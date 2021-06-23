@@ -5,9 +5,9 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+import 'package:audiobooks/app/modules/home/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:audiobooks/counter/counter.dart';
 import 'package:audiobooks/l10n/l10n.dart';
 
 class App extends StatelessWidget {
@@ -25,7 +25,7 @@ class App extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      home: HomeView(),
     );
   }
 }
