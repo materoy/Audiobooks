@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -16,5 +14,4 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {}
-  void increment() => count.value++;
 }
