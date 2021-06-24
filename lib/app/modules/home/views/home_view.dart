@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audiobooks/app/helpers/media_scanner.dart';
+import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 
 import 'package:get/get.dart';
 import 'package:easy_folder_picker/FolderPicker.dart';
@@ -56,20 +57,21 @@ class _DirPickerState extends State<DirPicker> {
               var allContents =
                   await Directory(selectedDirectory!.path).list().toList();
 
-              print(allContents);
+              print(allContents.length);
             },
             icon: const Icon(Icons.playlist_add_check)),
         IconButton(
-            onPressed: () {
-              var dir = Directory('/storage/emulated/0/Download');
-              var files = <FileSystemEntity>[];
-              var completer = Completer<List<FileSystemEntity>>();
-              var lister = dir.list(recursive: false);
-              lister.listen((file) => files.add(file),
-                  // should also register onError
-                  onDone: () => completer.complete(files));
-              completer.future;
-              print(files);
+            onPressed: () async {
+              var allContents = await Directory('/storage/emulated/0/Download')
+                  .list()
+                  .toList();
+
+              print(allContents.last.path);
+
+              var retriever = MetadataRetriever();
+              await retriever.setFile(File(allContents.first.path));
+              Metadata metadata = await retriever.metadata;
+              print(metadata.albumArtistName);
             },
             icon: Icon(Icons.scanner))
       ],
