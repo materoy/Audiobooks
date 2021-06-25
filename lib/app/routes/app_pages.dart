@@ -6,6 +6,8 @@ import 'package:audiobooks/app/modules/finished/bindings/finished_binding.dart';
 import 'package:audiobooks/app/modules/finished/views/finished_view.dart';
 import 'package:audiobooks/app/modules/home/bindings/home_binding.dart';
 import 'package:audiobooks/app/modules/home/views/home_view.dart';
+import 'package:audiobooks/app/modules/media_folders/bindings/media_folders_binding.dart';
+import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.dart';
 import 'package:audiobooks/app/modules/now_listening/bindings/now_listening_binding.dart';
 import 'package:audiobooks/app/modules/now_listening/views/now_listening_view.dart';
 import 'package:audiobooks/app/modules/unread/bindings/unread_binding.dart';
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.UNREAD,
       page: () => UnreadView(),
       binding: UnreadBinding(),
+    ),
+    GetPage(
+      name: _Paths.MEDIA_FOLDERS,
+      page: () => MediaFoldersView(),
+      binding: MediaFoldersBinding(),
     ),
   ];
 }

@@ -9,6 +9,7 @@ abstract class Routes {
   static const NOW_LISTENING = _Paths.NOW_LISTENING;
   static const FINISHED = _Paths.FINISHED;
   static const UNREAD = _Paths.UNREAD;
+  static const MEDIA_FOLDERS = _Paths.MEDIA_FOLDERS;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const NOW_LISTENING = '/now-listening';
   static const FINISHED = '/finished';
   static const UNREAD = '/unread';
+  static const MEDIA_FOLDERS = '/media-folders';
 }
