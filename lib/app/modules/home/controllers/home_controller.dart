@@ -3,31 +3,30 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class HomeController extends GetxController {
-  final LocalDatabase _localDatabase = LocalDatabase();
+  final LocalDatabase localDatabase = LocalDatabase();
   final GetStorage _localStorage = GetStorage();
 
   @override
-  void onInit() async {
-    // Open the database connection
-    final bool databaseOpenened = await _localDatabase.databaseOpened;
-    print(databaseOpenened);
+  void onInit() {
+    openDatabase().then((databaseOpen) async {
+      if (databaseOpen) await localDatabase.initializeDatabaseSchema();
+    });
     super.onInit();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  // }
 
   @override
   void onClose() {}
 
-  bool checkDatabaseSchemaInitialised() {
-    final bool? initialized = _localStorage.read('LocalDatabaseStatus');
-    return initialized ?? false;
-  }
+  Future<bool> openDatabase() async => localDatabase.openLocalDatabase();
 
-  void initializeDatabaseSchema() {
-    // _localDatabase.initializeDatabase()
+  Future<bool> checkDirectoryPathsExist() async {
+    final results =
+        await localDatabase.query(table: LocalDatabase.directoryPaths);
+    return results.isBlank!;
   }
 }

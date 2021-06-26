@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 class Audiobook {
   Audiobook({
+    required this.trackId,
+    this.collectionId,
     this.trackName,
     this.trackArtistNames,
     this.albumName,
@@ -24,6 +26,8 @@ class Audiobook {
 
   factory Audiobook.fromMap(Map<String, dynamic> audiobookMap) {
     return Audiobook(
+      trackId: audiobookMap['trackId'],
+      collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
       trackArtistNames: audiobookMap['trackArtistNames'],
       albumName: audiobookMap['albumName'],
@@ -44,6 +48,8 @@ class Audiobook {
       currentPosition: audiobookMap['currentPosition'],
     );
   }
+  final int trackId;
+  final int? collectionId;
   final String? trackName;
   final List<String?>? trackArtistNames;
   final String? albumName;
@@ -65,6 +71,8 @@ class Audiobook {
 
   Map<String, dynamic> toMap() {
     return {
+      'trackId': trackId,
+      'collectionId': collectionId,
       'trackName': trackName,
       'trackArtistNames': trackArtistNames,
       'albumName': albumName,

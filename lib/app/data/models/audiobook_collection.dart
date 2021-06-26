@@ -1,24 +1,24 @@
 class AudiobookCollection {
   AudiobookCollection(
-      {required this.audiobooksId,
-      required this.currentIndex,
+      {required this.tracksIds,
+      required this.currentTrackId,
       required this.collectionDuration});
 
   factory AudiobookCollection.fromMap(Map<String, dynamic> abookCollectionMap) {
     return AudiobookCollection(
-        audiobooksId: abookCollectionMap['audiobooksId'],
+        tracksIds: abookCollectionMap['tracksIds'],
         collectionDuration: abookCollectionMap['abookCollectionMap'],
-        currentIndex: abookCollectionMap['currentIndex']);
+        currentTrackId: abookCollectionMap['currentTrackId']);
   }
 
   Map<String, dynamic> toMap(AudiobookCollection audiobookCollection) {
     return {
-      'audiobooksId': audiobookCollection.audiobooksId,
-      'currentIndex': audiobookCollection.currentIndex,
+      'tracksIds': audiobookCollection.tracksIds,
+      'currentTrackId': audiobookCollection.currentTrackId,
     };
   }
 
-  final List<String> audiobooksId;
+  final List<int> tracksIds;
   final int collectionDuration;
-  final int currentIndex;
+  final int currentTrackId;
 }
