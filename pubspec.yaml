@@ -11,12 +11,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.3
-  # easy_folder_picker: ^1.1.0
-  easy_folder_picker:
-    git: 
-      url: https://github.com/romater0/Easy-Folder-Picker.git
+  easy_folder_picker: ^1.1.1
   flutter_media_metadata: ^0.1.0
   get: 4.1.4
+  get_storage: ^2.0.2
   intl: ^0.17.0
   just_audio: ^0.8.0
   sqflite: ^2.0.0+3

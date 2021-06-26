@@ -1,27 +1,38 @@
 import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:sqflite/sqflite.dart';
 
-class DBase {
+class LocalDatabase {
   late Database database;
 
-  static const String databaseName = 'Audiobooks.db';
-  static const String tableName = 'Audiobooks';
+  late Future<bool> _databaseOpen;
 
-  DBase() {
-    openDatabase('audiobooks.db').then((value) => database = value);
+  static const String databaseName = 'Audiobooks.db';
+  static const String audiobooksTable = 'Audiobooks';
+  static const String audiobooksCollectionTable = 'AudiobooksCollection';
+  static const String unreadAudiobooksTable = 'UnreadAudiobooks';
+  static const String finishedAudiobooksTable = 'FinishedAudiobooks';
+  static const String nowReadingAudiobooksTable = 'NowReadingAudiobooks';
+  static const String pathsTable = 'AudiobooksDirectoryPaths';
+
+  LocalDatabase() {
+    _databaseOpen = openLocalDatabase();
   }
 
-  Future<bool> initializeDatabase() async {
+  Future<bool> get databaseOpened => _databaseOpen;
+
+  Future<bool> openLocalDatabase() async {
     database = await openDatabase(databaseName);
     return database.isOpen;
   }
 
-  void initDatabase() async {
-    bool open = await initializeDatabase();
+  // Future<bool> checkInitialised() {}
+
+  Future<void> initializeDatabaseSchema() async {
+    final bool open = await databaseOpened;
     if (open) {
-      await database.execute('''CREATE TABLE $tableName (
+      await database.execute('''
+      CREATE TABLE $audiobooksTable (
         trackId int AUTO_INCREMENT,
         path VarChar(255),
         trackName VarChar(255),
@@ -41,16 +52,16 @@ class DBase {
         PRIMARY KEY(trackId)
     )''');
 
-      log("The database has been initialised");
+      log('The database has been initialised');
     }
   }
 
   Future<List<Map<String, Object?>>?> query(
-      {String? table, List<String>? columns, bool? distinct}) async {
-    bool open = await initializeDatabase();
+      {required String table, List<String>? columns, bool? distinct}) async {
+    final bool open = await databaseOpened;
     if (open) {
-      var results = database.query(
-        table ?? tableName,
+      final List<Map<String, dynamic>> results = await database.query(
+        table,
         columns: columns,
         distinct: distinct,
       );
@@ -58,11 +69,14 @@ class DBase {
     }
   }
 
-  void insert({String? table, required Map<String, dynamic> values}) async {
-    bool open = await initializeDatabase();
+  Future<int> insert(
+      {required String table, required Map<String, dynamic> values}) async {
+    final bool open = await databaseOpened;
 
     if (open) {
-      database.insert(table ?? tableName, values);
+      final int returnCode = await database.insert(table, values);
+      return returnCode;
     }
+    return -1;
   }
 }
