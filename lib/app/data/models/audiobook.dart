@@ -48,7 +48,7 @@ class Audiobook {
       currentPosition: audiobookMap['currentPosition'],
     );
   }
-  final int trackId;
+  final int? trackId;
   final int? collectionId;
   final String? trackName;
   final List<String?>? trackArtistNames;
@@ -64,14 +64,14 @@ class Audiobook {
   final String? mimeType;
   final int? trackDuration;
   final int? bitrate;
-  final String path;
+  String? path;
   final Uint8List? albumArt;
   final Uint8List? trackArt;
   final int? currentPosition;
 
   Map<String, dynamic> toMap() {
     return {
-      'trackId': trackId,
+      // 'trackId': trackId,
       'collectionId': collectionId,
       'trackName': trackName,
       'trackArtistNames': trackArtistNames,

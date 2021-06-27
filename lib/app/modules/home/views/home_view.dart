@@ -1,3 +1,5 @@
+import 'package:audiobooks/app/routes/app_pages.dart';
+import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,15 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     controller.onReady();
     // controller.localDatabase.resetDatabase();
-    return Scaffold(body: Container());
+    MediaScanner(controller.localDatabase).queryMediaFolders();
+    return Scaffold(
+        appBar: AppBar(),
+        drawer: Drawer(
+          child: OutlinedButton(
+            onPressed: () => Get.toNamed(Routes.MEDIA_FOLDERS),
+            child: const Text('Media folders'),
+          ),
+        ),
+        body: Container());
   }
 }
