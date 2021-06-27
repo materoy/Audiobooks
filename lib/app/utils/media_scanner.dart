@@ -34,6 +34,7 @@ class MediaScanner {
         if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
           final Audiobook audiobook = await getMediaInfo(entity.path);
           print(audiobook.path);
+          addAudiobookToDatabase(audiobook);
         }
       }
     }
@@ -46,5 +47,62 @@ class MediaScanner {
     final Audiobook _audiobook = Audiobook.fromMap(metadata.toMap())
       ..path = mediaPath;
     return _audiobook;
+  }
+
+  Future<void> addAudiobookToDatabase(Audiobook audiobook) async {
+    final String aTable = LocalDatabase.audiobooksTable;
+
+    localDatabase.database.transaction((txn) async {
+      // txn..rawInsert('''''');
+      txn.rawInsert('''
+      IF NOT EXISTS (SELECT * FROM $aTable WHERE path = "${audiobook.path}")
+          INSERT INTO $aTable 
+          (
+            collectionId,
+            trackName,
+            trackArtistNames,
+            albumName,
+            albumArtistName,
+            trackNumber,
+            albumLength,
+            year,
+            genre,
+            authorName,
+            writerName,
+            discNumber,
+            mimeType,
+            trackDuration,
+            bitrate,
+            path,
+            currentPosition
+            ) VALUES (
+            ?,
+            "${audiobook.trackName}",
+            "${audiobook.trackArtistNames}",
+            "${audiobook.albumName}",
+            "${audiobook.albumArtistName}",
+            "${audiobook.trackNumber}",
+            "${audiobook.albumLength}",
+            "${audiobook.year}",
+            "${audiobook.genre}",
+            "${audiobook.authorName}",
+            "${audiobook.writerName}",
+            "${audiobook.discNumber}",
+            "${audiobook.mimeType}",
+            "${audiobook.trackDuration}",
+            "${audiobook.bitrate}",
+            "${audiobook.path}",
+            "${audiobook.currentPosition}"
+          )
+      ''', [audiobook.collectionId]);
+    });
+  }
+
+  Future<void> getAudiobooks() async {
+    final results =
+        await localDatabase.query(table: LocalDatabase.audiobooksTable);
+    for (final result in results!) {
+      print(result.length);
+    }
   }
 }

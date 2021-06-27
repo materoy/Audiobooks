@@ -69,6 +69,7 @@ class LocalDatabase {
         mimeType TEXT,
         trackDuration INTEGER,
         bitrate INTEGER,
+        currentPosition INTEGER,
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
     )''');
 

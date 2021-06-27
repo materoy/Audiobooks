@@ -11,7 +11,8 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     controller.onReady();
     // controller.localDatabase.resetDatabase();
-    MediaScanner(controller.localDatabase).queryMediaFolders();
+    // MediaScanner(controller.localDatabase).queryMediaFolders();
+    MediaScanner(controller.localDatabase).getAudiobooks();
     return Scaffold(
         appBar: AppBar(),
         drawer: Drawer(
