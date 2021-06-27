@@ -1,16 +1,20 @@
+import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class HomeController extends GetxController {
   final LocalDatabase localDatabase = LocalDatabase();
-  final GetStorage _localStorage = GetStorage();
 
   @override
   void onInit() {
+    // Checks if the databse schema is initialized
     openDatabase().then((databaseOpen) async {
       if (databaseOpen) await localDatabase.initializeDatabaseSchema();
+      // Checks if there are loaded paths
+      checkDirectoryPathsExist().then((directoryLoaded) =>
+          !directoryLoaded ? Get.toNamed(Routes.MEDIA_FOLDERS) : null);
     });
+
     super.onInit();
   }
 
@@ -27,6 +31,6 @@ class HomeController extends GetxController {
   Future<bool> checkDirectoryPathsExist() async {
     final results =
         await localDatabase.query(table: LocalDatabase.directoryPaths);
-    return results.isBlank!;
+    return !results.isBlank!;
   }
 }

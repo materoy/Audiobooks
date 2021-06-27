@@ -43,43 +43,40 @@ class LocalDatabase {
           /// Create audiobooks collection table
           await txn.execute('''
       CREATE TABLE $audiobooksCollectionTable (
-        collectionId int AUTO_INCREMENT,
-        collectionDuration int,
-        currentTrackId int,
-        PRIMARY KEY (collectionId)
+        collectionId INTEGER PRIMARY_KEY,
+        collectionDuration INTEGER,
+        currentTrackId INTEGER,
         FOREIGN KEY (currentTrackId) REFERENCES $audiobooksTable(trackId)
     )''');
 
           /// Create audiobooks table
           await txn.execute('''
       CREATE TABLE $audiobooksTable (
-        trackId int AUTO_INCREMENT,
-        path VarChar(255),
-        trackName VarChar(255),
-        trackArtistNames  VarChar(255),
-        collectionId int,
-        albumName VarChar(255),
-        albumArtistName VarChar(255),
-        trackNumber int,
-        albumLength int,
-        year int,
-        genre VarChar(255),
-        authorName VarChar(255),
-        writerName VarChar(255),
-        discNumber int,
-        mimeType VarChar(32),
-        trackDuration int,
-        bitrate int,
-        PRIMARY KEY (trackId)
+        trackId INTEGER PRIMARY KEY,
+        path TEXT,
+        trackName TEXT,
+        trackArtistNames TEXT,
+        collectionId INTEGER,
+        albumName INTEGER,
+        albumArtistName TEXT,
+        trackNumber INTEGER,
+        albumLength INTEGER,
+        year INTEGER,
+        genre TEXT,
+        authorName TEXT,
+        writerName TEXT,
+        discNumber INTEGER,
+        mimeType TEXT,
+        trackDuration INTEGER,
+        bitrate INTEGER,
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
     )''');
 
           /// Create paths table
           await txn.execute('''
       CREATE TABLE $directoryPaths (
-        pathId int AUTO_INCREMENT,
-        directoryPath VarChar(255),
-        PRIMARY KEY (pathId)
+        pathId INTEGER PRIMARY KEY,
+        directoryPath TEXT
     )''');
         });
         GetStorage().write(databaseInitialisedStatusStorage, true);
@@ -116,5 +113,11 @@ class LocalDatabase {
       return returnCode;
     }
     return -1;
+  }
+
+  Future<void> resetDatabase() async {
+    await deleteDatabase(databaseName);
+    final localStorage = GetStorage();
+    localStorage.remove(databaseInitialisedStatusStorage);
   }
 }
