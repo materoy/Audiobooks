@@ -12,7 +12,7 @@ class HomeView extends GetView<HomeController> {
     controller.onReady();
     // controller.localDatabase.resetDatabase();
     // MediaScanner(controller.localDatabase).queryMediaFolders();
-    MediaScanner(controller.localDatabase).getAudiobooks();
+    // MediaScanner(controller.localDatabase).getAudiobooks();
     return Scaffold(
         appBar: AppBar(),
         drawer: Drawer(
@@ -21,6 +21,21 @@ class HomeView extends GetView<HomeController> {
             child: const Text('Media folders'),
           ),
         ),
-        body: Container());
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                onPressed: () =>
+                    MediaScanner(controller.localDatabase).queryMediaFolders(),
+                child: Text('Query media Folders')),
+            ElevatedButton(
+                onPressed: () =>
+                    MediaScanner(controller.localDatabase).getAudiobooks(),
+                child: Text('Get abooks')),
+            ElevatedButton(
+                onPressed: () => controller.localDatabase.resetDatabase(),
+                child: Text('Reset Db')),
+          ],
+        ));
   }
 }

@@ -70,6 +70,7 @@ class LocalDatabase {
         trackDuration INTEGER,
         bitrate INTEGER,
         currentPosition INTEGER,
+        UNIQUE(path),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
     )''');
 
