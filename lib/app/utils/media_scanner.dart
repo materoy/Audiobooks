@@ -57,15 +57,17 @@ class MediaScanner {
     await retriever.setFile(File(mediaPath));
     final Metadata metadata = await retriever.metadata;
     final Audiobook _audiobook = Audiobook.fromMap(metadata.toMap())
-      ..path = mediaPath;
+      ..path = mediaPath
+      ..single = metadata.albumName == null ? 1 : 0;
     return _audiobook;
   }
 
   Future<void> _addCollectionToDatabase(AudiobookCollection collection) async {
     final String collectionTable = LocalDatabase.audiobooksCollectionTable;
+    final String unreadTable = LocalDatabase.unreadAudiobooksTable;
 
     localDatabase.database.transaction((txn) async {
-      await txn.rawInsert('''
+      final int collectionId = await txn.rawInsert('''
         INSERT OR REPLACE INTO $collectionTable (
           currentTrackId, collectionDuration, collectionName, collectionAuthor,
           collectionLength
@@ -77,20 +79,26 @@ class MediaScanner {
         collection.collectionAuthor,
         collection.collectionLength,
       ]);
+
+      await txn.rawInsert('''
+          INSERT OR REPLACE INTO $unreadTable 
+            (collectionId) VALUES (?)
+        ''', [collectionId]);
     });
   }
 
   Future<void> _addAudiobookToDatabase(Audiobook audiobook) async {
     final String aTable = LocalDatabase.audiobooksTable;
+    final String unreadTable = LocalDatabase.unreadAudiobooksTable;
 
     localDatabase.database.transaction((txn) async {
-      txn.rawInsert('''
+      final int trackId = await txn.rawInsert('''
           INSERT OR IGNORE INTO $aTable
           (collectionId, trackName, trackArtistNames,albumName,albumArtistName,
             trackNumber,albumLength, year,genre,authorName,
-            writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition
+            writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, single
             ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
           ) 
           
       ''', [
@@ -114,7 +122,15 @@ class MediaScanner {
         audiobook.bitrate,
         audiobook.path,
         audiobook.currentPosition,
+        audiobook.single,
       ]);
+
+      if (audiobook.single == 1) {
+        txn.rawInsert('''
+          INSERT OR REPLACE INTO $unreadTable 
+            (trackId) VALUES (?)
+        ''', [trackId]);
+      }
     });
   }
 
@@ -122,7 +138,7 @@ class MediaScanner {
     final results =
         await localDatabase.query(table: LocalDatabase.audiobooksTable);
     // for (final result in results!) {
-    //   print(result);
+    //   print(result['single']);
     // }
     print(results!.length);
   }
@@ -133,6 +149,12 @@ class MediaScanner {
     // for (final result in results!) {
     //   print(result);
     // }
+    print(results);
+  }
+
+  Future<void> getUnread() async {
+    final results = await localDatabase.query(
+        table: LocalDatabase.audiobooksCollectionTable);
     print(results);
   }
 }

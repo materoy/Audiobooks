@@ -74,6 +74,7 @@ class LocalDatabase {
         trackDuration INTEGER,
         bitrate INTEGER,
         currentPosition INTEGER,
+        single INTEGER,
         UNIQUE(path),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
     )''');
@@ -84,7 +85,42 @@ class LocalDatabase {
         pathId INTEGER PRIMARY KEY,
         directoryPath TEXT
     )''');
+
+          /// Create unread table
+          await txn.execute('''
+      CREATE TABLE $unreadAudiobooksTable (
+        entryId PRIMARY KEY,
+        trackId INTEGER,
+        collectionId INTEGER,
+        UNIQUE(trackId, collectionId),
+        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
+        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+    )''');
+
+          /// Create now reading table
+          await txn.execute('''
+      CREATE TABLE $nowReadingAudiobooksTable (
+        entryId PRIMARY KEY,
+        trackId INTEGER,
+        collectionId INTEGER,
+        UNIQUE(trackId, collectionId),
+        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
+        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+          )''');
+
+          /// Create finished table
+          await txn.execute('''
+      CREATE TABLE $finishedAudiobooksTable (
+        entryId PRIMARY KEY,
+        trackId INTEGER,
+        collectionId INTEGER,
+        UNIQUE(trackId, collectionId),
+        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
+        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+          )''');
         });
+
+        /// Rat to the app that the database is ok
         GetStorage().write(databaseInitialisedStatusStorage, true);
 
         log('The database schema has been initialised');
@@ -125,5 +161,6 @@ class LocalDatabase {
     await deleteDatabase(databaseName);
     final localStorage = GetStorage();
     localStorage.remove(databaseInitialisedStatusStorage);
+    log('The database has been reset');
   }
 }

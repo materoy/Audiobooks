@@ -22,6 +22,7 @@ class Audiobook {
     this.albumArt,
     this.trackArt,
     this.currentPosition,
+    this.single,
   });
 
   factory Audiobook.fromMap(Map<String, dynamic> audiobookMap) {
@@ -46,6 +47,7 @@ class Audiobook {
       albumArt: audiobookMap['albumArt'],
       trackArt: audiobookMap['trackArt'],
       currentPosition: audiobookMap['currentPosition'],
+      single: audiobookMap['single'],
     );
   }
   final int? trackId;
@@ -68,6 +70,7 @@ class Audiobook {
   final Uint8List? albumArt;
   final Uint8List? trackArt;
   final int? currentPosition;
+  int? single;
 
   Map<String, dynamic> toMap() {
     return {
@@ -91,6 +94,7 @@ class Audiobook {
       'albumArt': albumArt,
       'trackArt': trackArt,
       'currentPosition': currentPosition,
+      'single': single,
     };
   }
 }
