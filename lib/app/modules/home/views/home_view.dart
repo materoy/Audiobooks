@@ -1,5 +1,5 @@
 import 'package:audiobooks/app/routes/app_pages.dart';
-import 'package:audiobooks/app/utils/media_scanner.dart';
+import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -50,16 +50,34 @@ class HomeView extends GetView<HomeController> {
           padding: const EdgeInsets.only(top: 10.0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TabLabel(label: 'Unread', onPressed: () {}, selected: false),
-                  TabLabel(
-                      label: 'Jump back in', onPressed: () {}, selected: true),
-                  TabLabel(
-                      label: 'Finished', onPressed: () {}, selected: false),
+              Obx(() => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TabLabel(
+                          label: 'Unread',
+                          onPressed: () =>
+                              controller.tabState = TabState.Unread,
+                          selected: controller.tabState == TabState.Unread),
+                      TabLabel(
+                          label: 'Jump back in',
+                          onPressed: () =>
+                              controller.tabState = TabState.Reading,
+                          selected: controller.tabState == TabState.Reading),
+                      TabLabel(
+                          label: 'Finished',
+                          onPressed: () =>
+                              controller.tabState = TabState.Finished,
+                          selected: controller.tabState == TabState.Finished),
+                    ],
+                  )),
+              Expanded(
+                  child: PageView(
+                children: const [
+                  Center(child: Text("Unread")),
+                  Center(child: Text("Jump back in")),
+                  Center(child: Text("finished")),
                 ],
-              ),
+              )),
             ],
           ),
         ));
@@ -81,18 +99,21 @@ class TabLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Opacity(
       opacity: selected ? 1.0 : .5,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9.0, vertical: 7.0),
-        decoration: BoxDecoration(
-            color: selected ? Colors.blue : Colors.transparent,
-            border: Border.all(
-              color: Colors.blue,
-              width: 1.5,
-            ),
-            borderRadius: BorderRadius.circular(15.0)),
-        child: Text(
-          label,
-          style: TextStyle(color: selected ? Colors.black : Colors.white),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9.0, vertical: 7.0),
+          decoration: BoxDecoration(
+              color: selected ? Colors.blue : Colors.transparent,
+              border: Border.all(
+                color: Colors.blue,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(15.0)),
+          child: Text(
+            label,
+            style: TextStyle(color: selected ? Colors.black : Colors.white),
+          ),
         ),
       ),
     );

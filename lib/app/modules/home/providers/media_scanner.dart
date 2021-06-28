@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/data/models/audiobook_collection.dart';
+import 'package:audiobooks/app/data/models/track_.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path/path.dart' as p;
 
@@ -68,7 +69,7 @@ class MediaScanner {
 
     localDatabase.database.transaction((txn) async {
       final int collectionId = await txn.rawInsert('''
-        INSERT OR REPLACE INTO $collectionTable (
+        INSERT OR IGNORE INTO $collectionTable (
           currentTrackId, collectionDuration, collectionName, collectionAuthor,
           collectionLength
         ) VALUES ( ?,?,?,?,?)
@@ -80,10 +81,12 @@ class MediaScanner {
         collection.collectionLength,
       ]);
 
-      await txn.rawInsert('''
-          INSERT OR REPLACE INTO $unreadTable 
-            (collectionId) VALUES (?)
-        ''', [collectionId]);
+      if (collectionId != 0) {
+        await txn.rawInsert('''
+          INSERT OR IGNORE INTO $unreadTable 
+            (collectionId, name) VALUES (?, ?)
+        ''', [collectionId, collection.collectionName]);
+      }
     });
   }
 
@@ -128,8 +131,8 @@ class MediaScanner {
       if (audiobook.single == 1) {
         txn.rawInsert('''
           INSERT OR REPLACE INTO $unreadTable 
-            (trackId) VALUES (?)
-        ''', [trackId]);
+            (trackId, name) VALUES (?, ?)
+        ''', [trackId, audiobook.trackName]);
       }
     });
   }
@@ -140,7 +143,7 @@ class MediaScanner {
     // for (final result in results!) {
     //   print(result['single']);
     // }
-    print(results!.length);
+    print(results);
   }
 
   Future<void> getCollection() async {
@@ -152,9 +155,15 @@ class MediaScanner {
     print(results);
   }
 
-  Future<void> getUnread() async {
-    final results = await localDatabase.query(
-        table: LocalDatabase.audiobooksCollectionTable);
+  Future<List<Track>> getUnread() async {
+    final results =
+        await localDatabase.query(table: LocalDatabase.unreadAudiobooksTable);
     print(results);
+    List<Track> tracks = [];
+    for (final result in results!) {
+      print(result['trackId']);
+      Track track = Track.fromMap(result);
+    }
+    return tracks;
   }
 }

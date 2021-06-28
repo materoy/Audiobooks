@@ -43,13 +43,13 @@ class LocalDatabase {
           /// Create audiobooks collection table
           await txn.execute('''
       CREATE TABLE $audiobooksCollectionTable (
-        collectionId INTEGER PRIMARY_KEY,
+        collectionId INTEGER PRIMARY KEY,
         collectionDuration INTEGER,
         currentTrackId INTEGER,
         collectionName TEXT,
         collectionAuthor TEXT,
         collectionLength INTEGER,
-        UNIQUE(collectionName)
+        UNIQUE(collectionName),
         FOREIGN KEY (currentTrackId) REFERENCES $audiobooksTable(trackId)
     )''');
 
@@ -89,10 +89,12 @@ class LocalDatabase {
           /// Create unread table
           await txn.execute('''
       CREATE TABLE $unreadAudiobooksTable (
-        entryId PRIMARY KEY,
+        entryId INTEGER PRIMARY KEY,
         trackId INTEGER,
         collectionId INTEGER,
-        UNIQUE(trackId, collectionId),
+        name TEXT,
+        UNIQUE(trackId),
+        UNIQUE(collectionId),
         FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
     )''');
@@ -100,7 +102,7 @@ class LocalDatabase {
           /// Create now reading table
           await txn.execute('''
       CREATE TABLE $nowReadingAudiobooksTable (
-        entryId PRIMARY KEY,
+        entryId INTEGER PRIMARY KEY,
         trackId INTEGER,
         collectionId INTEGER,
         UNIQUE(trackId, collectionId),
@@ -111,10 +113,11 @@ class LocalDatabase {
           /// Create finished table
           await txn.execute('''
       CREATE TABLE $finishedAudiobooksTable (
-        entryId PRIMARY KEY,
+        entryId INTEGER PRIMARY KEY,
         trackId INTEGER,
         collectionId INTEGER,
         UNIQUE(trackId, collectionId),
+
         FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
           )''');
