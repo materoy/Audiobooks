@@ -159,10 +159,11 @@ class MediaScanner {
     final results =
         await localDatabase.query(table: LocalDatabase.unreadAudiobooksTable);
     print(results);
-    List<Track> tracks = [];
+    List<Track> tracks;
+    tracks = [];
     for (final result in results!) {
-      print(result['trackId']);
-      Track track = Track.fromMap(result);
+      final Track track = Track.fromMap(result);
+      tracks.add(track);
     }
     return tracks;
   }

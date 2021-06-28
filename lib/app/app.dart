@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 
 import 'modules/home/bindings/home_binding.dart';
 import 'routes/app_pages.dart';
+import 'utils/size_config.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -34,6 +35,10 @@ class App extends StatelessWidget {
       initialBinding: HomeBinding(),
       supportedLocales: AppLocalizations.supportedLocales,
       home: HomeView(),
+      builder: (context, child) {
+        SizeConfig().init(context);
+        return child!;
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/modules/home/views/widgets/tracks_list.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,11 +6,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import 'widgets/tab_label.dart';
 
 class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
-    controller.onReady();
     return Scaffold(
         backgroundColor: const Color(0xFF3C404B),
         appBar: AppBar(
@@ -72,50 +73,29 @@ class HomeView extends GetView<HomeController> {
                   )),
               Expanded(
                   child: PageView(
-                children: const [
-                  Center(child: Text("Unread")),
-                  Center(child: Text("Jump back in")),
-                  Center(child: Text("finished")),
+                controller: controller.pageController,
+                onPageChanged: (value) {
+                  switch (value) {
+                    case 0:
+                      controller.tabState = TabState.Unread;
+                      break;
+                    case 1:
+                      controller.tabState = TabState.Reading;
+                      break;
+                    case 2:
+                      controller.tabState = TabState.Finished;
+                      break;
+                    default:
+                  }
+                },
+                children: [
+                  TracksList(tracks: controller.unreadTracks),
+                  TracksList(tracks: controller.nowReadingTracks),
+                  TracksList(tracks: controller.finishedTracks),
                 ],
               )),
             ],
           ),
         ));
-  }
-}
-
-class TabLabel extends StatelessWidget {
-  const TabLabel(
-      {Key? key,
-      required this.label,
-      required this.onPressed,
-      required this.selected})
-      : super(key: key);
-  final String label;
-  final VoidCallback onPressed;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: selected ? 1.0 : .5,
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9.0, vertical: 7.0),
-          decoration: BoxDecoration(
-              color: selected ? Colors.blue : Colors.transparent,
-              border: Border.all(
-                color: Colors.blue,
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(15.0)),
-          child: Text(
-            label,
-            style: TextStyle(color: selected ? Colors.black : Colors.white),
-          ),
-        ),
-      ),
-    );
   }
 }
