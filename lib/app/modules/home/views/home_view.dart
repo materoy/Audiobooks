@@ -27,14 +27,18 @@ class HomeView extends GetView<HomeController> {
             ElevatedButton(
                 onPressed: () =>
                     MediaScanner(controller.localDatabase).queryMediaFolders(),
-                child: Text('Query media Folders')),
+                child: const Text('Query media Folders')),
             ElevatedButton(
                 onPressed: () =>
                     MediaScanner(controller.localDatabase).getAudiobooks(),
-                child: Text('Get abooks')),
+                child: const Text('Get abooks')),
+            ElevatedButton(
+                onPressed: () =>
+                    MediaScanner(controller.localDatabase).getCollection(),
+                child: const Text('Get collections')),
             ElevatedButton(
                 onPressed: () => controller.localDatabase.resetDatabase(),
-                child: Text('Reset Db')),
+                child: const Text('Reset Db')),
           ],
         ));
   }

@@ -1,24 +1,45 @@
+import 'dart:typed_data';
+
 class AudiobookCollection {
-  AudiobookCollection(
-      {required this.tracksIds,
-      required this.currentTrackId,
-      required this.collectionDuration});
+  AudiobookCollection({
+    this.collectionId,
+    this.currentTrackId,
+    this.collectionDuration,
+    required this.collectionName,
+    this.collectionAuthor,
+    this.collectionLength,
+    this.collectionArt,
+  });
 
   factory AudiobookCollection.fromMap(Map<String, dynamic> abookCollectionMap) {
     return AudiobookCollection(
-        tracksIds: abookCollectionMap['tracksIds'],
-        collectionDuration: abookCollectionMap['abookCollectionMap'],
-        currentTrackId: abookCollectionMap['currentTrackId']);
+      collectionId: abookCollectionMap['collectionId'],
+      currentTrackId: abookCollectionMap['currentTrackId'],
+      collectionDuration: abookCollectionMap['collectionDuration'],
+      collectionName: abookCollectionMap['collectionName'],
+      collectionAuthor: abookCollectionMap['collectionAuthor'],
+      collectionLength: abookCollectionMap['collectionLength'],
+      collectionArt: abookCollectionMap['collectionArt'],
+    );
   }
 
   Map<String, dynamic> toMap(AudiobookCollection audiobookCollection) {
     return {
-      'tracksIds': audiobookCollection.tracksIds,
+      'collectionId': audiobookCollection.collectionId,
       'currentTrackId': audiobookCollection.currentTrackId,
+      'collectionDuration': audiobookCollection.collectionDuration,
+      'collectionName': audiobookCollection.collectionName,
+      'collectionAuthor': audiobookCollection.collectionAuthor,
+      'collectionLength': audiobookCollection.collectionLength,
+      'collectionArt': audiobookCollection.collectionArt,
     };
   }
 
-  final List<int> tracksIds;
-  final int collectionDuration;
-  final int currentTrackId;
+  final int? collectionId;
+  final int? currentTrackId;
+  final int? collectionDuration;
+  final String collectionName;
+  final String? collectionAuthor;
+  final int? collectionLength;
+  final Uint8List? collectionArt;
 }

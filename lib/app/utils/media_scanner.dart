@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audiobooks/app/data/models/audiobook.dart';
+import 'package:audiobooks/app/data/models/audiobook_collection.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path/path.dart' as p;
 
@@ -32,8 +33,20 @@ class MediaScanner {
         final String extensiton = p.extension(entity.path);
         if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
           final Audiobook audiobook = await getMediaInfo(entity.path);
-          print(audiobook.path);
-          addAudiobookToDatabase(audiobook);
+          print(audiobook.albumArtistName);
+
+          /// Adds media to database
+          _addAudiobookToDatabase(audiobook);
+
+          /// Adds collection
+          if (audiobook.albumName != null) {
+            _addCollectionToDatabase(AudiobookCollection(
+              collectionName: audiobook.albumName!,
+              collectionAuthor: audiobook.albumArtistName,
+              collectionArt: audiobook.albumArt,
+              collectionLength: audiobook.albumLength,
+            ));
+          }
         }
       }
     }
@@ -48,7 +61,26 @@ class MediaScanner {
     return _audiobook;
   }
 
-  Future<void> addAudiobookToDatabase(Audiobook audiobook) async {
+  Future<void> _addCollectionToDatabase(AudiobookCollection collection) async {
+    final String collectionTable = LocalDatabase.audiobooksCollectionTable;
+
+    localDatabase.database.transaction((txn) async {
+      await txn.rawInsert('''
+        INSERT OR REPLACE INTO $collectionTable (
+          currentTrackId, collectionDuration, collectionName, collectionAuthor,
+          collectionLength
+        ) VALUES ( ?,?,?,?,?)
+      ''', [
+        collection.currentTrackId,
+        collection.collectionDuration,
+        collection.collectionName,
+        collection.collectionAuthor,
+        collection.collectionLength,
+      ]);
+    });
+  }
+
+  Future<void> _addAudiobookToDatabase(Audiobook audiobook) async {
     final String aTable = LocalDatabase.audiobooksTable;
 
     localDatabase.database.transaction((txn) async {
@@ -93,5 +125,14 @@ class MediaScanner {
     //   print(result);
     // }
     print(results!.length);
+  }
+
+  Future<void> getCollection() async {
+    final results = await localDatabase.query(
+        table: LocalDatabase.audiobooksCollectionTable);
+    // for (final result in results!) {
+    //   print(result);
+    // }
+    print(results);
   }
 }

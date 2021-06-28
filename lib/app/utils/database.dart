@@ -46,6 +46,10 @@ class LocalDatabase {
         collectionId INTEGER PRIMARY_KEY,
         collectionDuration INTEGER,
         currentTrackId INTEGER,
+        collectionName TEXT,
+        collectionAuthor TEXT,
+        collectionLength INTEGER,
+        UNIQUE(collectionName)
         FOREIGN KEY (currentTrackId) REFERENCES $audiobooksTable(trackId)
     )''');
 
