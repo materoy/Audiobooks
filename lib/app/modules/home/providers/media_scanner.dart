@@ -37,9 +37,6 @@ class MediaScanner {
           final Audiobook audiobook = await getMediaInfo(entity.path);
           print('Added ${audiobook.trackName} to db');
 
-          /// Adds media to database
-          _addAudiobookToDatabase(audiobook);
-
           /// Adds collection
           if (audiobook.albumName != null) {
             _addCollectionToDatabase(AudiobookCollection(
@@ -49,6 +46,9 @@ class MediaScanner {
               collectionLength: audiobook.albumLength,
             ));
           }
+
+          /// Adds media to database
+          await _addAudiobookToDatabase(audiobook);
         }
       }
     }

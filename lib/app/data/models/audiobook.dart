@@ -31,7 +31,7 @@ class Audiobook {
       trackId: audiobookMap['trackId'],
       collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
-      trackArtistNames: audiobookMap['trackArtistNames'].toList(),
+      trackArtistNames: audiobookMap['trackArtistNames'],
       albumName: audiobookMap['albumName'],
       albumArtistName: audiobookMap['albumArtistName'],
       trackNumber: audiobookMap['trackNumber'],
