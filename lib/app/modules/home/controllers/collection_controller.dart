@@ -1,5 +1,6 @@
 import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ class CollectionController extends GetxController {
   final LocalDatabase _localDatabase;
   final TrackEntry trackEntry;
   TrackProvider get provider => TrackProvider(_localDatabase);
+  PlayerProvider get _playerProvider => PlayerProvider(_localDatabase);
 
   final _tracks = List<Audiobook>.empty(growable: true).obs;
 

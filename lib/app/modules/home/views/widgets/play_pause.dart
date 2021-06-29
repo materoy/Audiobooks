@@ -10,15 +10,18 @@ class PlayPauseButton extends GetView<AudioController> {
 
   @override
   Widget build(BuildContext context) {
-    print(controller.playing);
     return GestureDetector(
       onTap: () => controller.playing
           ? controller.pause()
           : controller.play(audioFilePath),
       child: Center(
-          child: Icon(!controller.playing
-              ? Icons.play_circle_fill_rounded
-              : Icons.pause_circle_outline_rounded)),
+          child: Obx(() => Icon(
+                controller.playing && controller.audioPath == audioFilePath
+                    ? Icons.pause_circle_outline_rounded
+                    : Icons.play_circle_fill_rounded,
+                size: 40.0,
+                color: const Color(0xFF2E429C),
+              ))),
     );
   }
 }

@@ -45,6 +45,10 @@ class HomeView extends GetView<HomeController> {
               ElevatedButton(
                   onPressed: () => controller.localDatabase.resetDatabase(),
                   child: const Text('Reset Db')),
+              ElevatedButton(
+                  onPressed: () =>
+                      controller.localDatabase.initializeDatabaseSchema(),
+                  child: const Text('Initialize db schema')),
             ],
           ),
         ),

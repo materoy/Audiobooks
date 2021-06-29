@@ -31,7 +31,7 @@ class Audiobook {
       trackId: audiobookMap['trackId'],
       collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
-      trackArtistNames: audiobookMap['trackArtistNames'],
+      trackArtistNames: audiobookMap['trackArtistNames'].split('|'),
       albumName: audiobookMap['albumName'],
       albumArtistName: audiobookMap['albumArtistName'],
       trackNumber: audiobookMap['trackNumber'],

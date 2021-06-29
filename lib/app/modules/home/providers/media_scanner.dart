@@ -103,7 +103,6 @@ class MediaScanner {
             columns: ['collectionId'],
             where: 'collectionName = ?',
             whereArgs: [audiobook.albumName]);
-        log('Results ${resultsSet}');
         collectionId = resultsSet.first['collectionId'] as int?;
       }
       final int trackId = await txn.rawInsert('''
