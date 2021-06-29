@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/tracks_list.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
@@ -31,15 +32,15 @@ class HomeView extends GetView<HomeController> {
                   child: const Text('Query media Folders')),
               ElevatedButton(
                   onPressed: () =>
-                      MediaScanner(controller.localDatabase).getAudiobooks(),
+                      TrackProvider(controller.localDatabase).getAudiobooks(),
                   child: const Text('Get abooks')),
               ElevatedButton(
                   onPressed: () =>
-                      MediaScanner(controller.localDatabase).getCollection(),
+                      TrackProvider(controller.localDatabase).getCollection(),
                   child: const Text('Get collections')),
               ElevatedButton(
                   onPressed: () =>
-                      MediaScanner(controller.localDatabase).getUnread(),
+                      TrackProvider(controller.localDatabase).getUnread(),
                   child: const Text('Get unread')),
               ElevatedButton(
                   onPressed: () => controller.localDatabase.resetDatabase(),
@@ -89,9 +90,9 @@ class HomeView extends GetView<HomeController> {
                   }
                 },
                 children: [
-                  TracksList(tracks: controller.unreadTracks),
-                  TracksList(tracks: controller.nowReadingTracks),
-                  TracksList(tracks: controller.finishedTracks),
+                  TracksList(trackEntries: controller.unreadTracks),
+                  TracksList(trackEntries: controller.nowReadingTracks),
+                  TracksList(trackEntries: controller.finishedTracks),
                 ],
               )),
             ],

@@ -1,29 +1,32 @@
 import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/controllers/collection_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
-import 'package:audiobooks/app/modules/home/controllers/track_controller.dart';
+import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
+import 'package:audiobooks/app/modules/home/views/widgets/track_card.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'coverage.dart';
-import 'play_pause.dart';
 
-class TrackCard extends GetView<TrackController> {
-  TrackCard({Key? key, required this.trackEntry}) : super(key: key);
+class CollectionCard extends GetView<CollectionController> {
+  CollectionCard({Key? key, required this.trackEntry}) : super(key: key);
   final TrackEntry trackEntry;
 
   final HomeController homeController = Get.find<HomeController>();
 
   @override
-  TrackController get controller => Get.put(
-      TrackController(
+  CollectionController get controller => Get.put(
+      CollectionController(
           localDatabase: homeController.localDatabase, trackEntry: trackEntry),
       tag: trackEntry.name);
 
   @override
   Widget build(BuildContext context) {
     // print(trackEntry.name);
+    controller.tracks.forEach((element) {
+      // print(element);
+    });
     return Container(
       clipBehavior: Clip.hardEdge,
       height: SizeConfig.blockSizeVertical * 17,

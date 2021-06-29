@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/data/models/audiobook_collection.dart';
-import 'package:audiobooks/app/data/models/track_.dart';
+import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path/path.dart' as p;
 
@@ -93,10 +93,20 @@ class MediaScanner {
   Future<void> _addAudiobookToDatabase(Audiobook audiobook) async {
     final String aTable = LocalDatabase.audiobooksTable;
     final String unreadTable = LocalDatabase.unreadAudiobooksTable;
+    final String collectionTable = LocalDatabase.audiobooksCollectionTable;
 
     localDatabase.database.transaction((txn) async {
+      int? collectionId;
+      if (audiobook.albumName != null) {
+        final resultsSet = await txn.query(collectionTable,
+            columns: ['collectionId'],
+            where: 'collectionName = ?',
+            whereArgs: [audiobook.albumName]);
+
+        collectionId = resultsSet.first['collectionId'] as int?;
+      }
       final int trackId = await txn.rawInsert('''
-          INSERT OR IGNORE INTO $aTable
+          INSERT OR REPLACE INTO $aTable
           (collectionId, trackName, trackArtistNames,albumName,albumArtistName,
             trackNumber,albumLength, year,genre,authorName,
             writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, single
@@ -105,7 +115,7 @@ class MediaScanner {
           ) 
           
       ''', [
-        audiobook.collectionId,
+        collectionId,
         audiobook.trackName,
         if (audiobook.trackArtistNames != null)
           audiobook.trackArtistNames!.join('|').toString()
@@ -135,36 +145,5 @@ class MediaScanner {
         ''', [trackId, audiobook.trackName]);
       }
     });
-  }
-
-  Future<void> getAudiobooks() async {
-    final results =
-        await localDatabase.query(table: LocalDatabase.audiobooksTable);
-    // for (final result in results!) {
-    //   print(result['single']);
-    // }
-    print(results);
-  }
-
-  Future<void> getCollection() async {
-    final results = await localDatabase.query(
-        table: LocalDatabase.audiobooksCollectionTable);
-    // for (final result in results!) {
-    //   print(result);
-    // }
-    print(results);
-  }
-
-  Future<List<Track>> getUnread() async {
-    final results =
-        await localDatabase.query(table: LocalDatabase.unreadAudiobooksTable);
-    print(results);
-    List<Track> tracks;
-    tracks = [];
-    for (final result in results!) {
-      final Track track = Track.fromMap(result);
-      tracks.add(track);
-    }
-    return tracks;
   }
 }

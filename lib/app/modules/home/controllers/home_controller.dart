@@ -1,4 +1,5 @@
-import 'package:audiobooks/app/data/models/track_.dart';
+import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/database.dart';
@@ -11,14 +12,14 @@ class HomeController extends GetxController {
   final LocalDatabase localDatabase = LocalDatabase();
 
   final _tabState = TabState.Unread.obs;
-  final _unreadTracks = List<Track>.empty(growable: true).obs;
-  final _nowReadingTracks = List<Track>.empty(growable: true).obs;
-  final _finishedTracks = List<Track>.empty(growable: true).obs;
+  final _unreadTracks = List<TrackEntry>.empty(growable: true).obs;
+  final _nowReadingTracks = List<TrackEntry>.empty(growable: true).obs;
+  final _finishedTracks = List<TrackEntry>.empty(growable: true).obs;
 
   TabState get tabState => _tabState.value;
-  List<Track> get unreadTracks => _unreadTracks;
-  List<Track> get nowReadingTracks => _nowReadingTracks;
-  List<Track> get finishedTracks => _finishedTracks;
+  List<TrackEntry> get unreadTracks => _unreadTracks;
+  List<TrackEntry> get nowReadingTracks => _nowReadingTracks;
+  List<TrackEntry> get finishedTracks => _finishedTracks;
 
   set tabState(TabState value) => _tabState.value = value;
 
@@ -30,12 +31,12 @@ class HomeController extends GetxController {
     openDatabase().then((databaseOpen) async {
       if (databaseOpen) await localDatabase.initializeDatabaseSchema();
       // Checks if there are loaded paths
-      checkDirectoryPathsExist().then((directoryLoaded) =>
+      await checkDirectoryPathsExist().then((directoryLoaded) =>
           !directoryLoaded ? Get.toNamed(Routes.MEDIA_FOLDERS) : null);
+      addTracks();
     });
 
     super.onInit();
-    addTracks();
   }
 
   @override
@@ -55,9 +56,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> addTracks() async {
-    final MediaScanner _mediaScanner = MediaScanner(localDatabase);
-    await _mediaScanner
-        .getUnread()
-        .then((value) => _unreadTracks.addAll(value));
+    final TrackProvider _provider = TrackProvider(localDatabase);
+    await _provider.getUnread().then((value) => _unreadTracks.addAll(value));
   }
 }

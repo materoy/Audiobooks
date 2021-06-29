@@ -30,7 +30,7 @@ class Audiobook {
       trackId: audiobookMap['trackId'],
       collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
-      trackArtistNames: audiobookMap['trackArtistNames'],
+      trackArtistNames: (audiobookMap['trackArtistNames'] as String).split('|'),
       albumName: audiobookMap['albumName'],
       albumArtistName: audiobookMap['albumArtistName'],
       trackNumber: audiobookMap['trackNumber'],
@@ -97,4 +97,11 @@ class Audiobook {
       'single': single,
     };
   }
+
+  factory Audiobook.empty() {
+    return Audiobook(trackId: null, path: null);
+  }
+
+  @override
+  String toString() => trackName ?? albumName ?? 'Unnamed track';
 }
