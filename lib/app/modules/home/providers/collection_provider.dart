@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
@@ -23,5 +24,12 @@ class CollectionProvider {
       log(e.toString());
       return 0;
     }
+  }
+
+  Future<void> updateCurrentTrackInCollection(int trackId) async {
+    await _localDatabase.database
+        .update(LocalDatabase.audiobooksCollectionTable, {
+      'currentTrackId': trackId,
+    });
   }
 }

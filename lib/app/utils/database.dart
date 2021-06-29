@@ -162,6 +162,7 @@ class LocalDatabase {
 
   Future<void> resetDatabase() async {
     await deleteDatabase(databaseName);
+    await database.close();
     final localStorage = GetStorage();
     localStorage.remove(databaseInitialisedStatusStorage);
     log('The database has been reset');

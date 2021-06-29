@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,10 @@ class AudioController extends GetxController {
   final AudioPlayer _audioPlayer = AudioPlayer();
   PlayerProvider get _playerProvider =>
       PlayerProvider(Get.find<HomeController>().localDatabase);
+
+  int? _currentTrackId;
+  set currentTrackId(int trackId) => _currentTrackId = trackId;
+  int get currentTrackId => _currentTrackId!;
 
   final _audioPath = ''.obs;
   final _audioDuration = const Duration().obs;
@@ -27,12 +33,15 @@ class AudioController extends GetxController {
     if (_audioPlayer.playing) {
       await _audioPlayer.pause();
     }
-    _playing.value = true;
     await setAudioPath(path);
+    final int currentPosition = await getCurrentPlayPosition();
+    await _audioPlayer.seek(Duration(milliseconds: currentPosition));
+    _playing.value = true;
     await _audioPlayer.play();
   }
 
-  void pause() {
+  Future<void> pause() async {
+    await updatePlayPosition();
     if (_audioPlayer.playing) {
       _playing.value = false;
       _audioPlayer.pause();
@@ -40,7 +49,13 @@ class AudioController extends GetxController {
   }
 
   Future<void> updatePlayPosition() async {
-    _playerProvider.updateCurrentTrackPosition(_audioPlayer.currentIndex!);
+    _playerProvider.updateCurrentTrackPosition(
+        currentPosition: _audioPlayer.position.inMilliseconds,
+        trackId: _currentTrackId!);
+  }
+
+  Future<int> getCurrentPlayPosition() async {
+    return _playerProvider.getCurrentTrackPlayPosition(_currentTrackId!);
   }
 
   @override

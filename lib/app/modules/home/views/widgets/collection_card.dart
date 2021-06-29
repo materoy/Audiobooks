@@ -60,10 +60,16 @@ class CollectionCard extends GetView<CollectionController> {
                 Row(
                   children: [
                     const Coverage(),
-                    Obx(() => PlayPauseButton(
-                        audioFilePath: controller.tracks.isNotEmpty
-                            ? controller.tracks.first.path!
-                            : '')),
+                    Obx(() => controller.currentTrack.path != null
+                        ? PlayPauseButton(
+                            trackId: controller.currentTrack.trackId!,
+                            audioFilePath: controller.currentTrack.path!,
+                            onPressed: () {
+                              controller.updateCurrentTrack(
+                                  controller.currentTrack.trackId!);
+                            },
+                          )
+                        : const CircularProgressIndicator.adaptive()),
                   ],
                 ),
               ],

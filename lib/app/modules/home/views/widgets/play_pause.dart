@@ -4,16 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PlayPauseButton extends GetView<AudioController> {
-  const PlayPauseButton({Key? key, required this.audioFilePath})
+  const PlayPauseButton(
+      {Key? key,
+      required this.trackId,
+      required this.audioFilePath,
+      this.onPressed})
       : super(key: key);
+
+  final int trackId;
   final String audioFilePath;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => controller.playing
-          ? controller.pause()
-          : controller.play(audioFilePath),
+      onTap: () {
+        controller.currentTrackId = trackId;
+        controller.playing
+            ? controller.pause()
+            : controller.play(audioFilePath);
+        if (onPressed != null) {
+          onPressed!();
+        }
+      },
       child: Center(
           child: Obx(() => Icon(
                 controller.playing && controller.audioPath == audioFilePath
