@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 class Audiobook {
@@ -30,7 +31,7 @@ class Audiobook {
       trackId: audiobookMap['trackId'],
       collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
-      trackArtistNames: (audiobookMap['trackArtistNames'] as String).split('|'),
+      trackArtistNames: audiobookMap['trackArtistNames'].toList(),
       albumName: audiobookMap['albumName'],
       albumArtistName: audiobookMap['albumArtistName'],
       trackNumber: audiobookMap['trackNumber'],

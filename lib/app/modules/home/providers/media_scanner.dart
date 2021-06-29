@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:audiobooks/app/data/models/audiobook.dart';
@@ -34,7 +35,7 @@ class MediaScanner {
         final String extensiton = p.extension(entity.path);
         if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
           final Audiobook audiobook = await getMediaInfo(entity.path);
-          print(audiobook.albumArtistName);
+          print('Added ${audiobook.trackName} to db');
 
           /// Adds media to database
           _addAudiobookToDatabase(audiobook);
@@ -102,11 +103,11 @@ class MediaScanner {
             columns: ['collectionId'],
             where: 'collectionName = ?',
             whereArgs: [audiobook.albumName]);
-
+        log('Results ${resultsSet}');
         collectionId = resultsSet.first['collectionId'] as int?;
       }
       final int trackId = await txn.rawInsert('''
-          INSERT OR REPLACE INTO $aTable
+          INSERT OR IGNORE INTO $aTable
           (collectionId, trackName, trackArtistNames,albumName,albumArtistName,
             trackNumber,albumLength, year,genre,authorName,
             writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, single

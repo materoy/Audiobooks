@@ -1,4 +1,5 @@
 import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/controllers/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/track_controller.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
@@ -20,6 +21,8 @@ class TrackCard extends GetView<TrackController> {
       TrackController(
           localDatabase: homeController.localDatabase, trackEntry: trackEntry),
       tag: trackEntry.name);
+
+  final AudioController audioController = Get.put(AudioController());
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,11 @@ class TrackCard extends GetView<TrackController> {
             child: Column(
               children: [
                 Row(
-                  children: const [Coverage(), PlayPauseButton()],
+                  children: [
+                    const Coverage(),
+                    PlayPauseButton(
+                        audioFilePath: controller.singleTrack.path!),
+                  ],
                 ),
               ],
             ),

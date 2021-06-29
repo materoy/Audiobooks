@@ -2,7 +2,6 @@ import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/modules/home/controllers/collection_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
-import 'package:audiobooks/app/modules/home/views/widgets/track_card.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,10 +22,8 @@ class CollectionCard extends GetView<CollectionController> {
 
   @override
   Widget build(BuildContext context) {
-    // print(trackEntry.name);
-    controller.tracks.forEach((element) {
-      // print(element);
-    });
+    // print(controller.tracks == null);
+
     return Container(
       clipBehavior: Clip.hardEdge,
       height: SizeConfig.blockSizeVertical * 17,
@@ -61,7 +58,13 @@ class CollectionCard extends GetView<CollectionController> {
             child: Column(
               children: [
                 Row(
-                  children: const [Coverage(), PlayPauseButton()],
+                  children: [
+                    const Coverage(),
+                    Obx(() => PlayPauseButton(
+                        audioFilePath: controller.tracks.isNotEmpty
+                            ? controller.tracks.first.path!
+                            : '')),
+                  ],
                 ),
               ],
             ),

@@ -1,31 +1,24 @@
+import 'package:audiobooks/app/modules/home/controllers/audio_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
-class PlayPauseButton extends StatefulWidget {
-  const PlayPauseButton({Key? key}) : super(key: key);
-
-  @override
-  _PlayPauseButtonState createState() => _PlayPauseButtonState();
-}
-
-class _PlayPauseButtonState extends State<PlayPauseButton> {
-  final player = AudioPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-    player.setFilePath('/path/to/file.mp3');
-  }
+class PlayPauseButton extends GetView<AudioController> {
+  const PlayPauseButton({Key? key, required this.audioFilePath})
+      : super(key: key);
+  final String audioFilePath;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40.0,
-      height: 40.0,
-      decoration:
-          const BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
-      child: const Center(child: Icon(CupertinoIcons.play)),
+    print(controller.playing);
+    return GestureDetector(
+      onTap: () => controller.playing
+          ? controller.pause()
+          : controller.play(audioFilePath),
+      child: Center(
+          child: Icon(!controller.playing
+              ? Icons.play_circle_fill_rounded
+              : Icons.pause_circle_outline_rounded)),
     );
   }
 }
