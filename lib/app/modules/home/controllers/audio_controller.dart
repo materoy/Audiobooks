@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
+import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
+import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -10,9 +12,15 @@ class AudioController extends GetxController {
   PlayerProvider get _playerProvider =>
       PlayerProvider(Get.find<HomeController>().localDatabase);
 
+  TrackProvider get _trackProvider =>
+      TrackProvider(Get.find<HomeController>().localDatabase);
+
   int? _currentTrackId;
-  set currentTrackId(int trackId) => _currentTrackId = trackId;
+  int? _currentEntryId;
+  set currentTrackId(int value) => _currentTrackId = value;
+  set currentEntryId(int value) => _currentEntryId = value;
   int get currentTrackId => _currentTrackId!;
+  int get currentEntryId => _currentEntryId!;
 
   final _audioPath = ''.obs;
   final _audioDuration = const Duration().obs;
@@ -38,6 +46,9 @@ class AudioController extends GetxController {
     await _audioPlayer.seek(Duration(milliseconds: currentPosition));
     _playing.value = true;
     await _audioPlayer.play();
+    if (Get.find<HomeController>().tabState == TabState.Unread) {
+      moveFromUnreadToReading();
+    }
   }
 
   Future<void> pause() async {
@@ -56,6 +67,14 @@ class AudioController extends GetxController {
 
   Future<int> getCurrentPlayPosition() async {
     return _playerProvider.getCurrentTrackPlayPosition(_currentTrackId!);
+  }
+
+  Future<void> moveFromUnreadToReading() async {
+    await _trackProvider.changeReadingState(
+        trackEntryId: _currentEntryId!,
+        fromTable: LocalDatabase.unreadAudiobooksTable,
+        toTable: LocalDatabase.nowReadingAudiobooksTable);
+    log('Moved to now reading ');
   }
 
   @override

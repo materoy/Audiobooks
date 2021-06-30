@@ -1,6 +1,5 @@
 import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
-import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,9 @@ class HomeController extends GetxController {
   List<TrackEntry> get nowReadingTracks => _nowReadingTracks;
   List<TrackEntry> get finishedTracks => _finishedTracks;
 
-  set tabState(TabState value) => _tabState.value = value;
+  set tabState(TabState value) {
+    _tabState.value = value;
+  }
 
   PageController pageController = PageController(initialPage: 0);
 
@@ -40,11 +41,6 @@ class HomeController extends GetxController {
   }
 
   @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
   void onClose() {}
 
   Future<bool> openDatabase() async => localDatabase.openLocalDatabase();
@@ -57,6 +53,18 @@ class HomeController extends GetxController {
 
   Future<void> addTracks() async {
     final TrackProvider _provider = TrackProvider(localDatabase);
-    await _provider.getUnread().then((value) => _unreadTracks.addAll(value));
+
+    /// Gets all the now reading tracks
+    await _provider
+        .getTrackEntries(LocalDatabase.nowReadingAudiobooksTable)
+        .then((value) => _nowReadingTracks.addAll(value));
+
+    await _provider
+        .getTrackEntries(LocalDatabase.unreadAudiobooksTable)
+        .then((value) => _unreadTracks.addAll(value));
+
+    await _provider
+        .getTrackEntries(LocalDatabase.finishedAudiobooksTable)
+        .then((value) => _finishedTracks.addAll(value));
   }
 }

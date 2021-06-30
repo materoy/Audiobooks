@@ -105,6 +105,7 @@ class LocalDatabase {
         entryId INTEGER PRIMARY KEY,
         trackId INTEGER,
         collectionId INTEGER,
+        name TEXT,
         UNIQUE(trackId, collectionId),
         FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
@@ -116,6 +117,7 @@ class LocalDatabase {
         entryId INTEGER PRIMARY KEY,
         trackId INTEGER,
         collectionId INTEGER,
+        name TEXT,
         UNIQUE(trackId, collectionId),
 
         FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),

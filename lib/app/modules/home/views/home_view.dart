@@ -38,10 +38,10 @@ class HomeView extends GetView<HomeController> {
                   onPressed: () =>
                       TrackProvider(controller.localDatabase).getCollection(),
                   child: const Text('Get collections')),
-              ElevatedButton(
-                  onPressed: () =>
-                      TrackProvider(controller.localDatabase).getUnread(),
-                  child: const Text('Get unread')),
+              // ElevatedButton(
+              //     onPressed: () =>
+              //         TrackProvider(controller.localDatabase).getUnread(),
+              //     child: const Text('Get unread')),
               ElevatedButton(
                   onPressed: () => controller.localDatabase.resetDatabase(),
                   child: const Text('Reset Db')),

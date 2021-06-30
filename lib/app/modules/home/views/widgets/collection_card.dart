@@ -22,8 +22,6 @@ class CollectionCard extends GetView<CollectionController> {
 
   @override
   Widget build(BuildContext context) {
-    // print(controller.tracks == null);
-
     return Container(
       clipBehavior: Clip.hardEdge,
       height: SizeConfig.blockSizeVertical * 17,
@@ -47,10 +45,31 @@ class CollectionCard extends GetView<CollectionController> {
           const Spacer(),
           SizedBox(
             width: SizeConfig.blockSizeHorizontal * 35,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text(trackEntry.name, textAlign: TextAlign.center)],
-            ),
+            child: Obx(() => Column(
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    Text(trackEntry.name, textAlign: TextAlign.center),
+                    const Spacer(),
+                    if (controller.tracks.isNotEmpty)
+                      ...List.generate(controller.tracks.length, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          child: Text(
+                            controller.tracks[index].trackName!,
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: controller.currentTrack.trackId ==
+                                        controller.tracks[index].trackId
+                                    ? Colors.blue
+                                    : Colors.black54),
+                          ),
+                        );
+                      }),
+                    const Spacer(flex: 3),
+                  ],
+                )),
           ),
           const Spacer(),
           Padding(
@@ -62,6 +81,7 @@ class CollectionCard extends GetView<CollectionController> {
                     const Coverage(),
                     Obx(() => controller.currentTrack.path != null
                         ? PlayPauseButton(
+                            entryId: controller.trackEntry.trackEntryId!,
                             trackId: controller.currentTrack.trackId!,
                             audioFilePath: controller.currentTrack.path!,
                             onPressed: () {

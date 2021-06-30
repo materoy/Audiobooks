@@ -24,16 +24,13 @@ class CollectionController extends GetxController {
   List<Audiobook> get tracks => _tracks;
   Audiobook get currentTrack => _currentTrack.value;
 
-  @override
-  void onInit() {
-    getTracksInCollection().then((value) => getCurrentTrack());
-    super.onInit();
-  }
-
   Future<void> getTracksInCollection() async {
+    List<Audiobook> tracks;
+    tracks = [];
     await _trackProvider
         .getTracksInCollection(trackEntry.collectionId!)
-        .then((value) => _tracks.addAll(value));
+        .then((value) => tracks.addAll(value));
+    _tracks.value = tracks.reversed.toList();
   }
 
   Future<void> updateCurrentTrack(int trackId) async {
@@ -50,5 +47,9 @@ class CollectionController extends GetxController {
     }
   }
 
-  // Future<void> getTrack() {}
+  @override
+  void onInit() {
+    getTracksInCollection().then((value) => getCurrentTrack());
+    super.onInit();
+  }
 }

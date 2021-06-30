@@ -31,7 +31,12 @@ class Audiobook {
       trackId: audiobookMap['trackId'],
       collectionId: audiobookMap['collectionId'],
       trackName: audiobookMap['trackName'],
-      trackArtistNames: audiobookMap['trackArtistNames'].split('|'),
+
+      /// Sometime this part is a bitch , you may need to spit
+      /// with pattern '|' if it return a runtime of string
+      trackArtistNames: audiobookMap['trackArtistNames'].runtimeType == String
+          ? (audiobookMap['trackArtistNames'] as String).split('|')
+          : audiobookMap['trackArtistNames'],
       albumName: audiobookMap['albumName'],
       albumArtistName: audiobookMap['albumArtistName'],
       trackNumber: audiobookMap['trackNumber'],

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/utils/database.dart';
@@ -25,9 +27,8 @@ class TrackProvider {
     print(results);
   }
 
-  Future<List<TrackEntry>> getUnread() async {
-    final results =
-        await localDatabase.query(table: LocalDatabase.unreadAudiobooksTable);
+  Future<List<TrackEntry>> getTrackEntries(String tableName) async {
+    final results = await localDatabase.query(table: tableName);
     print(results);
     List<TrackEntry> tracks;
     tracks = [];
@@ -64,5 +65,39 @@ class TrackProvider {
       whereArgs: [trackId],
     );
     return Audiobook.fromMap(resultsSet.first);
+  }
+
+  /// This function moves track entries from Given table to another table
+  /// eg . from unread to now reading table
+  Future<int> changeReadingState(
+      {required int trackEntryId,
+      required String fromTable,
+      required String toTable}) async {
+    try {
+      print(trackEntryId);
+      await localDatabase.database.transaction((txn) async {
+        final resultSet = await txn
+            .query(fromTable, where: 'entryId = ?', whereArgs: [trackEntryId]);
+        if (resultSet.isNotEmpty) {
+          final int newId = await txn.rawInsert('''
+          INSERT OR REPLACE INTO $toTable
+            (entryId, trackId, collectionId, name) VALUES (?, ?, ?, ?)
+        ''', [
+            resultSet.first['entryId'],
+            resultSet.first['trackId'],
+            resultSet.first['collectionId'],
+            resultSet.first['name']
+          ]);
+
+          final int rowsDeleted = await txn.delete(fromTable,
+              where: 'entryId = ?', whereArgs: [trackEntryId]);
+          return newId;
+        }
+      });
+      return 0;
+    } catch (e) {
+      log(e.toString());
+      return 0;
+    }
   }
 }

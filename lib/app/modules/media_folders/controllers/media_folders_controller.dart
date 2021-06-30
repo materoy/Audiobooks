@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class MediaFoldersController extends GetxController {
       final String path = result['directoryPath']! as String;
       if (!_mediaFolders.contains(path)) {
         _mediaFolders.add(path);
+        MediaScanner(_localDatabase).queryMediaFolders();
       }
     }
   }

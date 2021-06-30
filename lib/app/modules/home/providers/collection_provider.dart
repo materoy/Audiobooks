@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/utils/database.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class CollectionProvider {
   const CollectionProvider({required LocalDatabase database})
