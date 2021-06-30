@@ -10,7 +10,7 @@ enum TabState { Unread, Reading, Finished }
 class HomeController extends GetxController {
   final LocalDatabase localDatabase = LocalDatabase();
 
-  final _tabState = TabState.Unread.obs;
+  final _tabState = TabState.Reading.obs;
   final _unreadTracks = List<TrackEntry>.empty(growable: true).obs;
   final _nowReadingTracks = List<TrackEntry>.empty(growable: true).obs;
   final _finishedTracks = List<TrackEntry>.empty(growable: true).obs;
@@ -22,9 +22,8 @@ class HomeController extends GetxController {
 
   set tabState(TabState value) {
     _tabState.value = value;
+    addTracks();
   }
-
-  PageController pageController = PageController(initialPage: 0);
 
   @override
   void onInit() {
@@ -55,16 +54,43 @@ class HomeController extends GetxController {
     final TrackProvider _provider = TrackProvider(localDatabase);
 
     /// Gets all the now reading tracks
-    await _provider
-        .getTrackEntries(LocalDatabase.nowReadingAudiobooksTable)
-        .then((value) => _nowReadingTracks.addAll(value));
+    switch (_tabState.value) {
+      case TabState.Unread:
+        await _provider
+            .getTrackEntries(LocalDatabase.unreadAudiobooksTable)
+            .then((value) {
+          _unreadTracks.clear();
+          _unreadTracks.addAll(value);
+        });
+        break;
 
-    await _provider
-        .getTrackEntries(LocalDatabase.unreadAudiobooksTable)
-        .then((value) => _unreadTracks.addAll(value));
+      case TabState.Reading:
+        await _provider
+            .getTrackEntries(LocalDatabase.nowReadingAudiobooksTable)
+            .then((value) {
+          _nowReadingTracks.clear();
+          _nowReadingTracks.addAll(value);
+        });
+        break;
 
-    await _provider
-        .getTrackEntries(LocalDatabase.finishedAudiobooksTable)
-        .then((value) => _finishedTracks.addAll(value));
+      case TabState.Finished:
+        await _provider
+            .getTrackEntries(LocalDatabase.finishedAudiobooksTable)
+            .then((value) {
+          _finishedTracks.clear();
+          _finishedTracks.addAll(value);
+        });
+        break;
+      default:
+    }
+  }
+
+  /// Honestly this will not scale and is very slow thing takes O(n2) time
+  void addUnique(List<TrackEntry> newTracks, List<TrackEntry> oldTracks) {
+    for (final track in newTracks) {
+      if (!oldTracks.contains(track)) {
+        oldTracks.add(track);
+      }
+    }
   }
 }

@@ -52,7 +52,9 @@ class TrackCard extends GetView<TrackController> {
             width: SizeConfig.blockSizeHorizontal * 35,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text(trackEntry.name, textAlign: TextAlign.center)],
+              children: [
+                Text(trackEntry.name ?? '', textAlign: TextAlign.center)
+              ],
             ),
           ),
           const Spacer(),

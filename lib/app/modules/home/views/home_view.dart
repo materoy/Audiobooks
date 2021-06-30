@@ -10,6 +10,7 @@ import '../controllers/home_controller.dart';
 import 'widgets/tab_label.dart';
 
 class HomeView extends GetView<HomeController> {
+  final PageController _pageController = PageController(initialPage: 1);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,24 +62,39 @@ class HomeView extends GetView<HomeController> {
                     children: [
                       TabLabel(
                           label: 'Unread',
-                          onPressed: () =>
-                              controller.tabState = TabState.Unread,
+                          onPressed: () async {
+                            _pageController.jumpToPage(0);
+                            // await _pageController.animateToPage(0,
+                            // duration: const Duration(milliseconds: 300),
+                            // curve: Curves.elasticIn);
+                            controller.tabState = TabState.Unread;
+                          },
                           selected: controller.tabState == TabState.Unread),
                       TabLabel(
                           label: 'Jump back in',
-                          onPressed: () =>
-                              controller.tabState = TabState.Reading,
+                          onPressed: () async {
+                            _pageController.jumpToPage(1);
+                            // await _pageController.animateToPage(1,
+                            // duration: const Duration(milliseconds: 300),
+                            // curve: Curves.elasticIn);
+                            controller.tabState = TabState.Reading;
+                          },
                           selected: controller.tabState == TabState.Reading),
                       TabLabel(
                           label: 'Finished',
-                          onPressed: () =>
-                              controller.tabState = TabState.Finished,
+                          onPressed: () async {
+                            _pageController.jumpToPage(2);
+                            // await _pageController.animateToPage(2,
+                            // duration: const Duration(milliseconds: 300),
+                            // curve: Curves.elasticIn);
+                            controller.tabState = TabState.Finished;
+                          },
                           selected: controller.tabState == TabState.Finished),
                     ],
                   )),
               Expanded(
                   child: PageView(
-                controller: controller.pageController,
+                controller: _pageController,
                 onPageChanged: (value) {
                   switch (value) {
                     case 0:

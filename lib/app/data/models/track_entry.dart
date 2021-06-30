@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
-class TrackEntry {
+import 'package:equatable/equatable.dart';
+
+class TrackEntry extends Equatable {
   const TrackEntry({
     this.trackEntryId,
     this.collectionId,
@@ -9,7 +11,7 @@ class TrackEntry {
     this.thumbnail,
   });
   final int? trackEntryId;
-  final String name;
+  final String? name;
   final Uint8List? thumbnail;
   final int? collectionId;
   final int? audiobookId;
@@ -21,4 +23,7 @@ class TrackEntry {
         collectionId: trackMap['collectionId'],
         audiobookId: trackMap['trackId']);
   }
+
+  @override
+  List<Object?> get props => [trackEntryId, name];
 }

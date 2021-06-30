@@ -50,7 +50,7 @@ class CollectionCard extends GetView<CollectionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    Text(trackEntry.name, textAlign: TextAlign.center),
+                    Text(trackEntry.name ?? '', textAlign: TextAlign.center),
                     const Spacer(),
                     if (controller.tracks.isNotEmpty)
                       ...List.generate(controller.tracks.length, (index) {

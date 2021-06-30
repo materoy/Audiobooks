@@ -119,7 +119,6 @@ class LocalDatabase {
         collectionId INTEGER,
         name TEXT,
         UNIQUE(trackId, collectionId),
-
         FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
         FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
           )''');

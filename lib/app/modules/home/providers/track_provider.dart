@@ -29,7 +29,6 @@ class TrackProvider {
 
   Future<List<TrackEntry>> getTrackEntries(String tableName) async {
     final results = await localDatabase.query(table: tableName);
-    print(results);
     List<TrackEntry> tracks;
     tracks = [];
     for (final result in results!) {

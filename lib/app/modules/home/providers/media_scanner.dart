@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:audiobooks/app/data/models/audiobook.dart';
 import 'package:audiobooks/app/data/models/audiobook_collection.dart';
-import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path/path.dart' as p;
 
