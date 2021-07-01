@@ -52,4 +52,11 @@ class CollectionController extends GetxController {
     getTracksInCollection().then((value) => getCurrentTrack());
     super.onInit();
   }
+
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    print(_currentTrack.value);
+  }
 }

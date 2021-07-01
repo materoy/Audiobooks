@@ -14,7 +14,7 @@ class MediaScanner {
   final LocalDatabase localDatabase;
 
   /// These are the audiobok media types accepted
-  static const List<String> AUDIO_MEDIA_TYPES = ['.mp3'];
+  static const List<String> AUDIO_MEDIA_TYPES = ['.mp3', '.m4b'];
 
   Future<void> queryMediaFolders() async {
     final results =

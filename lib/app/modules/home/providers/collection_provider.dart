@@ -15,7 +15,8 @@ class CollectionProvider {
           where: 'collectionId = ?',
           whereArgs: [collectionId]);
       if (resultsSet.isNotEmpty) {
-        return resultsSet.first['collectionId']! as int;
+        print(resultsSet);
+        return resultsSet.first['currentTrackId']! as int;
       }
       return 0;
     } catch (e) {
