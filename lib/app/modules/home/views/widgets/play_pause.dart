@@ -6,6 +6,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 class PlayPauseButton extends GetView<AudioController> {
   const PlayPauseButton(
       {Key? key,
+      required this.entryName,
       required this.entryId,
       required this.trackId,
       required this.audioFilePath,
@@ -13,9 +14,12 @@ class PlayPauseButton extends GetView<AudioController> {
       : super(key: key);
 
   final int trackId;
+  final String entryName;
   final int entryId;
   final String audioFilePath;
   final VoidCallback? onPressed;
+  @override
+  String? get tag => entryName;
 
   @override
   Widget build(BuildContext context) {

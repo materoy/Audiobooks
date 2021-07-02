@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/controllers/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/track_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,9 @@ class TracksList extends StatelessWidget {
       child: Obx(() => ListView.builder(
           itemCount: trackEntries.length,
           itemBuilder: (context, index) {
+            Get.lazyPut<AudioController>(() => AudioController(),
+                tag: trackEntries[index].name);
+
             return trackEntries[index].collectionId != null
                 ? CollectionCard(trackEntry: trackEntries[index])
                 : TrackCard(trackEntry: trackEntries[index]);

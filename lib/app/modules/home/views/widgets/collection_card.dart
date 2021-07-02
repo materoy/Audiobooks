@@ -1,4 +1,5 @@
 import 'package:audiobooks/app/data/models/track_entry.dart';
+import 'package:audiobooks/app/modules/home/controllers/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/collection_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
@@ -74,18 +75,50 @@ class CollectionCard extends GetView<CollectionController> {
                               : controller.tracks.length, (index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: Text(
-                            controller.tracks[index].trackName!,
-                            style: TextStyle(
-                                fontSize: 10,
-                                color: controller.currentTrack.trackId ==
-                                        controller.tracks[index].trackId
-                                    ? Colors.blue
-                                    : Colors.black54),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: controller.tracks[index].trackName !=
+                                            null
+                                        ? controller.tracks[index].trackName!
+                                        : '',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: controller
+                                                    .currentTrack.trackId ==
+                                                controller.tracks[index].trackId
+                                            ? Colors.blue
+                                            : Colors.black54),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                            ],
                           ),
                         );
                       }),
                     const Spacer(flex: 3),
+                    StreamBuilder<Duration>(
+                        stream: Get.find<AudioController>(tag: trackEntry.name)
+                            .streamPosition(),
+                        builder: (context, snapshot) {
+                          final int trackDuration =
+                              Get.find<AudioController>(tag: trackEntry.name)
+                                  .audioDuration
+                                  .inMilliseconds;
+                          if (snapshot.hasData && trackDuration != 0) {
+                            return LinearProgressIndicator(
+                              value:
+                                  snapshot.data!.inMilliseconds / trackDuration,
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    const Spacer(),
                   ],
                 )),
           ),
@@ -99,6 +132,7 @@ class CollectionCard extends GetView<CollectionController> {
                     const Coverage(),
                     Obx(() => controller.currentTrack.path != null
                         ? PlayPauseButton(
+                            entryName: controller.trackEntry.name!,
                             entryId: controller.trackEntry.trackEntryId!,
                             trackId: controller.currentTrack.trackId!,
                             audioFilePath: controller.currentTrack.path!,

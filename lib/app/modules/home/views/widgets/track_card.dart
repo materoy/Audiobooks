@@ -66,6 +66,7 @@ class TrackCard extends GetView<TrackController> {
                   children: [
                     const Coverage(),
                     PlayPauseButton(
+                        entryName: controller.trackEntry.name!,
                         entryId: controller.trackEntry.trackEntryId!,
                         trackId: controller.singleTrack.trackId!,
                         audioFilePath: controller.singleTrack.path!),

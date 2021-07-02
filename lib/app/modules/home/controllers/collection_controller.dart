@@ -6,6 +6,8 @@ import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 
+import 'audio_controller.dart';
+
 class CollectionController extends GetxController {
   CollectionController(
       {required LocalDatabase localDatabase, required this.trackEntry})
@@ -30,7 +32,7 @@ class CollectionController extends GetxController {
     await _trackProvider
         .getTracksInCollection(trackEntry.collectionId!)
         .then((value) => tracks.addAll(value));
-    _tracks.value = tracks.reversed.toList();
+    _tracks.value = tracks;
   }
 
   Future<void> updateCurrentTrack(int trackId) async {

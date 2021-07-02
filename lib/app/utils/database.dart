@@ -17,8 +17,12 @@ class LocalDatabase {
   static const String nowReadingAudiobooksTable = 'NowReadingAudiobooks';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
 
-  LocalDatabase() {
-    _databaseOpen = openLocalDatabase();
+  LocalDatabase({Database? testDatabase}) {
+    if (testDatabase != null) {
+      database = testDatabase;
+    } else {
+      _databaseOpen = openLocalDatabase();
+    }
   }
 
   Future<bool> get databaseOpened => _databaseOpen;

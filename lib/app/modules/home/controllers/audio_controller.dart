@@ -77,6 +77,15 @@ class AudioController extends GetxController {
     log('Moved to now reading ');
   }
 
+  Stream<Duration> streamPosition() async* {
+    if (_audioPlayer.playing) {
+      yield* _audioPlayer.positionStream;
+    } else {
+      final int currentPosition = await getCurrentPlayPosition();
+      yield Duration(milliseconds: currentPosition);
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();

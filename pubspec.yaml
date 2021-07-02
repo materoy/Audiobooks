@@ -23,7 +23,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mocktail: ^0.1.0
+  mockito: ^5.0.10
+  sqflite_common_ffi: ^2.0.0+1
   very_good_analysis: ^2.1.0
 
 flutter:

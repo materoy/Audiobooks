@@ -10,6 +10,6 @@ class HomeBinding extends Bindings {
       () => HomeController(),
     );
 
-    Get.lazyPut<AudioController>(() => AudioController());
+    // Get.lazyPut<AudioController>(() => AudioController());
   }
 }
