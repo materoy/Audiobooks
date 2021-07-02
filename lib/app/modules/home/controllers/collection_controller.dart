@@ -1,6 +1,6 @@
-import 'package:audiobooks/app/data/models/audiobook.dart';
+import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/track_entry.dart';
-import 'package:audiobooks/app/modules/home/providers/collection_provider.dart';
+import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
@@ -20,14 +20,14 @@ class CollectionController extends GetxController {
   CollectionProvider get _collectionProvider =>
       CollectionProvider(database: _localDatabase);
 
-  final _tracks = List<Audiobook>.empty(growable: true).obs;
-  final _currentTrack = Audiobook.empty().obs;
+  final _tracks = List<Track>.empty(growable: true).obs;
+  final _currentTrack = Track.empty().obs;
 
-  List<Audiobook> get tracks => _tracks;
-  Audiobook get currentTrack => _currentTrack.value;
+  List<Track> get tracks => _tracks;
+  Track get currentTrack => _currentTrack.value;
 
   Future<void> getTracksInCollection() async {
-    List<Audiobook> tracks;
+    List<Track> tracks;
     tracks = [];
     await _trackProvider
         .getTracksInCollection(trackEntry.collectionId!)
@@ -36,14 +36,15 @@ class CollectionController extends GetxController {
   }
 
   Future<void> updateCurrentTrack(int trackId) async {
-    await _collectionProvider.updateCurrentTrackInCollection(trackId);
+    await _collectionProvider.updateCurrentTrackInCollection(
+        trackId: trackId, collectionId: trackEntry.collectionId!);
   }
 
   Future<void> getCurrentTrack() async {
     final int currentTrackId =
         await _collectionProvider.getCurrentTrackId(trackEntry.collectionId!);
     if (currentTrackId != 0) {
-      _currentTrack.value = await _playerProvider.getTrackById(currentTrackId);
+      _currentTrack.value = await _trackProvider.getTrackById(currentTrackId);
     } else {
       _currentTrack.value = _tracks.first;
     }
