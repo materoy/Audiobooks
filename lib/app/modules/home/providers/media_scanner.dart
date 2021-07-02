@@ -65,10 +65,10 @@ class MediaScanner {
 
   Future<void> _addCollectionToDatabase(Album album) async {
     final String collectionTable = LocalDatabase.albumsTable;
-    final String unreadTable = LocalDatabase.unreadTracksTable;
+    final String newTracksTable = LocalDatabase.newTracksTable;
 
     localDatabase.database.transaction((txn) async {
-      final int collectionId = await txn.rawInsert('''
+      final int albumId = await txn.rawInsert('''
         INSERT OR IGNORE INTO $collectionTable (
           currentTrackId, albumDuration, albumName, albumAuthor,
           albumLength
@@ -81,32 +81,32 @@ class MediaScanner {
         album.albumLength,
       ]);
 
-      if (collectionId != 0) {
+      if (albumId != 0) {
         await txn.rawInsert('''
-          INSERT OR IGNORE INTO $unreadTable 
-            (collectionId, name) VALUES (?, ?)
-        ''', [collectionId, album.albumName]);
+          INSERT OR IGNORE INTO $newTracksTable 
+            (albumId) VALUES (?)
+        ''', [albumId]);
       }
     });
   }
 
   Future<void> _addAudiobookToDatabase(Track track) async {
-    final String aTable = LocalDatabase.tracksTable;
-    final String unreadTable = LocalDatabase.unreadTracksTable;
+    final String tracksTable = LocalDatabase.tracksTable;
+    final String newTracksTable = LocalDatabase.newTracksTable;
     final String collectionTable = LocalDatabase.albumsTable;
 
     localDatabase.database.transaction((txn) async {
-      int? collectionId;
+      int? albumId;
       if (track.albumName != null) {
         final resultsSet = await txn.query(collectionTable,
-            columns: ['collectionId'],
+            columns: ['albumId'],
             where: 'albumName = ?',
             whereArgs: [track.albumName]);
-        collectionId = resultsSet.first['collectionId'] as int?;
+        albumId = resultsSet.first['albumId'] as int?;
       }
       final int trackId = await txn.rawInsert('''
-          INSERT OR IGNORE INTO $aTable
-          (collectionId, trackName, trackArtistNames,albumName,albumArtistName,
+          INSERT OR IGNORE INTO $tracksTable
+          (albumId, trackName, trackArtistNames,albumName,albumArtistName,
             trackNumber,albumLength, year,genre,authorName,
             writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, single
             ) VALUES (
@@ -114,7 +114,7 @@ class MediaScanner {
           ) 
           
       ''', [
-        collectionId,
+        albumId,
         track.trackName,
         if (track.trackArtistNames != null)
           track.trackArtistNames!.join('|').toString()
@@ -138,7 +138,7 @@ class MediaScanner {
 
       // if (track.single == 1) {
       //   txn.rawInsert('''
-      //     INSERT OR REPLACE INTO $unreadTable
+      //     INSERT OR REPLACE INTO $newTracksTable
       //       (trackId, name) VALUES (?, ?)
       //   ''', [trackId, track.trackName]);
       // }

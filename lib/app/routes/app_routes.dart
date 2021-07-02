@@ -7,10 +7,12 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const MEDIA_FOLDERS = _Paths.MEDIA_FOLDERS;
   static const PLAYER = _Paths.PLAYER;
+  static const SPLASH = _Paths.SPLASH;
 }
 
 abstract class _Paths {
   static const HOME = '/home';
   static const MEDIA_FOLDERS = '/media-folders';
   static const PLAYER = '/player';
+  static const SPLASH = '/splash';
 }

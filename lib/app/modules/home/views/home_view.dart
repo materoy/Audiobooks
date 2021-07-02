@@ -1,5 +1,3 @@
-import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
-import 'package:audiobooks/app/modules/home/views/widgets/tracks_list.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import 'widgets/albums_list.dart';
 import 'widgets/tab_label.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -31,14 +30,14 @@ class HomeView extends GetView<HomeController> {
                   onPressed: () => MediaScanner(controller.localDatabase)
                       .queryMediaFolders(),
                   child: const Text('Query media Folders')),
-              ElevatedButton(
-                  onPressed: () =>
-                      TrackProvider(controller.localDatabase).getAudiobooks(),
-                  child: const Text('Get abooks')),
-              ElevatedButton(
-                  onPressed: () =>
-                      TrackProvider(controller.localDatabase).getCollection(),
-                  child: const Text('Get collections')),
+              // ElevatedButton(
+              //     onPressed: () =>
+              //         TrackProvider(controller.localDatabase).getAudiobooks(),
+              //     child: const Text('Get abooks')),
+              // ElevatedButton(
+              //     onPressed: () =>
+              //         TrackProvider(controller.localDatabase).getCollection(),
+              //     child: const Text('Get collections')),
               // ElevatedButton(
               //     onPressed: () =>
               //         TrackProvider(controller.localDatabase).getUnread(),
@@ -110,9 +109,9 @@ class HomeView extends GetView<HomeController> {
                   }
                 },
                 children: [
-                  TracksList(trackEntries: controller.unreadTracks),
-                  TracksList(trackEntries: controller.nowReadingTracks),
-                  TracksList(trackEntries: controller.finishedTracks),
+                  AlbumsList(albums: controller.newAlbums),
+                  AlbumsList(albums: controller.nowListeningAlbums),
+                  AlbumsList(albums: controller.finishedAlbums),
                 ],
               )),
             ],

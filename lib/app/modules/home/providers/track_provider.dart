@@ -1,29 +1,12 @@
 import 'dart:developer';
 
 import 'package:audiobooks/app/data/models/track.dart';
-import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/utils/database.dart';
 
 class TrackProvider {
   final LocalDatabase localDatabase;
 
   TrackProvider(this.localDatabase);
-
-  Future<void> getAudiobooks() async {
-    final results = await localDatabase.query(table: LocalDatabase.tracksTable);
-    // for (final result in results!) {
-    //   print(result['single']);
-    // }
-    print(results);
-  }
-
-  Future<void> getCollection() async {
-    final results = await localDatabase.query(table: LocalDatabase.albumsTable);
-    // for (final result in results!) {
-    //   print(result);
-    // }
-    print(results);
-  }
 
   Future<Track> getTrackById(int trackId) async {
     try {
@@ -41,23 +24,7 @@ class TrackProvider {
     }
   }
 
-  Future<List<TrackEntry>> getTrackEntries(String tableName) async {
-    final results = await localDatabase.query(table: tableName);
-    List<TrackEntry> tracks;
-    tracks = [];
-    for (final result in results!) {
-      final TrackEntry track = TrackEntry.fromMap(result);
-      tracks.add(track);
-    }
-    return tracks;
-  }
-
-  Future<void> getTrack(int trackId) async {
-    await localDatabase.database.query(LocalDatabase.tracksTable,
-        where: 'trackId = ?', whereArgs: [trackId]);
-  }
-
-  Future<List<Track>> getTracksInCollection(int collectionId) async {
+  Future<List<Track>> getTracksInAlbum(int collectionId) async {
     List<Track> tracksInCollection;
     tracksInCollection = [];
     final results = await localDatabase.database.query(
@@ -69,15 +36,6 @@ class TrackProvider {
       tracksInCollection.add(Track.fromMap(result));
     }
     return tracksInCollection;
-  }
-
-  Future<Track> getSingleTrack(int trackId) async {
-    final resultsSet = await localDatabase.database.query(
-      LocalDatabase.tracksTable,
-      where: 'trackId = ?',
-      whereArgs: [trackId],
-    );
-    return Track.fromMap(resultsSet.first);
   }
 
   /// This function moves track entries from Given table to another table

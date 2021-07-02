@@ -72,7 +72,7 @@ class AudioController extends GetxController {
   Future<void> moveFromUnreadToReading() async {
     await _trackProvider.changeReadingState(
         trackEntryId: _currentEntryId!,
-        fromTable: LocalDatabase.unreadTracksTable,
+        fromTable: LocalDatabase.newTracksTable,
         toTable: LocalDatabase.nowListeningTracksTable);
     log('Moved to now reading ');
   }

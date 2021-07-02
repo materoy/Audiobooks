@@ -25,6 +25,10 @@ class Album {
     );
   }
 
+  factory Album.empty() {
+    return Album(albumName: '');
+  }
+
   Map<String, dynamic> toMap(Album audiobookCollection) {
     return {
       'albumId': audiobookCollection.albumId,

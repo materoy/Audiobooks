@@ -5,13 +5,12 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-import 'package:audiobooks/app/modules/home/views/home_view.dart';
+import 'package:audiobooks/app/modules/splash/bindings/splash_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:audiobooks/l10n/l10n.dart';
 import 'package:get/get.dart';
 
-import 'modules/home/bindings/home_binding.dart';
 import 'routes/app_pages.dart';
 import 'utils/size_config.dart';
 
@@ -25,6 +24,7 @@ class App extends StatelessWidget {
         accentColor: const Color(0xFF13B9FF),
         appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
       ),
+      darkTheme: ThemeData.dark(),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -32,9 +32,8 @@ class App extends StatelessWidget {
       title: 'Audiobooks',
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
-      initialBinding: HomeBinding(),
+      initialBinding: SplashBinding(),
       supportedLocales: AppLocalizations.supportedLocales,
-      home: HomeView(),
       builder: (context, child) {
         SizeConfig().init(context);
         return child!;

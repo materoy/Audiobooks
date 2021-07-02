@@ -6,13 +6,15 @@ import 'package:audiobooks/app/modules/media_folders/bindings/media_folders_bind
 import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.dart';
 import 'package:audiobooks/app/modules/player/bindings/player_binding.dart';
 import 'package:audiobooks/app/modules/player/views/player_view.dart';
+import 'package:audiobooks/app/modules/splash/bindings/splash_binding.dart';
+import 'package:audiobooks/app/modules/splash/views/splash_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -29,6 +31,11 @@ class AppPages {
       name: _Paths.PLAYER,
       page: () => PlayerView(),
       binding: PlayerBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => SplashView(),
+      binding: SplashBinding(),
     ),
   ];
 }

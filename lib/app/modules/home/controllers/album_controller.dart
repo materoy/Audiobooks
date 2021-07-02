@@ -1,24 +1,20 @@
+import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/data/models/track.dart';
-import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 
-import 'audio_controller.dart';
-
-class CollectionController extends GetxController {
-  CollectionController(
-      {required LocalDatabase localDatabase, required this.trackEntry})
+class AlbumController extends GetxController {
+  AlbumController({required LocalDatabase localDatabase, required this.album})
       : _localDatabase = localDatabase;
 
   final LocalDatabase _localDatabase;
-  final TrackEntry trackEntry;
+  final Album album;
   TrackProvider get _trackProvider => TrackProvider(_localDatabase);
   PlayerProvider get _playerProvider => PlayerProvider(_localDatabase);
-  CollectionProvider get _collectionProvider =>
-      CollectionProvider(database: _localDatabase);
+  AlbumProvider get _albumProvider => AlbumProvider(_localDatabase);
 
   final _tracks = List<Track>.empty(growable: true).obs;
   final _currentTrack = Track.empty().obs;
@@ -26,23 +22,23 @@ class CollectionController extends GetxController {
   List<Track> get tracks => _tracks;
   Track get currentTrack => _currentTrack.value;
 
-  Future<void> getTracksInCollection() async {
+  Future<void> getTracksInAlbum() async {
     List<Track> tracks;
     tracks = [];
     await _trackProvider
-        .getTracksInCollection(trackEntry.collectionId!)
+        .getTracksInAlbum(album.albumId!)
         .then((value) => tracks.addAll(value));
     _tracks.value = tracks;
   }
 
   Future<void> updateCurrentTrack(int trackId) async {
-    await _collectionProvider.updateCurrentTrackInCollection(
-        trackId: trackId, collectionId: trackEntry.collectionId!);
+    await _albumProvider.updateCurrentTrackInCollection(
+        trackId: trackId, albumId: album.currentTrackId!);
   }
 
   Future<void> getCurrentTrack() async {
     final int currentTrackId =
-        await _collectionProvider.getCurrentTrackId(trackEntry.collectionId!);
+        await _albumProvider.getCurrentTrackId(album.currentTrackId!);
     if (currentTrackId != 0) {
       _currentTrack.value = await _trackProvider.getTrackById(currentTrackId);
     } else {
@@ -52,7 +48,7 @@ class CollectionController extends GetxController {
 
   @override
   void onInit() {
-    getTracksInCollection().then((value) => getCurrentTrack());
+    getTracksInAlbum().then((value) => getCurrentTrack());
     super.onInit();
   }
 

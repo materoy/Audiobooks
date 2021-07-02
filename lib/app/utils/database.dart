@@ -12,7 +12,7 @@ class LocalDatabase {
   static const String databaseInitialisedStatusStorage = 'DatabaseStatus';
   static const String tracksTable = 'Tracks';
   static const String albumsTable = 'Albums';
-  static const String unreadTracksTable = 'UnreadTracks';
+  static const String newTracksTable = 'NewTracks';
   static const String finishedTracksTable = 'FinishedTracks';
   static const String nowListeningTracksTable = 'NowListeningTracks';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
@@ -54,7 +54,7 @@ class LocalDatabase {
         albumAuthor TEXT,
         albumLength INTEGER,
         albumArt BLOB,
-        albumCoverage INTEGER;
+        albumCoverage INTEGER,
         UNIQUE(albumName),
         FOREIGN KEY (currentTrackId) REFERENCES $tracksTable(trackId)
     )''');
@@ -94,7 +94,7 @@ class LocalDatabase {
 
           /// Create unread table
           await txn.execute('''
-      CREATE TABLE $unreadTracksTable (
+      CREATE TABLE $newTracksTable (
         albumId INTEGER ,
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
     )''');
