@@ -1,4 +1,4 @@
-import 'package:audiobooks/app/data/models/audiobook.dart';
+import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
@@ -13,9 +13,9 @@ class TrackController extends GetxController {
   final TrackEntry trackEntry;
   TrackProvider get provider => TrackProvider(_localDatabase);
 
-  final _singleTrack = Audiobook.empty().obs;
+  final _singleTrack = Track.empty().obs;
 
-  Audiobook get singleTrack => _singleTrack.value;
+  Track get singleTrack => _singleTrack.value;
 
   @override
   void onInit() {

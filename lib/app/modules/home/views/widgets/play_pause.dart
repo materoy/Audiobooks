@@ -18,8 +18,8 @@ class PlayPauseButton extends GetView<AudioController> {
   final int entryId;
   final String audioFilePath;
   final VoidCallback? onPressed;
-  @override
-  String? get tag => entryName;
+  // @override
+  // String? get tag => entryName;
 
   @override
   Widget build(BuildContext context) {

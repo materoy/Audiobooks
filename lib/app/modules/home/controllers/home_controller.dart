@@ -57,7 +57,7 @@ class HomeController extends GetxController {
     switch (_tabState.value) {
       case TabState.Unread:
         await _provider
-            .getTrackEntries(LocalDatabase.unreadAudiobooksTable)
+            .getTrackEntries(LocalDatabase.unreadTracksTable)
             .then((value) {
           _unreadTracks.clear();
           _unreadTracks.addAll(value);
@@ -66,7 +66,7 @@ class HomeController extends GetxController {
 
       case TabState.Reading:
         await _provider
-            .getTrackEntries(LocalDatabase.nowReadingAudiobooksTable)
+            .getTrackEntries(LocalDatabase.nowListeningTracksTable)
             .then((value) {
           _nowReadingTracks.clear();
           _nowReadingTracks.addAll(value);
@@ -75,7 +75,7 @@ class HomeController extends GetxController {
 
       case TabState.Finished:
         await _provider
-            .getTrackEntries(LocalDatabase.finishedAudiobooksTable)
+            .getTrackEntries(LocalDatabase.finishedTracksTable)
             .then((value) {
           _finishedTracks.clear();
           _finishedTracks.addAll(value);

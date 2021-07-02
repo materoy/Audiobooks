@@ -10,11 +10,11 @@ class LocalDatabase {
 
   static const String databaseName = 'Audiobooks.db';
   static const String databaseInitialisedStatusStorage = 'DatabaseStatus';
-  static const String audiobooksTable = 'Audiobooks';
-  static const String audiobooksCollectionTable = 'AudiobooksCollection';
-  static const String unreadAudiobooksTable = 'UnreadAudiobooks';
-  static const String finishedAudiobooksTable = 'FinishedAudiobooks';
-  static const String nowReadingAudiobooksTable = 'NowReadingAudiobooks';
+  static const String tracksTable = 'Tracks';
+  static const String albumsTable = 'Albums';
+  static const String unreadTracksTable = 'UnreadTracks';
+  static const String finishedTracksTable = 'FinishedTracks';
+  static const String nowListeningTracksTable = 'NowListeningTracks';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
 
   LocalDatabase({Database? testDatabase}) {
@@ -46,25 +46,27 @@ class LocalDatabase {
         await database.transaction((txn) async {
           /// Create audiobooks collection table
           await txn.execute('''
-      CREATE TABLE $audiobooksCollectionTable (
-        collectionId INTEGER PRIMARY KEY,
-        collectionDuration INTEGER,
+      CREATE TABLE $albumsTable (
+        albumId INTEGER PRIMARY KEY,
+        albumDuration INTEGER,
         currentTrackId INTEGER,
-        collectionName TEXT,
-        collectionAuthor TEXT,
-        collectionLength INTEGER,
-        UNIQUE(collectionName),
-        FOREIGN KEY (currentTrackId) REFERENCES $audiobooksTable(trackId)
+        albumName TEXT,
+        albumAuthor TEXT,
+        albumLength INTEGER,
+        albumArt BLOB,
+        albumCoverage INTEGER;
+        UNIQUE(albumName),
+        FOREIGN KEY (currentTrackId) REFERENCES $tracksTable(trackId)
     )''');
 
           /// Create audiobooks table
           await txn.execute('''
-      CREATE TABLE $audiobooksTable (
+      CREATE TABLE $tracksTable (
         trackId INTEGER PRIMARY KEY,
         path TEXT,
         trackName TEXT,
         trackArtistNames TEXT,
-        collectionId INTEGER,
+        albumId INTEGER,
         albumName INTEGER,
         albumArtistName TEXT,
         trackNumber INTEGER,
@@ -80,7 +82,7 @@ class LocalDatabase {
         currentPosition INTEGER,
         single INTEGER,
         UNIQUE(path),
-        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
     )''');
 
           /// Create paths table
@@ -92,39 +94,23 @@ class LocalDatabase {
 
           /// Create unread table
           await txn.execute('''
-      CREATE TABLE $unreadAudiobooksTable (
-        entryId INTEGER PRIMARY KEY,
-        trackId INTEGER,
-        collectionId INTEGER,
-        name TEXT,
-        UNIQUE(trackId),
-        UNIQUE(collectionId),
-        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
-        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+      CREATE TABLE $unreadTracksTable (
+        albumId INTEGER ,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
     )''');
 
           /// Create now reading table
           await txn.execute('''
-      CREATE TABLE $nowReadingAudiobooksTable (
-        entryId INTEGER PRIMARY KEY,
-        trackId INTEGER,
-        collectionId INTEGER,
-        name TEXT,
-        UNIQUE(trackId, collectionId),
-        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
-        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+      CREATE TABLE $nowListeningTracksTable (
+        albumId INTEGER,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
           )''');
 
           /// Create finished table
           await txn.execute('''
-      CREATE TABLE $finishedAudiobooksTable (
-        entryId INTEGER PRIMARY KEY,
-        trackId INTEGER,
-        collectionId INTEGER,
-        name TEXT,
-        UNIQUE(trackId, collectionId),
-        FOREIGN KEY (trackId) REFERENCES $audiobooksTable(trackId),
-        FOREIGN KEY (collectionId) REFERENCES $audiobooksCollectionTable (collectionId)
+      CREATE TABLE $finishedTracksTable (
+        albumId INTEGER,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
           )''');
         });
 

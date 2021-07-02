@@ -1,4 +1,4 @@
-import 'package:audiobooks/app/data/models/audiobook.dart';
+import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/get_storage.dart';
@@ -7,12 +7,13 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
-class MockAudiobook extends Mock implements Audiobook {}
+class MockAudiobook extends Mock implements Track {}
 
 @GenerateMocks([])
 Future<void> main() async {
   // Init ffi loader if needed.
   sqfliteFfiInit();
+  TestWidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init('testx');
 
   group('Database ', () {
@@ -46,7 +47,7 @@ Future<void> main() async {
 
       final LocalDatabase localDatabase = LocalDatabase(testDatabase: db);
 
-      final Audiobook audiobook = MockAudiobook();
+      final Track audiobook = MockAudiobook();
       when(() => audiobook.albumName).thenReturn(() => 'Mock book');
       expect(audiobook.albumName, 'Mock book');
 

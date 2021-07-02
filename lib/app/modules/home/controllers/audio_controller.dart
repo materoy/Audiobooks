@@ -8,15 +8,15 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
 class AudioController extends GetxController {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer audioPlayer = AudioPlayer();
   PlayerProvider get _playerProvider =>
       PlayerProvider(Get.find<HomeController>().localDatabase);
 
   TrackProvider get _trackProvider =>
       TrackProvider(Get.find<HomeController>().localDatabase);
 
-  int? _currentTrackId;
-  int? _currentEntryId;
+  late int? _currentTrackId;
+  late int? _currentEntryId;
   set currentTrackId(int value) => _currentTrackId = value;
   set currentEntryId(int value) => _currentEntryId = value;
   int get currentTrackId => _currentTrackId!;
@@ -33,19 +33,19 @@ class AudioController extends GetxController {
   Future<void> setAudioPath(String path) async {
     if (_audioPath.value != path) {
       _audioPath.value = path;
-      _audioDuration.value = (await _audioPlayer.setFilePath(path))!;
+      _audioDuration.value = (await audioPlayer.setFilePath(path))!;
     }
   }
 
   Future<void> play(String path) async {
-    if (_audioPlayer.playing) {
-      await _audioPlayer.pause();
+    if (audioPlayer.playing) {
+      await audioPlayer.pause();
     }
     await setAudioPath(path);
     final int currentPosition = await getCurrentPlayPosition();
-    await _audioPlayer.seek(Duration(milliseconds: currentPosition));
+    await audioPlayer.seek(Duration(milliseconds: currentPosition));
     _playing.value = true;
-    await _audioPlayer.play();
+    await audioPlayer.play();
     if (Get.find<HomeController>().tabState == TabState.Unread) {
       moveFromUnreadToReading();
     }
@@ -53,15 +53,15 @@ class AudioController extends GetxController {
 
   Future<void> pause() async {
     await updatePlayPosition();
-    if (_audioPlayer.playing) {
+    if (audioPlayer.playing) {
       _playing.value = false;
-      _audioPlayer.pause();
+      audioPlayer.pause();
     }
   }
 
   Future<void> updatePlayPosition() async {
     _playerProvider.updateCurrentTrackPosition(
-        currentPosition: _audioPlayer.position.inMilliseconds,
+        currentPosition: audioPlayer.position.inMilliseconds,
         trackId: _currentTrackId!);
   }
 
@@ -72,14 +72,14 @@ class AudioController extends GetxController {
   Future<void> moveFromUnreadToReading() async {
     await _trackProvider.changeReadingState(
         trackEntryId: _currentEntryId!,
-        fromTable: LocalDatabase.unreadAudiobooksTable,
-        toTable: LocalDatabase.nowReadingAudiobooksTable);
+        fromTable: LocalDatabase.unreadTracksTable,
+        toTable: LocalDatabase.nowListeningTracksTable);
     log('Moved to now reading ');
   }
 
   Stream<Duration> streamPosition() async* {
-    if (_audioPlayer.playing) {
-      yield* _audioPlayer.positionStream;
+    if (audioPlayer.playing) {
+      yield* audioPlayer.positionStream;
     } else {
       final int currentPosition = await getCurrentPlayPosition();
       yield Duration(milliseconds: currentPosition);
@@ -90,7 +90,7 @@ class AudioController extends GetxController {
   void onInit() {
     super.onInit();
     if (_audioPath.value != '') {
-      _audioPlayer.setFilePath(audioPath);
+      audioPlayer.setFilePath(audioPath);
     }
   }
 }

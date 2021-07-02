@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:audiobooks/app/data/models/audiobook.dart';
+import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/track_entry.dart';
 import 'package:audiobooks/app/utils/database.dart';
 
@@ -10,8 +10,7 @@ class TrackProvider {
   TrackProvider(this.localDatabase);
 
   Future<void> getAudiobooks() async {
-    final results =
-        await localDatabase.query(table: LocalDatabase.audiobooksTable);
+    final results = await localDatabase.query(table: LocalDatabase.tracksTable);
     // for (final result in results!) {
     //   print(result['single']);
     // }
@@ -19,12 +18,27 @@ class TrackProvider {
   }
 
   Future<void> getCollection() async {
-    final results = await localDatabase.query(
-        table: LocalDatabase.audiobooksCollectionTable);
+    final results = await localDatabase.query(table: LocalDatabase.albumsTable);
     // for (final result in results!) {
     //   print(result);
     // }
     print(results);
+  }
+
+  Future<Track> getTrackById(int trackId) async {
+    try {
+      final resultSet = await localDatabase.database.query(
+          LocalDatabase.tracksTable,
+          where: 'trackId = ?',
+          whereArgs: [trackId]);
+      if (resultSet.isNotEmpty) {
+        return Track.fromMap(resultSet.first);
+      }
+      return Track.empty();
+    } catch (e) {
+      log(e.toString());
+      return Track.empty();
+    }
   }
 
   Future<List<TrackEntry>> getTrackEntries(String tableName) async {
@@ -39,31 +53,31 @@ class TrackProvider {
   }
 
   Future<void> getTrack(int trackId) async {
-    await localDatabase.database.query(LocalDatabase.audiobooksTable,
+    await localDatabase.database.query(LocalDatabase.tracksTable,
         where: 'trackId = ?', whereArgs: [trackId]);
   }
 
-  Future<List<Audiobook>> getTracksInCollection(int collectionId) async {
-    List<Audiobook> tracksInCollection;
+  Future<List<Track>> getTracksInCollection(int collectionId) async {
+    List<Track> tracksInCollection;
     tracksInCollection = [];
     final results = await localDatabase.database.query(
-      LocalDatabase.audiobooksTable,
+      LocalDatabase.tracksTable,
       where: 'collectionId = ?',
       whereArgs: [collectionId],
     );
     for (final result in results) {
-      tracksInCollection.add(Audiobook.fromMap(result));
+      tracksInCollection.add(Track.fromMap(result));
     }
     return tracksInCollection;
   }
 
-  Future<Audiobook> getSingleTrack(int trackId) async {
+  Future<Track> getSingleTrack(int trackId) async {
     final resultsSet = await localDatabase.database.query(
-      LocalDatabase.audiobooksTable,
+      LocalDatabase.tracksTable,
       where: 'trackId = ?',
       whereArgs: [trackId],
     );
-    return Audiobook.fromMap(resultsSet.first);
+    return Track.fromMap(resultsSet.first);
   }
 
   /// This function moves track entries from Given table to another table

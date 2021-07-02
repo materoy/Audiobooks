@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:audiobooks/app/data/models/audiobook.dart';
-import 'package:audiobooks/app/data/models/audiobook_collection.dart';
+import 'package:audiobooks/app/data/models/track.dart';
+import 'package:audiobooks/app/data/models/album.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path/path.dart' as p;
 
@@ -33,75 +33,75 @@ class MediaScanner {
       for (final FileSystemEntity entity in entitites) {
         final String extensiton = p.extension(entity.path);
         if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
-          final Audiobook audiobook = await getMediaInfo(entity.path);
-          print('Added ${audiobook.trackName} to db');
+          final Track track = await getMediaInfo(entity.path);
+          print('Added ${track.trackName} to db');
 
-          /// Adds collection
-          if (audiobook.albumName != null) {
-            _addCollectionToDatabase(AudiobookCollection(
-              collectionName: audiobook.albumName!,
-              collectionAuthor: audiobook.albumArtistName,
-              collectionArt: audiobook.albumArt,
-              collectionLength: audiobook.albumLength,
+          /// Adds album
+          if (track.albumName != null) {
+            _addCollectionToDatabase(Album(
+              albumName: track.albumName!,
+              albumAuthor: track.albumArtistName,
+              albumArt: track.albumArt,
+              albumLength: track.albumLength,
             ));
           }
 
           /// Adds media to database
-          await _addAudiobookToDatabase(audiobook);
+          await _addAudiobookToDatabase(track);
         }
       }
     }
   }
 
-  Future<Audiobook> getMediaInfo(String mediaPath) async {
+  Future<Track> getMediaInfo(String mediaPath) async {
     final retriever = MetadataRetriever();
     await retriever.setFile(File(mediaPath));
     final Metadata metadata = await retriever.metadata;
-    final Audiobook _audiobook = Audiobook.fromMap(metadata.toMap())
+    final Track _audiobook = Track.fromMap(metadata.toMap())
       ..path = mediaPath
-      ..single = metadata.albumName == null ? 1 : 0;
+      ..albumArt = retriever.albumArt;
     return _audiobook;
   }
 
-  Future<void> _addCollectionToDatabase(AudiobookCollection collection) async {
-    final String collectionTable = LocalDatabase.audiobooksCollectionTable;
-    final String unreadTable = LocalDatabase.unreadAudiobooksTable;
+  Future<void> _addCollectionToDatabase(Album album) async {
+    final String collectionTable = LocalDatabase.albumsTable;
+    final String unreadTable = LocalDatabase.unreadTracksTable;
 
     localDatabase.database.transaction((txn) async {
       final int collectionId = await txn.rawInsert('''
         INSERT OR IGNORE INTO $collectionTable (
-          currentTrackId, collectionDuration, collectionName, collectionAuthor,
-          collectionLength
+          currentTrackId, albumDuration, albumName, albumAuthor,
+          albumLength
         ) VALUES ( ?,?,?,?,?)
       ''', [
-        collection.currentTrackId,
-        collection.collectionDuration,
-        collection.collectionName,
-        collection.collectionAuthor,
-        collection.collectionLength,
+        album.currentTrackId,
+        album.albumDuration,
+        album.albumName,
+        album.albumAuthor,
+        album.albumLength,
       ]);
 
       if (collectionId != 0) {
         await txn.rawInsert('''
           INSERT OR IGNORE INTO $unreadTable 
             (collectionId, name) VALUES (?, ?)
-        ''', [collectionId, collection.collectionName]);
+        ''', [collectionId, album.albumName]);
       }
     });
   }
 
-  Future<void> _addAudiobookToDatabase(Audiobook audiobook) async {
-    final String aTable = LocalDatabase.audiobooksTable;
-    final String unreadTable = LocalDatabase.unreadAudiobooksTable;
-    final String collectionTable = LocalDatabase.audiobooksCollectionTable;
+  Future<void> _addAudiobookToDatabase(Track track) async {
+    final String aTable = LocalDatabase.tracksTable;
+    final String unreadTable = LocalDatabase.unreadTracksTable;
+    final String collectionTable = LocalDatabase.albumsTable;
 
     localDatabase.database.transaction((txn) async {
       int? collectionId;
-      if (audiobook.albumName != null) {
+      if (track.albumName != null) {
         final resultsSet = await txn.query(collectionTable,
             columns: ['collectionId'],
-            where: 'collectionName = ?',
-            whereArgs: [audiobook.albumName]);
+            where: 'albumName = ?',
+            whereArgs: [track.albumName]);
         collectionId = resultsSet.first['collectionId'] as int?;
       }
       final int trackId = await txn.rawInsert('''
@@ -115,34 +115,33 @@ class MediaScanner {
           
       ''', [
         collectionId,
-        audiobook.trackName,
-        if (audiobook.trackArtistNames != null)
-          audiobook.trackArtistNames!.join('|').toString()
+        track.trackName,
+        if (track.trackArtistNames != null)
+          track.trackArtistNames!.join('|').toString()
         else
           null,
-        audiobook.albumName,
-        audiobook.albumArtistName,
-        audiobook.trackNumber,
-        audiobook.albumLength,
-        audiobook.year,
-        audiobook.genre,
-        audiobook.authorName,
-        audiobook.writerName,
-        audiobook.discNumber,
-        audiobook.mimeType,
-        audiobook.trackDuration,
-        audiobook.bitrate,
-        audiobook.path,
-        audiobook.currentPosition,
-        audiobook.single,
+        track.albumName,
+        track.albumArtistName,
+        track.trackNumber,
+        track.albumLength,
+        track.year,
+        track.genre,
+        track.authorName,
+        track.writerName,
+        track.discNumber,
+        track.mimeType,
+        track.trackDuration,
+        track.bitrate,
+        track.path,
+        track.currentPosition,
       ]);
 
-      if (audiobook.single == 1) {
-        txn.rawInsert('''
-          INSERT OR REPLACE INTO $unreadTable 
-            (trackId, name) VALUES (?, ?)
-        ''', [trackId, audiobook.trackName]);
-      }
+      // if (track.single == 1) {
+      //   txn.rawInsert('''
+      //     INSERT OR REPLACE INTO $unreadTable
+      //       (trackId, name) VALUES (?, ?)
+      //   ''', [trackId, track.trackName]);
+      // }
     });
   }
 }

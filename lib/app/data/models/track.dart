@@ -1,10 +1,9 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
-class Audiobook {
-  Audiobook({
+class Track {
+  Track({
     required this.trackId,
-    this.collectionId,
+    this.albumId,
     this.trackName,
     this.trackArtistNames,
     this.albumName,
@@ -21,45 +20,41 @@ class Audiobook {
     this.bitrate,
     required this.path,
     this.albumArt,
-    this.trackArt,
     this.currentPosition,
-    this.single,
   });
 
-  factory Audiobook.fromMap(Map<String, dynamic> audiobookMap) {
-    return Audiobook(
-      trackId: audiobookMap['trackId'],
-      collectionId: audiobookMap['collectionId'],
-      trackName: audiobookMap['trackName'],
+  factory Track.fromMap(Map<String, dynamic> trackMap) {
+    return Track(
+      trackId: trackMap['trackId'],
+      albumId: trackMap['albumId'],
+      trackName: trackMap['trackName'],
 
       /// Sometime this part is a bitch , you may need to spit
       /// with pattern '|' if it return a runtime of string
-      trackArtistNames: audiobookMap['trackArtistNames'] == null
+      trackArtistNames: trackMap['trackArtistNames'] == null
           ? null
-          : audiobookMap['trackArtistNames'].runtimeType == String
-              ? (audiobookMap['trackArtistNames'] as String).split('|')
-              : audiobookMap['trackArtistNames'],
-      albumName: audiobookMap['albumName'],
-      albumArtistName: audiobookMap['albumArtistName'],
-      trackNumber: audiobookMap['trackNumber'],
-      albumLength: audiobookMap['albumLength'],
-      year: audiobookMap['year'],
-      genre: audiobookMap['genre'],
-      authorName: audiobookMap['authorName'],
-      writerName: audiobookMap['writerName'],
-      discNumber: audiobookMap['discNumber'],
-      mimeType: audiobookMap['mimeType'],
-      trackDuration: audiobookMap['trackDuration'],
-      bitrate: audiobookMap['bitrate'],
-      path: audiobookMap['path'],
-      albumArt: audiobookMap['albumArt'],
-      trackArt: audiobookMap['trackArt'],
-      currentPosition: audiobookMap['currentPosition'],
-      single: audiobookMap['single'],
+          : trackMap['trackArtistNames'].runtimeType == String
+              ? (trackMap['trackArtistNames'] as String).split('|')
+              : trackMap['trackArtistNames'],
+      albumName: trackMap['albumName'],
+      albumArtistName: trackMap['albumArtistName'],
+      trackNumber: trackMap['trackNumber'],
+      albumLength: trackMap['albumLength'],
+      year: trackMap['year'],
+      genre: trackMap['genre'],
+      authorName: trackMap['authorName'],
+      writerName: trackMap['writerName'],
+      discNumber: trackMap['discNumber'],
+      mimeType: trackMap['mimeType'],
+      trackDuration: trackMap['trackDuration'],
+      bitrate: trackMap['bitrate'],
+      path: trackMap['path'],
+      albumArt: trackMap['albumArt'],
+      currentPosition: trackMap['currentPosition'],
     );
   }
   final int? trackId;
-  final int? collectionId;
+  final int? albumId;
   final String? trackName;
   final List<String?>? trackArtistNames;
   final String? albumName;
@@ -75,15 +70,13 @@ class Audiobook {
   final int? trackDuration;
   final int? bitrate;
   String? path;
-  final Uint8List? albumArt;
-  final Uint8List? trackArt;
+  Uint8List? albumArt;
   final int? currentPosition;
-  int? single;
 
   Map<String, dynamic> toMap() {
     return {
       // 'trackId': trackId,
-      'collectionId': collectionId,
+      'albumId': albumId,
       'trackName': trackName,
       'trackArtistNames': trackArtistNames,
       'albumName': albumName,
@@ -100,14 +93,12 @@ class Audiobook {
       'bitrate': bitrate,
       'path': path,
       'albumArt': albumArt,
-      'trackArt': trackArt,
       'currentPosition': currentPosition,
-      'single': single,
     };
   }
 
-  factory Audiobook.empty() {
-    return Audiobook(trackId: null, path: null);
+  factory Track.empty() {
+    return Track(trackId: null, path: null);
   }
 
   @override

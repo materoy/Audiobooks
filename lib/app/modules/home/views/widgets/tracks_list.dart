@@ -18,9 +18,6 @@ class TracksList extends StatelessWidget {
       child: Obx(() => ListView.builder(
           itemCount: trackEntries.length,
           itemBuilder: (context, index) {
-            Get.lazyPut<AudioController>(() => AudioController(),
-                tag: trackEntries[index].name);
-
             return trackEntries[index].collectionId != null
                 ? CollectionCard(trackEntry: trackEntries[index])
                 : TrackCard(trackEntry: trackEntries[index]);

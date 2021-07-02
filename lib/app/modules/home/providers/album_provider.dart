@@ -11,7 +11,7 @@ class CollectionProvider {
   Future<int> getCurrentTrackId(int collectionId) async {
     try {
       final resultsSet = await _localDatabase.database.query(
-          LocalDatabase.audiobooksCollectionTable,
+          LocalDatabase.albumsTable,
           where: 'collectionId = ?',
           whereArgs: [collectionId]);
       if (resultsSet.isNotEmpty) {
@@ -25,10 +25,14 @@ class CollectionProvider {
     }
   }
 
-  Future<void> updateCurrentTrackInCollection(int trackId) async {
-    await _localDatabase.database
-        .update(LocalDatabase.audiobooksCollectionTable, {
-      'currentTrackId': trackId,
-    });
+  Future<void> updateCurrentTrackInCollection(
+      {required int trackId, required int collectionId}) async {
+    await _localDatabase.database.update(
+        LocalDatabase.albumsTable,
+        {
+          'currentTrackId': trackId,
+        },
+        where: 'collectionId = ?',
+        whereArgs: [collectionId]);
   }
 }
