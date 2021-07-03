@@ -2,6 +2,7 @@ import 'package:audiobooks/app/modules/splash/controllers/database_controller.da
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -27,21 +28,23 @@ class HomeView extends GetView<HomeController> {
                 onPressed: () => Get.toNamed(Routes.MEDIA_FOLDERS),
                 child: const Text('Media folders'),
               ),
-              ElevatedButton(
-                  onPressed: () =>
-                      MediaScanner(Get.find<DatabaseController>().localDatabase)
-                          .queryMediaFolders(),
-                  child: const Text('Query media Folders')),
-              ElevatedButton(
-                  onPressed: () => Get.find<DatabaseController>()
-                      .localDatabase
-                      .resetDatabase(),
-                  child: const Text('Reset Db')),
-              ElevatedButton(
-                  onPressed: () => Get.find<DatabaseController>()
-                      .localDatabase
-                      .initializeDatabaseSchema(),
-                  child: const Text('Initialize db schema')),
+              if (kDebugMode) ...[
+                ElevatedButton(
+                    onPressed: () => MediaScanner(
+                            Get.find<DatabaseController>().localDatabase)
+                        .queryMediaFolders(),
+                    child: const Text('Query media Folders')),
+                ElevatedButton(
+                    onPressed: () => Get.find<DatabaseController>()
+                        .localDatabase
+                        .resetDatabase(),
+                    child: const Text('Reset Db')),
+                ElevatedButton(
+                    onPressed: () => Get.find<DatabaseController>()
+                        .localDatabase
+                        .initializeDatabaseSchema(),
+                    child: const Text('Initialize db schema')),
+              ]
             ],
           ),
         ),
@@ -53,7 +56,7 @@ class HomeView extends GetView<HomeController> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TabLabel(
-                          label: 'Unread',
+                          label: 'New',
                           onPressed: () async {
                             _pageController.jumpToPage(0);
                             // await _pageController.animateToPage(0,

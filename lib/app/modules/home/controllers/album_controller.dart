@@ -80,9 +80,6 @@ class AlbumController extends GetxController {
 
   @override
   void onReady() {
-    print(currentTrack.albumArt);
-    // goToNextTrack();
-    // goToPreviousTrack();
     super.onReady();
   }
 }

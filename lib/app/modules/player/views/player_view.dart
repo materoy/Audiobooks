@@ -23,7 +23,7 @@ class PlayerView extends GetView<AlbumController> {
         Text(
           controller.album.albumName,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(fontSize: 14),
         ),
 
         Text(
@@ -32,11 +32,15 @@ class PlayerView extends GetView<AlbumController> {
               controller.currentTrack.authorName ??
               controller.currentTrack.trackArtistNames!.toList().first!,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(fontSize: 14),
         ),
 
         CircleAvatar(
           radius: SizeConfig.blockSizeHorizontal * 35,
+          backgroundColor: Colors.grey,
+          backgroundImage: controller.album.albumArt != null
+              ? MemoryImage(controller.album.albumArt!)
+              : null,
         ),
 
         SeekBar(

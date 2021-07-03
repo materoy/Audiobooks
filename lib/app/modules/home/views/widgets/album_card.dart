@@ -35,7 +35,7 @@ class AlbumCard extends GetView<AlbumController> {
       onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
       child: Container(
         clipBehavior: Clip.hardEdge,
-        height: SizeConfig.blockSizeVertical * 17,
+        height: SizeConfig.blockSizeVertical * 20,
         width: SizeConfig.blockSizeHorizontal * 80,
         decoration: BoxDecoration(
             color: const Color(0xFFC4C4C4),
@@ -48,10 +48,14 @@ class AlbumCard extends GetView<AlbumController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
+              clipBehavior: Clip.hardEdge,
               width: SizeConfig.blockSizeHorizontal * 25,
               decoration: BoxDecoration(
                   color: Colors.brown[50],
                   borderRadius: BorderRadius.circular(13)),
+              child: album.albumArt != null
+                  ? Image.memory(album.albumArt!, fit: BoxFit.cover)
+                  : Container(),
             ),
             const Spacer(),
             SizedBox(
@@ -79,7 +83,7 @@ class AlbumCard extends GetView<AlbumController> {
                                 ? 3
                                 : controller.tracks.length, (index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            padding: const EdgeInsets.symmetric(vertical: 2),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -115,27 +119,27 @@ class AlbumCard extends GetView<AlbumController> {
                               position: audioController.audioPlayer.position,
                             )),
                       if (audioController.audioPath !=
-                          controller.currentTrack.path)
+                              controller.currentTrack.path &&
+                          homeController.tabState == TabState.NowListening)
                         FutureBuilder<int>(
                           future: controller.getCurrentTrackPosition(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return SeekBar(
-                                showSeeker: false,
-                                duration: Duration(
-                                    milliseconds:
-                                        controller.currentTrack.trackDuration!),
+                              return ProgressBar(
+                                duration:
+                                    controller.currentTrack.trackDuration!,
                                 position: audioController.audioPath ==
                                         controller.currentTrack.path
-                                    ? audioController.audioPlayer.position
-                                    : Duration(milliseconds: snapshot.data!),
+                                    ? audioController
+                                        .audioPlayer.position.inMilliseconds
+                                    : snapshot.data!,
                               );
                             } else {
                               return Container();
                             }
                           },
                         ),
-                      const Spacer(),
+                      const Spacer(flex: 2),
                     ],
                   )),
             ),
@@ -146,7 +150,7 @@ class AlbumCard extends GetView<AlbumController> {
                 children: [
                   Row(
                     children: [
-                      const Coverage(),
+                      // const Coverage(),
                       Obx(() => controller.currentTrack.path != null
                           ? PlayPauseButton(
                               audioFilePath: controller.currentTrack.path!,

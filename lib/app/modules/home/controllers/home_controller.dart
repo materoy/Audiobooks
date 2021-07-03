@@ -25,20 +25,6 @@ class HomeController extends GetxController {
     addTracks();
   }
 
-  @override
-  void onInit() {
-    addTracks().then((value) {
-      if (_nowListeningAlbums.isEmpty) {
-        _tabState.value = TabState.New;
-      }
-    });
-
-    super.onInit();
-  }
-
-  @override
-  void onClose() {}
-
   Future<void> addTracks() async {
     /// Gets all the now reading tracks
     switch (_tabState.value) {
@@ -71,4 +57,14 @@ class HomeController extends GetxController {
       default:
     }
   }
+
+  @override
+  Future<void> onInit() async {
+    await addTracks();
+
+    super.onInit();
+  }
+
+  @override
+  void onClose() {}
 }

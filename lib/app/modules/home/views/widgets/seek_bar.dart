@@ -176,3 +176,17 @@ void showSliderDialog({
     ),
   );
 }
+
+class ProgressBar extends StatelessWidget {
+  const ProgressBar({Key? key, required this.duration, required this.position})
+      : super(key: key);
+  final int duration;
+  final int position;
+
+  @override
+  Widget build(BuildContext context) {
+    return LinearProgressIndicator(
+      value: position / duration,
+    );
+  }
+}
