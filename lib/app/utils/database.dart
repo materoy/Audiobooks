@@ -80,7 +80,7 @@ class LocalDatabase {
         trackDuration INTEGER,
         bitrate INTEGER,
         currentPosition INTEGER,
-        single INTEGER,
+        albumArt BLOB,
         UNIQUE(path),
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
     )''');

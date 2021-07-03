@@ -31,7 +31,6 @@ class AlbumProvider {
           where: 'albumId = ?',
           whereArgs: [albumId]);
       if (resultsSet.isNotEmpty) {
-        print(resultsSet);
         return resultsSet.first['currentTrackId']! as int;
       }
       return 0;
@@ -62,5 +61,36 @@ class AlbumProvider {
     }
 
     return albums;
+  }
+
+  /// This function moves track entries from Given table to another table
+  /// eg . from unread to now reading table
+  Future<int> changeReadingState(
+      {required int albumId,
+      required String fromTable,
+      required String toTable}) async {
+    try {
+      print(albumId);
+      await _localDatabase.database.transaction((txn) async {
+        final resultSet = await txn
+            .query(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
+        if (resultSet.isNotEmpty) {
+          final int newId = await txn.rawInsert('''
+          INSERT OR REPLACE INTO $toTable
+            (albumId) VALUES (?)
+        ''', [
+            resultSet.first['albumId'],
+          ]);
+
+          final int rowsDeleted = await txn
+              .delete(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
+          return newId;
+        }
+      });
+      return 0;
+    } catch (e) {
+      log(e.toString());
+      return 0;
+    }
   }
 }

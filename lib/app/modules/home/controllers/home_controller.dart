@@ -1,16 +1,16 @@
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 
-enum TabState { Unread, Reading, Finished }
+enum TabState { New, NowListening, Finished }
 
 class HomeController extends GetxController {
-  final LocalDatabase localDatabase = LocalDatabase();
+  AlbumProvider get _albumProvider =>
+      AlbumProvider(Get.find<DatabaseController>().localDatabase);
 
-  AlbumProvider get _albumProvider => AlbumProvider(localDatabase);
-
-  final _tabState = TabState.Reading.obs;
+  final _tabState = TabState.NowListening.obs;
   final _newAlbums = List<Album>.empty(growable: true).obs;
   final _nowListeningAlbums = List<Album>.empty(growable: true).obs;
   final _finishedAlbums = List<Album>.empty(growable: true).obs;
@@ -27,7 +27,11 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
-    addTracks();
+    addTracks().then((value) {
+      if (_nowListeningAlbums.isEmpty) {
+        _tabState.value = TabState.New;
+      }
+    });
 
     super.onInit();
   }
@@ -35,12 +39,10 @@ class HomeController extends GetxController {
   @override
   void onClose() {}
 
-  Future<bool> openDatabase() async => localDatabase.openLocalDatabase();
-
   Future<void> addTracks() async {
     /// Gets all the now reading tracks
     switch (_tabState.value) {
-      case TabState.Unread:
+      case TabState.New:
         await _albumProvider
             .getAlbumsInCategory(LocalDatabase.newTracksTable)
             .then((value) {
@@ -49,7 +51,7 @@ class HomeController extends GetxController {
         });
         break;
 
-      case TabState.Reading:
+      case TabState.NowListening:
         await _albumProvider
             .getAlbumsInCategory(LocalDatabase.nowListeningTracksTable)
             .then((value) {

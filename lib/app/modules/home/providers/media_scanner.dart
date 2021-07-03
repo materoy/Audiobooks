@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:audiobooks/app/data/models/track.dart';
@@ -37,17 +36,17 @@ class MediaScanner {
           print('Added ${track.trackName} to db');
 
           /// Adds album
-          if (track.albumName != null) {
+          if (!(track.albumName == null && track.trackName == null)) {
             _addCollectionToDatabase(Album(
               albumName: track.albumName!,
               albumAuthor: track.albumArtistName,
               albumArt: track.albumArt,
               albumLength: track.albumLength,
             ));
-          }
 
-          /// Adds media to database
-          await _addAudiobookToDatabase(track);
+            /// Adds media to database
+            await _addAudiobookToDatabase(track);
+          }
         }
       }
     }
@@ -64,21 +63,22 @@ class MediaScanner {
   }
 
   Future<void> _addCollectionToDatabase(Album album) async {
-    final String collectionTable = LocalDatabase.albumsTable;
+    final String albumsTable = LocalDatabase.albumsTable;
     final String newTracksTable = LocalDatabase.newTracksTable;
 
     localDatabase.database.transaction((txn) async {
       final int albumId = await txn.rawInsert('''
-        INSERT OR IGNORE INTO $collectionTable (
+        INSERT OR IGNORE INTO $albumsTable (
           currentTrackId, albumDuration, albumName, albumAuthor,
-          albumLength
-        ) VALUES ( ?,?,?,?,?)
+          albumLength, albumArt
+        ) VALUES ( ?,?,?,?,?,?)
       ''', [
         album.currentTrackId,
         album.albumDuration,
         album.albumName,
         album.albumAuthor,
         album.albumLength,
+        album.albumArt,
       ]);
 
       if (albumId != 0) {
@@ -92,23 +92,22 @@ class MediaScanner {
 
   Future<void> _addAudiobookToDatabase(Track track) async {
     final String tracksTable = LocalDatabase.tracksTable;
-    final String newTracksTable = LocalDatabase.newTracksTable;
-    final String collectionTable = LocalDatabase.albumsTable;
+    final String albumsTable = LocalDatabase.albumsTable;
 
     localDatabase.database.transaction((txn) async {
       int? albumId;
       if (track.albumName != null) {
-        final resultsSet = await txn.query(collectionTable,
+        final resultsSet = await txn.query(albumsTable,
             columns: ['albumId'],
             where: 'albumName = ?',
             whereArgs: [track.albumName]);
         albumId = resultsSet.first['albumId'] as int?;
       }
-      final int trackId = await txn.rawInsert('''
+      await txn.rawInsert('''
           INSERT OR IGNORE INTO $tracksTable
           (albumId, trackName, trackArtistNames,albumName,albumArtistName,
             trackNumber,albumLength, year,genre,authorName,
-            writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, single
+            writerName, discNumber, mimeType, trackDuration, bitrate, path, currentPosition, albumArt
             ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
           ) 
@@ -134,14 +133,8 @@ class MediaScanner {
         track.bitrate,
         track.path,
         track.currentPosition,
+        track.albumArt
       ]);
-
-      // if (track.single == 1) {
-      //   txn.rawInsert('''
-      //     INSERT OR REPLACE INTO $newTracksTable
-      //       (trackId, name) VALUES (?, ?)
-      //   ''', [trackId, track.trackName]);
-      // }
     });
   }
 }

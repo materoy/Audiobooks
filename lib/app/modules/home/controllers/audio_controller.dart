@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
+import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
-import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -10,17 +11,13 @@ import 'package:just_audio/just_audio.dart';
 class AudioController extends GetxController {
   final AudioPlayer audioPlayer = AudioPlayer();
   PlayerProvider get _playerProvider =>
-      PlayerProvider(Get.find<HomeController>().localDatabase);
+      PlayerProvider(Get.find<DatabaseController>().localDatabase);
 
-  TrackProvider get _trackProvider =>
-      TrackProvider(Get.find<HomeController>().localDatabase);
+  AlbumProvider get _albumProvider =>
+      AlbumProvider(Get.find<DatabaseController>().localDatabase);
 
-  late int? _currentTrackId;
-  late int? _currentEntryId;
-  set currentTrackId(int value) => _currentTrackId = value;
-  set currentEntryId(int value) => _currentEntryId = value;
-  int get currentTrackId => _currentTrackId!;
-  int get currentEntryId => _currentEntryId!;
+  late int currentTrackId;
+  late int currentAlbumId;
 
   final _audioPath = ''.obs;
   final _audioDuration = const Duration().obs;
@@ -46,7 +43,7 @@ class AudioController extends GetxController {
     await audioPlayer.seek(Duration(milliseconds: currentPosition));
     _playing.value = true;
     await audioPlayer.play();
-    if (Get.find<HomeController>().tabState == TabState.Unread) {
+    if (Get.find<HomeController>().tabState == TabState.New) {
       moveFromUnreadToReading();
     }
   }
@@ -62,16 +59,16 @@ class AudioController extends GetxController {
   Future<void> updatePlayPosition() async {
     _playerProvider.updateCurrentTrackPosition(
         currentPosition: audioPlayer.position.inMilliseconds,
-        trackId: _currentTrackId!);
+        trackId: currentTrackId);
   }
 
   Future<int> getCurrentPlayPosition() async {
-    return _playerProvider.getCurrentTrackPlayPosition(_currentTrackId!);
+    return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
   }
 
   Future<void> moveFromUnreadToReading() async {
-    await _trackProvider.changeReadingState(
-        trackEntryId: _currentEntryId!,
+    await _albumProvider.changeReadingState(
+        albumId: currentAlbumId,
         fromTable: LocalDatabase.newTracksTable,
         toTable: LocalDatabase.nowListeningTracksTable);
     log('Moved to now reading ');

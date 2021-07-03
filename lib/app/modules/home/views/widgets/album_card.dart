@@ -4,6 +4,7 @@ import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,16 @@ class AlbumCard extends GetView<AlbumController> {
   @override
   AlbumController get controller => Get.put(
       AlbumController(
-          localDatabase: homeController.localDatabase, album: album),
+          localDatabase: Get.find<DatabaseController>().localDatabase,
+          album: album),
       tag: album.albumId.toString());
 
   @override
   Widget build(BuildContext context) {
+    controller.onReady();
+    // print(controller.album.albumArt);
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.PLAYER),
+      onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
       child: Container(
         clipBehavior: Clip.hardEdge,
         height: SizeConfig.blockSizeVertical * 17,
@@ -68,11 +72,6 @@ class AlbumCard extends GetView<AlbumController> {
                           )
                         ],
                       ),
-                      // Text(
-                      //     trackEntry.name != null
-                      //         ? trackEntry.name!.substring(0, 20)
-                      //         : '',
-                      //     textAlign: TextAlign.center),
                       const Spacer(),
                       if (controller.tracks.isNotEmpty)
                         ...List.generate(
@@ -109,12 +108,33 @@ class AlbumCard extends GetView<AlbumController> {
                           );
                         }),
                       const Spacer(flex: 3),
-                      SeekBar(
-                          duration: audioController.audioDuration,
-                          position: audioController.audioPlayer.position,
-                          bufferedPosition:
-                              audioController.audioPlayer.bufferedPosition),
-
+                      if (audioController.audioPath ==
+                          controller.currentTrack.path)
+                        Obx(() => SeekBar(
+                              duration: audioController.audioDuration,
+                              position: audioController.audioPlayer.position,
+                            )),
+                      if (audioController.audioPath !=
+                          controller.currentTrack.path)
+                        FutureBuilder<int>(
+                          future: controller.getCurrentTrackPosition(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return SeekBar(
+                                showSeeker: false,
+                                duration: Duration(
+                                    milliseconds:
+                                        controller.currentTrack.trackDuration!),
+                                position: audioController.audioPath ==
+                                        controller.currentTrack.path
+                                    ? audioController.audioPlayer.position
+                                    : Duration(milliseconds: snapshot.data!),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
                       const Spacer(),
                     ],
                   )),
@@ -131,6 +151,10 @@ class AlbumCard extends GetView<AlbumController> {
                           ? PlayPauseButton(
                               audioFilePath: controller.currentTrack.path!,
                               onPressed: () {
+                                audioController.currentAlbumId =
+                                    controller.album.albumId!;
+                                audioController.currentTrackId =
+                                    controller.currentTrack.trackId!;
                                 controller.updateCurrentTrack(
                                     controller.currentTrack.trackId!);
                               },

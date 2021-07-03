@@ -4,16 +4,18 @@ import 'package:flutter/material.dart';
 class SeekBar extends StatefulWidget {
   final Duration duration;
   final Duration position;
-  final Duration bufferedPosition;
+  final Duration? bufferedPosition;
   final ValueChanged<Duration>? onChanged;
   final ValueChanged<Duration>? onChangeEnd;
+  final bool? showSeeker;
 
   const SeekBar({
     required this.duration,
     required this.position,
-    required this.bufferedPosition,
+    this.bufferedPosition,
     this.onChanged,
     this.onChangeEnd,
+    this.showSeeker,
   });
 
   @override
@@ -46,8 +48,7 @@ class _SeekBarState extends State<SeekBar> {
           child: ExcludeSemantics(
             child: Slider(
               max: widget.duration.inMilliseconds.toDouble(),
-              value: min(widget.bufferedPosition.inMilliseconds.toDouble(),
-                  widget.duration.inMilliseconds.toDouble()),
+              value: widget.duration.inMilliseconds.toDouble(),
               onChanged: (value) {
                 setState(() {
                   _dragValue = value;
@@ -98,7 +99,7 @@ class _SeekBarState extends State<SeekBar> {
                       .firstMatch("$_remaining")
                       ?.group(1) ??
                   '$_remaining',
-              style: Theme.of(context).textTheme.caption),
+              style: const TextStyle(color: Colors.blue, fontSize: 10)),
         ),
       ],
     );

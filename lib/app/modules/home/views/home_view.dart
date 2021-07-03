@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,27 +28,19 @@ class HomeView extends GetView<HomeController> {
                 child: const Text('Media folders'),
               ),
               ElevatedButton(
-                  onPressed: () => MediaScanner(controller.localDatabase)
-                      .queryMediaFolders(),
+                  onPressed: () =>
+                      MediaScanner(Get.find<DatabaseController>().localDatabase)
+                          .queryMediaFolders(),
                   child: const Text('Query media Folders')),
-              // ElevatedButton(
-              //     onPressed: () =>
-              //         TrackProvider(controller.localDatabase).getAudiobooks(),
-              //     child: const Text('Get abooks')),
-              // ElevatedButton(
-              //     onPressed: () =>
-              //         TrackProvider(controller.localDatabase).getCollection(),
-              //     child: const Text('Get collections')),
-              // ElevatedButton(
-              //     onPressed: () =>
-              //         TrackProvider(controller.localDatabase).getUnread(),
-              //     child: const Text('Get unread')),
               ElevatedButton(
-                  onPressed: () => controller.localDatabase.resetDatabase(),
+                  onPressed: () => Get.find<DatabaseController>()
+                      .localDatabase
+                      .resetDatabase(),
                   child: const Text('Reset Db')),
               ElevatedButton(
-                  onPressed: () =>
-                      controller.localDatabase.initializeDatabaseSchema(),
+                  onPressed: () => Get.find<DatabaseController>()
+                      .localDatabase
+                      .initializeDatabaseSchema(),
                   child: const Text('Initialize db schema')),
             ],
           ),
@@ -66,9 +59,9 @@ class HomeView extends GetView<HomeController> {
                             // await _pageController.animateToPage(0,
                             // duration: const Duration(milliseconds: 300),
                             // curve: Curves.elasticIn);
-                            controller.tabState = TabState.Unread;
+                            controller.tabState = TabState.New;
                           },
-                          selected: controller.tabState == TabState.Unread),
+                          selected: controller.tabState == TabState.New),
                       TabLabel(
                           label: 'Jump back in',
                           onPressed: () async {
@@ -76,9 +69,10 @@ class HomeView extends GetView<HomeController> {
                             // await _pageController.animateToPage(1,
                             // duration: const Duration(milliseconds: 300),
                             // curve: Curves.elasticIn);
-                            controller.tabState = TabState.Reading;
+                            controller.tabState = TabState.NowListening;
                           },
-                          selected: controller.tabState == TabState.Reading),
+                          selected:
+                              controller.tabState == TabState.NowListening),
                       TabLabel(
                           label: 'Finished',
                           onPressed: () async {
@@ -97,10 +91,10 @@ class HomeView extends GetView<HomeController> {
                 onPageChanged: (value) {
                   switch (value) {
                     case 0:
-                      controller.tabState = TabState.Unread;
+                      controller.tabState = TabState.New;
                       break;
                     case 1:
-                      controller.tabState = TabState.Reading;
+                      controller.tabState = TabState.NowListening;
                       break;
                     case 2:
                       controller.tabState = TabState.Finished;
