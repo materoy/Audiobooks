@@ -11,9 +11,4 @@ class TrackController extends GetxController {
   TrackProvider get provider => TrackProvider(_localDatabase);
 
   final Track track;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }

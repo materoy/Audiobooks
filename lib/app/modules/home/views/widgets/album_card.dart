@@ -10,8 +10,6 @@ import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'coverage.dart';
-
 class AlbumCard extends GetView<AlbumController> {
   AlbumCard({Key? key, required this.album}) : super(key: key);
 
@@ -117,6 +115,13 @@ class AlbumCard extends GetView<AlbumController> {
                         Obx(() => SeekBar(
                               duration: audioController.audioDuration,
                               position: audioController.audioPlayer.position,
+                              onChanged: (value) {
+                                audioController.audioPlayer.seek(value);
+                              },
+                              onChangeEnd: (value) {
+                                audioController.updatePlayPosition(
+                                    newPosition: value.inMilliseconds);
+                              },
                             )),
                       if (audioController.audioPath !=
                               controller.currentTrack.path &&

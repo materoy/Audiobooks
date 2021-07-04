@@ -79,7 +79,7 @@ class _BreathePainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final radius = (size.shortestSide * 0.25) * animation.value;
     for (int index = 0; index < count; index++) {
-      final indexAngle = (index * math.pi / count * 2);
+      final indexAngle = index * math.pi / count * 2;
       final angle = indexAngle + (math.pi * 1.5 * animation.value);
       final offset = Offset(math.sin(angle), math.cos(angle)) * radius * 0.985;
       canvas.drawCircle(center + offset * animation.value, radius, circlePaint);

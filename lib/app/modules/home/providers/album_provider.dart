@@ -82,7 +82,7 @@ class AlbumProvider {
             resultSet.first['albumId'],
           ]);
 
-          final int rowsDeleted = await txn
+          await txn
               .delete(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
           return newId;
         }

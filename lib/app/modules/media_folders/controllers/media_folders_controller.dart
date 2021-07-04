@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
@@ -15,14 +13,6 @@ class MediaFoldersController extends GetxController {
     super.onInit();
     queryMediaFolders();
   }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  // }
-
-  // @override
-  // void onClose() {}
 
   Future<void> queryMediaFolders() async {
     final results =

@@ -39,6 +39,7 @@ class AudioController extends GetxController {
       await audioPlayer.pause();
     }
     await setAudioPath(path);
+    streamPosition().listen((event) {});
     final int currentPosition = await getCurrentPlayPosition();
     await audioPlayer.seek(Duration(milliseconds: currentPosition));
     _playing.value = true;
@@ -56,9 +57,9 @@ class AudioController extends GetxController {
     }
   }
 
-  Future<void> updatePlayPosition() async {
+  Future<void> updatePlayPosition({int? newPosition}) async {
     _playerProvider.updateCurrentTrackPosition(
-        currentPosition: audioPlayer.position.inMilliseconds,
+        currentPosition: newPosition ?? audioPlayer.position.inMilliseconds,
         trackId: currentTrackId);
   }
 
@@ -76,6 +77,7 @@ class AudioController extends GetxController {
 
   Stream<Duration> streamPosition() async* {
     if (audioPlayer.playing) {
+      print(audioPlayer.position);
       yield* audioPlayer.positionStream;
     } else {
       final int currentPosition = await getCurrentPlayPosition();

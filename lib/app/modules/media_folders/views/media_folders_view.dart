@@ -28,7 +28,7 @@ class MediaFoldersView extends GetView<MediaFoldersController> {
                     const SizedBox(height: 50),
                     ElevatedButton(
                         onPressed: () async {
-                          String? path = await controller.selectFolder();
+                          final String? path = await controller.selectFolder();
                           print(path);
                         },
                         style: ElevatedButton.styleFrom(
@@ -53,7 +53,7 @@ class MediaFoldersView extends GetView<MediaFoldersController> {
                           )),
                   ElevatedButton(
                       onPressed: () async {
-                        String? path = await controller.selectFolder();
+                        final String? path = await controller.selectFolder();
                         print(path);
                       },
                       style: ElevatedButton.styleFrom(

@@ -71,7 +71,6 @@ class _SeekBarState extends State<SeekBar> {
             inactiveTrackColor: Colors.transparent,
           ),
           child: Slider(
-            min: 0.0,
             max: widget.duration.inMilliseconds.toDouble(),
             value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
                 widget.duration.inMilliseconds.toDouble()),
@@ -153,7 +152,7 @@ void showSliderDialog({
       title: Text(title, textAlign: TextAlign.center),
       content: StreamBuilder<double>(
         stream: stream,
-        builder: (context, snapshot) => Container(
+        builder: (context, snapshot) => SizedBox(
           height: 100.0,
           child: Column(
             children: [

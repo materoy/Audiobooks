@@ -45,7 +45,7 @@ Future<void> main() async {
       final Database db =
           await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
 
-      final LocalDatabase localDatabase = LocalDatabase(testDatabase: db);
+      // final LocalDatabase localDatabase = LocalDatabase(testDatabase: db);
 
       final Track audiobook = MockAudiobook();
       when(() => audiobook.albumName).thenReturn(() => 'Mock book');

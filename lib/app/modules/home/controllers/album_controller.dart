@@ -77,9 +77,4 @@ class AlbumController extends GetxController {
     getTracksInAlbum().then((value) => getCurrentTrack());
     super.onInit();
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
 }

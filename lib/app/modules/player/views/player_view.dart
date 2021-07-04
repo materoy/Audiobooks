@@ -44,6 +44,13 @@ class PlayerView extends GetView<AlbumController> {
         ),
 
         SeekBar(
+            onChanged: (value) {
+              audioController.audioPlayer.seek(value);
+            },
+            onChangeEnd: (value) {
+              audioController.updatePlayPosition(
+                  newPosition: value.inMilliseconds);
+            },
             duration:
                 Duration(milliseconds: controller.currentTrack.trackDuration!),
             position: Duration(
@@ -53,10 +60,15 @@ class PlayerView extends GetView<AlbumController> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-                onPressed: () {},
+                onPressed: () => controller.goToPreviousTrack(),
                 icon: const Icon(Icons.skip_previous_rounded, size: 40)),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  audioController.updatePlayPosition(
+                      newPosition:
+                          audioController.audioPlayer.position.inMilliseconds -
+                              const Duration(seconds: 10).inMilliseconds);
+                },
                 icon: const Icon(Icons.replay_10_rounded, size: 40)),
             PlayPauseButton(
               audioFilePath: controller.currentTrack.path!,
@@ -69,10 +81,15 @@ class PlayerView extends GetView<AlbumController> {
               },
             ),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  audioController.updatePlayPosition(
+                      newPosition:
+                          audioController.audioPlayer.position.inMilliseconds +
+                              const Duration(seconds: 10).inMilliseconds);
+                },
                 icon: const Icon(Icons.forward_10_rounded, size: 40)),
             IconButton(
-                onPressed: () {},
+                onPressed: () => controller.goToNextTrack(),
                 icon: const Icon(Icons.skip_next_rounded, size: 40)),
           ],
         )
