@@ -2,6 +2,7 @@ import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class MediaFoldersController extends GetxController {
   final LocalDatabase _localDatabase = LocalDatabase();
@@ -34,6 +35,11 @@ class MediaFoldersController extends GetxController {
   }
 
   Future<String?> selectFolder() async {
+    // final PermissionStatus status = await Permission.storage.status;
+    // if (!status.isGranted) {
+    //   await Permission.storage.request();
+    // }
+
     final String? path = await FilePicker.platform.getDirectoryPath();
     if (path != null) {
       await addMediaFolder(path);
