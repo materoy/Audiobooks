@@ -12,9 +12,11 @@ class LocalDatabase {
   static const String databaseInitialisedStatusStorage = 'DatabaseStatus';
   static const String tracksTable = 'Tracks';
   static const String albumsTable = 'Albums';
-  static const String newTracksTable = 'NewTracks';
-  static const String finishedTracksTable = 'FinishedTracks';
-  static const String nowListeningTracksTable = 'NowListeningTracks';
+  static const String shelvesTable = 'Shelves';
+  static const String recentlyAddedTable = 'RecentlyAdded';
+  static const String completedTable = 'Completed';
+  static const String listeningTable = 'Listening';
+  static const String favoritesTable = 'Favorites';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
 
   LocalDatabase({Database? testDatabase}) {
@@ -40,6 +42,7 @@ class LocalDatabase {
     final localStorage = GetStorage();
 
     if (!localStorage.hasData(databaseInitialisedStatusStorage)) {
+      // if (true) {
       try {
         log('Creating database schema');
 
@@ -89,28 +92,54 @@ class LocalDatabase {
           await txn.execute('''
       CREATE TABLE $directoryPaths (
         pathId INTEGER PRIMARY KEY,
-        directoryPath TEXT
+        directoryPath TEXT NOT NULL
+    )''');
+
+          await txn.execute('''
+      CREATE TABLE $shelvesTable (
+        shelfId INTEGER PRIMARY KEY,
+        shelfName TEXT NOT NULL,
+        rank INTEGER NOT NULL
     )''');
 
           /// Create unread table
           await txn.execute('''
-      CREATE TABLE $newTracksTable (
-        albumId INTEGER ,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
+      CREATE TABLE $recentlyAddedTable (
+        shelfId INTEGER NOT NULL,
+        albumId INTEGER NOT NULL,
+        numberOf INTEGER NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
+        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
     )''');
 
           /// Create now reading table
           await txn.execute('''
-      CREATE TABLE $nowListeningTracksTable (
+      CREATE TABLE $listeningTable (
         albumId INTEGER,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
+        shelfId INTEGER,
+        numberOf INTEGER NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
+        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
           )''');
 
           /// Create finished table
           await txn.execute('''
-      CREATE TABLE $finishedTracksTable (
+      CREATE TABLE $completedTable (
         albumId INTEGER,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId)
+        shelfId INTEGER,
+        numberOf INTEGER NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
+        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
+          )''');
+
+          /// Create finished table
+          await txn.execute('''
+      CREATE TABLE $favoritesTable (
+        albumId INTEGER,
+        shelfId INTEGER,
+        numberOf INTEGER NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
+        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
           )''');
         });
 

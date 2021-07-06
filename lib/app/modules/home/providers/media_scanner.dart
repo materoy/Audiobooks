@@ -64,7 +64,7 @@ class MediaScanner {
 
   Future<void> _addCollectionToDatabase(Album album) async {
     final String albumsTable = LocalDatabase.albumsTable;
-    final String newTracksTable = LocalDatabase.newTracksTable;
+    final String recentlyAddedTable = LocalDatabase.recentlyAddedTable;
 
     localDatabase.database.transaction((txn) async {
       final int albumId = await txn.rawInsert('''
@@ -83,7 +83,7 @@ class MediaScanner {
 
       if (albumId != 0) {
         await txn.rawInsert('''
-          INSERT OR IGNORE INTO $newTracksTable 
+          INSERT OR IGNORE INTO $recentlyAddedTable 
             (albumId) VALUES (?)
         ''', [albumId]);
       }

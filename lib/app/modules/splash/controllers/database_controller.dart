@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
@@ -24,9 +25,8 @@ class DatabaseController extends GetxController {
         // Checks if there are loaded paths
         await checkDirectoryPathsExist().then((directoryLoaded) =>
             !directoryLoaded
-                ? Get.toNamed(Routes.MEDIA_FOLDERS)!
-                    .then((value) => Get.offAllNamed(Routes.HOME))
-                : Get.offAndToNamed(Routes.HOME));
+                ? MediaFoldersDialog.open()
+                : Get.offAndToNamed(Routes.LIBRARY));
       }
     });
 

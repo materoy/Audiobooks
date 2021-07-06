@@ -8,6 +8,8 @@ abstract class Routes {
   static const MEDIA_FOLDERS = _Paths.MEDIA_FOLDERS;
   static const PLAYER = _Paths.PLAYER;
   static const SPLASH = _Paths.SPLASH;
+  static const LIBRARY = _Paths.LIBRARY;
+  static const SETTINGS = _Paths.SETTINGS;
 }
 
 abstract class _Paths {
@@ -15,4 +17,6 @@ abstract class _Paths {
   static const MEDIA_FOLDERS = '/media-folders';
   static const PLAYER = '/player';
   static const SPLASH = '/splash';
+  static const LIBRARY = '/library';
+  static const SETTINGS = '/settings';
 }

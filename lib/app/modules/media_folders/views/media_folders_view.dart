@@ -4,7 +4,11 @@ import 'package:get/get.dart';
 
 import '../controllers/media_folders_controller.dart';
 
-class MediaFoldersView extends GetView<MediaFoldersController> {
+class MediaFoldersDialog extends GetView<MediaFoldersController> {
+  static void open() {
+    Get.dialog(MediaFoldersDialog());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

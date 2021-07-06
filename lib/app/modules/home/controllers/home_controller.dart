@@ -30,7 +30,7 @@ class HomeController extends GetxController {
     switch (_tabState.value) {
       case TabState.New:
         await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.newTracksTable)
+            .getAlbumsInCategory(LocalDatabase.recentlyAddedTable)
             .then((value) {
           _newAlbums.clear();
           _newAlbums.addAll(value);
@@ -39,7 +39,7 @@ class HomeController extends GetxController {
 
       case TabState.NowListening:
         await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.nowListeningTracksTable)
+            .getAlbumsInCategory(LocalDatabase.listeningTable)
             .then((value) {
           _nowListeningAlbums.clear();
           _nowListeningAlbums.addAll(value);
@@ -48,7 +48,7 @@ class HomeController extends GetxController {
 
       case TabState.Finished:
         await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.finishedTracksTable)
+            .getAlbumsInCategory(LocalDatabase.completedTable)
             .then((value) {
           _finishedAlbums.clear();
           _finishedAlbums.addAll(value);
