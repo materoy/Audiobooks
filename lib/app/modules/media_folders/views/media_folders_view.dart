@@ -1,4 +1,7 @@
+import 'package:audiobooks/app/utils/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 
 import 'package:get/get.dart';
 
@@ -6,68 +9,59 @@ import '../controllers/media_folders_controller.dart';
 
 class MediaFoldersDialog extends GetView<MediaFoldersController> {
   static void open() {
+    Get.lazyPut(() => MediaFoldersController());
     Get.dialog(MediaFoldersDialog());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select folder'),
-        centerTitle: true,
-      ),
-      body: Obx(
-        () => Center(
-          child: controller.mediaFolders.isBlank!
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: Text(
-                        'There appears to be no audiobooks folders configured please add one',
-                        textAlign: TextAlign.center,
-                      ),
+    return CupertinoAlertDialog(
+      title: const Text('Media folders'),
+      content: Obx(
+        () => controller.mediaFolders.isBlank!
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.blockSizeHorizontal * 5),
+                    child: const Text(
+                      'There appears to be no audiobooks folders configured please add one',
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 50),
-                    ElevatedButton(
-                        onPressed: () async {
-                          final String? path = await controller.selectFolder();
-                          print(path);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(50, 50),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        child: const Text('Select media folders')),
-                  ],
-                )
-              : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  ...List.generate(
-                      controller.mediaFolders.length,
-                      (index) => Container(
-                            margin: const EdgeInsets.all(10.0),
-                            padding: const EdgeInsets.all(15.0),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              color: Colors.blue.shade600,
-                              width: 2.0,
-                            )),
-                            child: Text(controller.mediaFolders[index]),
-                          )),
-                  ElevatedButton(
-                      onPressed: () async {
-                        final String? path = await controller.selectFolder();
-                        print(path);
-                      },
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(50, 50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20))),
-                      child: const Text('Add media folders')),
-                ]),
-        ),
+                  ),
+                  SizedBox(height: SizeConfig.blockSizeVertical * 4),
+                ],
+              )
+            : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                ...List.generate(
+                    controller.mediaFolders.length,
+                    (index) => Container(
+                          margin: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: Colors.blue.shade600,
+                                width: 2.0,
+                              )),
+                          child:
+                              Text(p.basename(controller.mediaFolders[index])),
+                        )),
+              ]),
       ),
+      actions: [
+        TextButton(
+            onPressed: () async => controller.selectFolder(),
+            child: const Text('Add folder')),
+        TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Color(0xFFFA3434)),
+            ))
+      ],
     );
   }
 }

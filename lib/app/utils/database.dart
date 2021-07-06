@@ -99,6 +99,7 @@ class LocalDatabase {
       CREATE TABLE $shelvesTable (
         shelfId INTEGER PRIMARY KEY,
         shelfName TEXT NOT NULL,
+        numberOf INTEGER NOT NULL,
         rank INTEGER NOT NULL
     )''');
 
@@ -107,7 +108,6 @@ class LocalDatabase {
       CREATE TABLE $recentlyAddedTable (
         shelfId INTEGER NOT NULL,
         albumId INTEGER NOT NULL,
-        numberOf INTEGER NOT NULL,
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
         FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
     )''');
@@ -117,7 +117,6 @@ class LocalDatabase {
       CREATE TABLE $listeningTable (
         albumId INTEGER,
         shelfId INTEGER,
-        numberOf INTEGER NOT NULL,
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
         FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
           )''');
@@ -127,7 +126,6 @@ class LocalDatabase {
       CREATE TABLE $completedTable (
         albumId INTEGER,
         shelfId INTEGER,
-        numberOf INTEGER NOT NULL,
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
         FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
           )''');
@@ -137,7 +135,6 @@ class LocalDatabase {
       CREATE TABLE $favoritesTable (
         albumId INTEGER,
         shelfId INTEGER,
-        numberOf INTEGER NOT NULL,
         FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
         FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
           )''');

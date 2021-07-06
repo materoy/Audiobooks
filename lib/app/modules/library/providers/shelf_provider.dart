@@ -10,27 +10,31 @@ class ShelfProvider extends BaseProvider {
     batch.insert(LocalDatabase.shelvesTable, {
       'shelfName': 'Recently added',
       'rank': 1,
+      'numberOf': 0,
     });
 
     batch.insert(LocalDatabase.shelvesTable, {
       'shelfName': 'Listening',
       'rank': 2,
+      'numberOf': 0,
     });
 
     batch.insert(LocalDatabase.shelvesTable, {
       'shelfName': 'Completed',
       'rank': 3,
+      'numberOf': 0,
     });
 
     batch.insert(LocalDatabase.shelvesTable, {
       'shelfName': 'Favorites',
       'rank': 4,
+      'numberOf': 0,
     });
 
     batch.commit();
   }
 
-  Future<Map<int, String>?> getShelves() async {
+  Future<Map<int, String>> getShelves() async {
     final resultsSet = await localDatabase.database
         .query(LocalDatabase.shelvesTable, orderBy: 'rank');
 
@@ -42,7 +46,7 @@ class ShelfProvider extends BaseProvider {
       }
       return shelves;
     } else {
-      return null;
+      return {};
     }
   }
 }

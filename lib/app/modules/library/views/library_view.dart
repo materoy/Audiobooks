@@ -25,22 +25,22 @@ class LibraryView extends GetView<LibraryController> {
       child: Material(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: ListView(
-            children: [
-              ...List.generate(controller.shelves.length, (index) {
-                return ShelfCard(
-                    shelfName: controller.shelves[index + 1] ?? '',
-                    number: 2,
-                    shelfIcon: const Icon(Icons.menu_book_rounded),
-                    onPressed: (value) => null);
-              }),
-              ShelfCard(
-                  shelfName: 'New shelf',
-                  number: 2,
-                  shelfIcon: const Icon(Icons.menu_book_rounded),
-                  onPressed: (value) => null),
-            ],
-          ),
+          child: Obx(() => ListView(
+                children: [
+                  ...List.generate(controller.shelves.length, (index) {
+                    return ShelfCard(
+                        shelfName: controller.shelves[index + 1] ?? '',
+                        number: 2,
+                        shelfIcon: const Icon(Icons.menu_book_rounded),
+                        onPressed: (value) => null);
+                  }),
+                  ShelfCard(
+                      shelfName: 'New shelf',
+                      number: 2,
+                      shelfIcon: const Icon(Icons.menu_book_rounded),
+                      onPressed: (value) => null),
+                ],
+              )),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
+import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:audiobooks/app/utils/database.dart';
@@ -33,11 +34,11 @@ class MediaScanner {
         final String extensiton = p.extension(entity.path);
         if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
           final Track track = await getMediaInfo(entity.path);
-          print('Added ${track.trackName} to db');
 
           /// Adds album
           if (!(track.albumName == null && track.trackName == null)) {
-            _addCollectionToDatabase(Album(
+            print('Added ${track.trackName} to db');
+            _addAlbumToDatabase(Album(
               albumName: track.albumName!,
               albumAuthor: track.albumArtistName,
               albumArt: track.albumArt,
@@ -47,6 +48,9 @@ class MediaScanner {
             /// Adds media to database
             await _addAudiobookToDatabase(track);
           }
+
+          // if (Get.isSnackbarOpen!) Get.back();
+          Get.snackbar("New book !", 'Added new audiobook ${track.trackName}');
         }
       }
     }
@@ -62,7 +66,7 @@ class MediaScanner {
     return _audiobook;
   }
 
-  Future<void> _addCollectionToDatabase(Album album) async {
+  Future<void> _addAlbumToDatabase(Album album) async {
     final String albumsTable = LocalDatabase.albumsTable;
     final String recentlyAddedTable = LocalDatabase.recentlyAddedTable;
 
@@ -81,11 +85,29 @@ class MediaScanner {
         album.albumArt,
       ]);
 
+      // When there is a unique album it is added to the database
+      // A return type of 0 means that there was a match confict
       if (albumId != 0) {
+        // Inserts to the recently added table because of course its been
+        // recently added huh
         await txn.rawInsert('''
           INSERT OR IGNORE INTO $recentlyAddedTable 
             (albumId) VALUES (?)
         ''', [albumId]);
+
+        // This queries the number of objects present in the shelves table
+        final resultsSet = await txn.query(LocalDatabase.shelvesTable,
+            columns: ['numberOf'],
+            where: 'shelfName = ?',
+            whereArgs: ['Recently added']);
+        if (resultsSet.isNotEmpty) {
+          final int numberOf = resultsSet.first['numberOf']! as int;
+          // Updates the number of objects in the shelves table
+          // increments it by one
+          await txn.update(
+              LocalDatabase.shelvesTable, {'numberOf': numberOf + 1},
+              where: 'shelfName = ?', whereArgs: ['Recently added']);
+        }
       }
     });
   }

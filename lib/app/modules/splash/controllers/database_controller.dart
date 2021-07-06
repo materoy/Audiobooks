@@ -22,11 +22,15 @@ class DatabaseController extends GetxController {
       if (isOpen) {
         databaseOpen.value = true;
         await localDatabase.initializeDatabaseSchema();
+
+        Get.offAndToNamed(Routes.LIBRARY);
+
         // Checks if there are loaded paths
-        await checkDirectoryPathsExist().then((directoryLoaded) =>
-            !directoryLoaded
-                ? MediaFoldersDialog.open()
-                : Get.offAndToNamed(Routes.LIBRARY));
+        await checkDirectoryPathsExist().then((directoryLoaded) {
+          // And if there are no directories configured open the select
+          // media directory dialog
+          if (!directoryLoaded) MediaFoldersDialog.open();
+        });
       }
     });
 

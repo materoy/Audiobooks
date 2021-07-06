@@ -3,7 +3,7 @@ import 'package:audiobooks/app/modules/splash/controllers/database_controller.da
 import 'package:get/get.dart';
 
 class LibraryController extends GetxController {
-  ShelfProvider get shelfProvider =>
+  ShelfProvider get _shelfProvider =>
       ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
 
   final _shelves = <int, String>{}.obs;
@@ -14,13 +14,11 @@ class LibraryController extends GetxController {
   @override
   Future onInit() async {
     super.onInit();
-    await shelfProvider.getShelves().then((value) {
-      if (value == null) {
-        shelfProvider.initializeDefaultShelves();
-      } else {
-        _shelves.addAll(value);
-      }
-    });
+    shelves = await _shelfProvider.getShelves();
+    if (shelves.isEmpty) {
+      await _shelfProvider.initializeDefaultShelves();
+      shelves = await _shelfProvider.getShelves();
+    }
   }
 
   @override
