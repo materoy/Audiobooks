@@ -10,6 +10,7 @@ abstract class Routes {
   static const SPLASH = _Paths.SPLASH;
   static const LIBRARY = _Paths.LIBRARY;
   static const SETTINGS = _Paths.SETTINGS;
+  static const SHELF = _Paths.SHELF;
 }
 
 abstract class _Paths {
@@ -19,4 +20,5 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const LIBRARY = '/library';
   static const SETTINGS = '/settings';
+  static const SHELF = '/shelf';
 }

@@ -10,6 +10,8 @@ import 'package:audiobooks/app/modules/player/bindings/player_binding.dart';
 import 'package:audiobooks/app/modules/player/views/player_view.dart';
 import 'package:audiobooks/app/modules/settings/bindings/settings_binding.dart';
 import 'package:audiobooks/app/modules/settings/views/settings_view.dart';
+import 'package:audiobooks/app/modules/shelf/bindings/shelf_binding.dart';
+import 'package:audiobooks/app/modules/shelf/views/shelf_view.dart';
 import 'package:audiobooks/app/modules/splash/bindings/splash_binding.dart';
 import 'package:audiobooks/app/modules/splash/views/splash_view.dart';
 
@@ -50,6 +52,11 @@ class AppPages {
       name: _Paths.SETTINGS,
       page: () => SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: _Paths.SHELF,
+      page: () => ShelfView(),
+      binding: ShelfBinding(),
     ),
   ];
 }

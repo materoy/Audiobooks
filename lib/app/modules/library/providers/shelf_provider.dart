@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/data/models/shelf.dart';
 import 'package:audiobooks/app/utils/base/base_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -34,19 +35,19 @@ class ShelfProvider extends BaseProvider {
     batch.commit();
   }
 
-  Future<Map<int, String>> getShelves() async {
+  Future<List<Shelf>> getShelves() async {
     final resultsSet = await localDatabase.database
         .query(LocalDatabase.shelvesTable, orderBy: 'rank');
 
     if (resultsSet.isNotEmpty) {
-      Map<int, String> shelves;
-      shelves = {};
-      for (final Map shelf in resultsSet) {
-        shelves.addAll({shelf['rank']: shelf['shelfName']});
+      List<Shelf> shelves;
+      shelves = [];
+      for (final Map<String, dynamic> shelf in resultsSet) {
+        shelves.add(Shelf.fromMap(shelf));
       }
       return shelves;
     } else {
-      return {};
+      return [];
     }
   }
 }

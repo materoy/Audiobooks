@@ -29,16 +29,15 @@ class LibraryView extends GetView<LibraryController> {
                 children: [
                   ...List.generate(controller.shelves.length, (index) {
                     return ShelfCard(
-                        shelfName: controller.shelves[index + 1] ?? '',
-                        number: 2,
-                        shelfIcon: const Icon(Icons.menu_book_rounded),
-                        onPressed: (value) => null);
+                        shelf: controller.shelves[index],
+                        onPressed: (value) =>
+                            Get.toNamed(Routes.SHELF, arguments: value));
                   }),
-                  ShelfCard(
-                      shelfName: 'New shelf',
-                      number: 2,
-                      shelfIcon: const Icon(Icons.menu_book_rounded),
-                      onPressed: (value) => null),
+                  // ShelfCard(
+                  //     shelfName: 'New shelf',
+                  //     shelfIcon: const Icon(Icons.menu_book_rounded),
+                  //     onPressed: (value) =>
+                  //         Get.toNamed(Routes.SHELF, arguments: value)),
                 ],
               )),
         ),
