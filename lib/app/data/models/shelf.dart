@@ -5,16 +5,16 @@ class Shelf extends Equatable {
       {required this.shelfId,
       required this.shelfName,
       required this.rank,
-      required this.numberOf,
+      required this.amount,
       this.shelfIcon});
 
   final int shelfId;
   final String shelfName;
   final int rank;
-  final int numberOf;
+  final int amount;
   final String? shelfIcon;
   @override
-  List<Object?> get props => [shelfName, rank, numberOf];
+  List<Object?> get props => [shelfName, rank, amount];
 
   @override
   bool? get stringify => true;
@@ -24,7 +24,7 @@ class Shelf extends Equatable {
       'shelfId': shelfId,
       'shelfName': shelfName,
       'rank': rank,
-      'numberOf': numberOf,
+      'amount': amount,
       'shelfIcon': shelfIcon,
     };
   }
@@ -34,7 +34,7 @@ class Shelf extends Equatable {
       shelfId: shelfMap['shelfId'],
       shelfName: shelfMap['shelfName'],
       rank: shelfMap['rank'],
-      numberOf: shelfMap['numberOf'],
+      amount: shelfMap['amount'],
       shelfIcon: shelfMap['shelfIcon'],
     );
   }

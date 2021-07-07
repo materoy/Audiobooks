@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import 'package:audiobooks/app/modules/home/bindings/home_binding.dart';
 import 'package:audiobooks/app/modules/home/views/home_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
 import 'package:audiobooks/app/modules/library/views/library_view.dart';
@@ -23,11 +22,6 @@ class AppPages {
   static const INITIAL = Routes.SPLASH;
 
   static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => HomeView(),
-      binding: HomeBinding(),
-    ),
     GetPage(
       name: _Paths.MEDIA_FOLDERS,
       page: () => MediaFoldersDialog(),

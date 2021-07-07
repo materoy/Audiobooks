@@ -68,7 +68,6 @@ class MediaScanner {
 
   Future<void> _addAlbumToDatabase(Album album) async {
     final String albumsTable = LocalDatabase.albumsTable;
-    final String recentlyAddedTable = LocalDatabase.recentlyAddedTable;
 
     localDatabase.database.transaction((txn) async {
       final int albumId = await txn.rawInsert('''
@@ -90,22 +89,28 @@ class MediaScanner {
       if (albumId != 0) {
         // Inserts to the recently added table because of course its been
         // recently added huh
+
+        final shelfIdMap = await txn.query(LocalDatabase.shelvesTable,
+            columns: ['shelfId'],
+            where: 'shelfName = ?',
+            whereArgs: ['Recently added']);
+
+        final int recentlyAddedShelfId = shelfIdMap.first['shelfId']! as int;
         await txn.rawInsert('''
-          INSERT OR IGNORE INTO $recentlyAddedTable 
-            (albumId) VALUES (?)
-        ''', [albumId]);
+          INSERT OR IGNORE INTO ${LocalDatabase.shelfMembersTable} 
+            (shelfId, albumId) VALUES (?, ?)
+        ''', [recentlyAddedShelfId, albumId]);
 
         // This queries the number of objects present in the shelves table
         final resultsSet = await txn.query(LocalDatabase.shelvesTable,
-            columns: ['numberOf'],
+            columns: ['amount'],
             where: 'shelfName = ?',
             whereArgs: ['Recently added']);
         if (resultsSet.isNotEmpty) {
-          final int numberOf = resultsSet.first['numberOf']! as int;
+          final int amount = resultsSet.first['amount']! as int;
           // Updates the number of objects in the shelves table
           // increments it by one
-          await txn.update(
-              LocalDatabase.shelvesTable, {'numberOf': numberOf + 1},
+          await txn.update(LocalDatabase.shelvesTable, {'amount': amount + 1},
               where: 'shelfName = ?', whereArgs: ['Recently added']);
         }
       }

@@ -27,35 +27,6 @@ class HomeController extends GetxController {
 
   Future<void> addTracks() async {
     /// Gets all the now reading tracks
-    switch (_tabState.value) {
-      case TabState.New:
-        await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.recentlyAddedTable)
-            .then((value) {
-          _newAlbums.clear();
-          _newAlbums.addAll(value);
-        });
-        break;
-
-      case TabState.NowListening:
-        await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.listeningTable)
-            .then((value) {
-          _nowListeningAlbums.clear();
-          _nowListeningAlbums.addAll(value);
-        });
-        break;
-
-      case TabState.Finished:
-        await _albumProvider
-            .getAlbumsInCategory(LocalDatabase.completedTable)
-            .then((value) {
-          _finishedAlbums.clear();
-          _finishedAlbums.addAll(value);
-        });
-        break;
-      default:
-    }
   }
 
   @override

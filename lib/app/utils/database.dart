@@ -13,10 +13,7 @@ class LocalDatabase {
   static const String tracksTable = 'Tracks';
   static const String albumsTable = 'Albums';
   static const String shelvesTable = 'Shelves';
-  static const String recentlyAddedTable = 'RecentlyAdded';
-  static const String completedTable = 'Completed';
-  static const String listeningTable = 'Listening';
-  static const String favoritesTable = 'Favorites';
+  static const String shelfMembersTable = 'ShelfMembers';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
 
   LocalDatabase({Database? testDatabase}) {
@@ -99,45 +96,16 @@ class LocalDatabase {
       CREATE TABLE $shelvesTable (
         shelfId INTEGER PRIMARY KEY,
         shelfName TEXT NOT NULL,
-        numberOf INTEGER NOT NULL,
+        amount INTEGER NOT NULL,
         rank INTEGER NOT NULL
     )''');
 
-          /// Create unread table
           await txn.execute('''
-      CREATE TABLE $recentlyAddedTable (
+      CREATE TABLE $shelfMembersTable (
         shelfId INTEGER NOT NULL,
         albumId INTEGER NOT NULL,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
-        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
+        UNIQUE(shelfId, albumId)
     )''');
-
-          /// Create now reading table
-          await txn.execute('''
-      CREATE TABLE $listeningTable (
-        albumId INTEGER,
-        shelfId INTEGER,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
-        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
-          )''');
-
-          /// Create finished table
-          await txn.execute('''
-      CREATE TABLE $completedTable (
-        albumId INTEGER,
-        shelfId INTEGER,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
-        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
-          )''');
-
-          /// Create finished table
-          await txn.execute('''
-      CREATE TABLE $favoritesTable (
-        albumId INTEGER,
-        shelfId INTEGER,
-        FOREIGN KEY (albumId) REFERENCES $albumsTable (albumId),
-        FOREIGN KEY (shelfId) REFERENCES $shelvesTable (shelfId)
-          )''');
         });
 
         /// Rat to the app that the database is ok

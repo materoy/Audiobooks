@@ -45,7 +45,7 @@ class AudioController extends GetxController {
     _playing.value = true;
     await audioPlayer.play();
     if (Get.find<HomeController>().tabState == TabState.New) {
-      moveFromUnreadToReading();
+      // moveFromUnreadToReading();
     }
   }
 
@@ -67,13 +67,13 @@ class AudioController extends GetxController {
     return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
   }
 
-  Future<void> moveFromUnreadToReading() async {
-    await _albumProvider.changeReadingState(
-        albumId: currentAlbumId,
-        fromTable: LocalDatabase.recentlyAddedTable,
-        toTable: LocalDatabase.listeningTable);
-    log('Moved to now reading ');
-  }
+  // Future<void> moveFromUnreadToReading() async {
+  //   await _albumProvider.changeReadingState(
+  //       albumId: currentAlbumId,
+  //       fromTable: LocalDatabase.recentlyAddedTable,
+  //       toTable: LocalDatabase.listeningTable);
+  //   log('Moved to now reading ');
+  // }
 
   Stream<Duration> streamPosition() async* {
     if (audioPlayer.playing) {

@@ -64,7 +64,7 @@ class ShelfCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF110000)),
                   ),
-                  Text('${shelf.numberOf} books'),
+                  Text('${shelf.amount} books'),
                   const Divider(
                     color: Color(0xFFAFAFAF),
                     thickness: .7,

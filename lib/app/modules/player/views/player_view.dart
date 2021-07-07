@@ -1,6 +1,6 @@
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
-import 'package:audiobooks/app/modules/home/controllers/audio_controller.dart';
+import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
 import 'package:audiobooks/app/utils/size_config.dart';

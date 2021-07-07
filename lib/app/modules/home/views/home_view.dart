@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
-import 'widgets/albums_list.dart';
+import '../../shelf/views/widgets/albums_list.dart';
 import 'widgets/tab_label.dart';
 
 class HomeView extends GetView<HomeController> {

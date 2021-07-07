@@ -1,4 +1,4 @@
-import 'package:audiobooks/app/modules/home/providers/media_scanner.dart';
+import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
