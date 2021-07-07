@@ -14,6 +14,7 @@ class Themes {
     primarySwatch: Colors.lightBlue,
     accentColor: const Color(0xFFFB7813),
     cardColor: const Color(0xFFFFFFFF),
+    buttonColor: const Color(0xFF007AFF),
     iconTheme: const IconThemeData(color: Colors.black),
     // canvasColor: Color.fromRGBO(86, 194, 255, 1),
     canvasColor: Colors.transparent,

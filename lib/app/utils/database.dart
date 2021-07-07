@@ -150,6 +150,7 @@ class LocalDatabase {
     await database.close();
     final localStorage = GetStorage();
     localStorage.remove(databaseInitialisedStatusStorage);
+    localStorage.remove('InitializedShelves');
     log('The database has been reset');
   }
 }

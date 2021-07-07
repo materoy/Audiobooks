@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/album.dart';
+import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
@@ -54,6 +55,9 @@ class MediaScanner {
         }
       }
     }
+
+    /// Refreshes the state of the shelves since new media has been added
+    Get.find<LibraryController>().refreshShelves();
   }
 
   Future<Track> getMediaInfo(String mediaPath) async {

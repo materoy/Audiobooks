@@ -10,7 +10,7 @@ class ShelfCard extends StatelessWidget {
   }) : super(key: key);
 
   final Shelf shelf;
-  final Function(int) onPressed;
+  final VoidCallback onPressed;
 
   IconData? get commonIcons {
     switch (shelf.shelfName) {
@@ -30,7 +30,7 @@ class ShelfCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onPressed(shelf.shelfId),
+      onTap: onPressed,
       child: Container(
         margin:
             EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical * 1.5),

@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:audiobooks/l10n/l10n.dart';
 import 'package:get/get.dart';
 
+import 'data/theme/theme.dart';
 import 'routes/app_pages.dart';
 import 'utils/size_config.dart';
 
@@ -20,11 +21,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData(
-        accentColor: const Color(0xFF13B9FF),
-        appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
-      ),
-      // darkTheme: ThemeData.dark(),
+      theme: Themes().lightTheme,
+      // darkTheme: Themes.darkTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

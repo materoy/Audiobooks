@@ -3,6 +3,7 @@ import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
+import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
@@ -15,6 +16,8 @@ class AlbumCard extends GetView<AlbumController> {
   final Album album;
 
   final AudioController audioController = Get.find<AudioController>();
+
+  final ShelfController _shelfController = Get.find<ShelfController>();
 
   @override
   AlbumController get controller => Get.put(
@@ -56,27 +59,35 @@ class AlbumCard extends GetView<AlbumController> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Center(
-              child: Obx(() => controller.currentTrack.path != null
-                  // ? PlayPauseButton(
-                  //     audioFilePath: controller.currentTrack.path!,
-                  //     onPressed: () {
-                  //       audioController.currentAlbumId =
-                  //           controller.album.albumId!;
-                  //       audioController.currentTrackId =
-                  //           controller.currentTrack.trackId!;
-                  //       controller.updateCurrentTrack(
-                  //           controller.currentTrack.trackId!);
-                  //     },
-                  //   )
-                  ? ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0))),
-                      child: const Text('Continue'),
-                    )
-                  : const CircularProgressIndicator.adaptive()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Obx(() => controller.currentTrack.path != null
+                    ? PlayPauseButton(
+                        audioFilePath: controller.currentTrack.path!,
+                        onPressed: () {
+                          audioController.currentAlbumId =
+                              controller.album.albumId!;
+                          audioController.currentTrackId =
+                              controller.currentTrack.trackId!;
+                          controller.updateCurrentTrack(
+                              controller.currentTrack.trackId!);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 8),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).buttonColor,
+                              borderRadius: BorderRadius.circular(20.0)),
+                          child: Text(_shelfController.shelf.shelfName ==
+                                  'Recently added'
+                              ? 'Listen'
+                              : 'Continue'),
+                        ),
+                      )
+                    : const CircularProgressIndicator.adaptive()),
+                TextButton(onPressed: () {}, child: const Text('View'))
+              ],
             ),
             const Spacer(),
           ],

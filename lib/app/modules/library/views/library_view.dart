@@ -10,6 +10,7 @@ import '../controllers/library_controller.dart';
 class LibraryView extends GetView<LibraryController> {
   @override
   Widget build(BuildContext context) {
+    controller.onReady();
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: const Text(
@@ -30,8 +31,8 @@ class LibraryView extends GetView<LibraryController> {
                   ...List.generate(controller.shelves.length, (index) {
                     return ShelfCard(
                         shelf: controller.shelves[index],
-                        onPressed: (value) =>
-                            Get.toNamed(Routes.SHELF, arguments: value));
+                        onPressed: () => Get.toNamed(Routes.SHELF,
+                            arguments: controller.shelves[index]));
                   }),
                   // ShelfCard(
                   //     shelfName: 'New shelf',

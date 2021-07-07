@@ -13,6 +13,6 @@ class SplashBinding extends Bindings {
 
     Get.put(DatabaseController());
 
-    Get.lazyPut<AudioController>(() => AudioController());
+    Get.put<AudioController>(AudioController(), permanent: true);
   }
 }

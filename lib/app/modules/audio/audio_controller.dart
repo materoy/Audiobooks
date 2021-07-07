@@ -1,10 +1,11 @@
 import 'dart:developer';
 
-import 'package:audiobooks/app/modules/home/controllers/home_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
+import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
+import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
+import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
-import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -12,9 +13,6 @@ class AudioController extends GetxController {
   final AudioPlayer audioPlayer = AudioPlayer();
   PlayerProvider get _playerProvider =>
       PlayerProvider(Get.find<DatabaseController>().localDatabase);
-
-  AlbumProvider get _albumProvider =>
-      AlbumProvider(Get.find<DatabaseController>().localDatabase);
 
   late int currentTrackId;
   late int currentAlbumId;
@@ -44,8 +42,10 @@ class AudioController extends GetxController {
     await audioPlayer.seek(Duration(milliseconds: currentPosition));
     _playing.value = true;
     await audioPlayer.play();
-    if (Get.find<HomeController>().tabState == TabState.New) {
-      // moveFromUnreadToReading();
+    if (Get.find<ShelfController>().shelf.shelfName == 'Recently added') {
+      await moveFromRecentlyAddedToListening();
+      await Get.find<LibraryController>().refreshShelves();
+      print("Hello earthling");
     }
   }
 
@@ -67,13 +67,17 @@ class AudioController extends GetxController {
     return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
   }
 
-  // Future<void> moveFromUnreadToReading() async {
-  //   await _albumProvider.changeReadingState(
-  //       albumId: currentAlbumId,
-  //       fromTable: LocalDatabase.recentlyAddedTable,
-  //       toTable: LocalDatabase.listeningTable);
-  //   log('Moved to now reading ');
-  // }
+  Future<void> moveFromRecentlyAddedToListening() async {
+    final ShelfProvider shelfProvider =
+        ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
+
+    shelfProvider.moveAlbumToAnotherShelf(
+        fromShelfId: Get.find<ShelfController>().shelf.shelfId,
+        toShelfName: 'Listening',
+        albumId: currentAlbumId);
+
+    log('Moved to listening');
+  }
 
   Stream<Duration> streamPosition() async* {
     if (audioPlayer.playing) {

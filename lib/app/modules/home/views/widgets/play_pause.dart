@@ -5,12 +5,17 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PlayPauseButton extends GetView<AudioController> {
   const PlayPauseButton(
-      {Key? key, required this.audioFilePath, this.onPressed, this.size})
+      {Key? key,
+      required this.audioFilePath,
+      this.onPressed,
+      this.size,
+      this.child})
       : super(key: key);
 
   final String audioFilePath;
   final VoidCallback? onPressed;
   final double? size;
+  final Widget? child;
   // @override
   // String? get tag => entryName;
 
@@ -25,14 +30,15 @@ class PlayPauseButton extends GetView<AudioController> {
           onPressed!();
         }
       },
-      child: Center(
-          child: Obx(() => Icon(
-                controller.playing && controller.audioPath == audioFilePath
-                    ? Icons.pause_circle_outline_rounded
-                    : Icons.play_circle_fill_rounded,
-                size: size ?? 40.0,
-                color: const Color(0xFF2E429C),
-              ))),
+      child: child ??
+          Center(
+              child: Obx(() => Icon(
+                    controller.playing && controller.audioPath == audioFilePath
+                        ? Icons.pause_circle_outline_rounded
+                        : Icons.play_circle_fill_rounded,
+                    size: size ?? 40.0,
+                    color: const Color(0xFF2E429C),
+                  ))),
     );
   }
 }
