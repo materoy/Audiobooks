@@ -20,10 +20,8 @@ class DatabaseController extends GetxController {
     // Checks if the databse schema is initialized
     openLocalDatabase().then((isOpen) async {
       if (isOpen) {
-        databaseOpen.value = true;
         await localDatabase.initializeDatabaseSchema();
-
-        Get.offAndToNamed(Routes.LIBRARY);
+        databaseOpen.value = true;
 
         // Checks if there are loaded paths
         await checkDirectoryPathsExist().then((directoryLoaded) {

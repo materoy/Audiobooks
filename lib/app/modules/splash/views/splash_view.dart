@@ -64,10 +64,10 @@ class _BreathePainter extends CustomPainter {
   _BreathePainter(
     this.animation, {
     this.count = 6,
-    Color color = const Color(0xFF61bea2),
+    Color color = const Color(0xFF00C288),
   })  : circlePaint = Paint()
           ..color = color
-          ..blendMode = BlendMode.screen,
+          ..blendMode = BlendMode.softLight,
         super(repaint: animation);
 
   final Animation<double> animation;

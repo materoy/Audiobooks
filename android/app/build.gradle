@@ -69,6 +69,7 @@ android {
                 storePassword keystoreProperties['storePassword']
             }
         }
+        
     }
 
     flavorDimensions "default"
@@ -96,6 +97,7 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
+            shrinkResources false
         }
     }
 }

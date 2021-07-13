@@ -4,6 +4,7 @@ import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -15,85 +16,97 @@ class PlayerView extends GetView<AlbumController> {
       tag: (Get.arguments as Album).albumId.toString());
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        // Album Title
-        Text(
-          controller.album.albumName,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 14),
+    return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          previousPageTitle: 'Shelf',
         ),
+        child: Material(
+          child: Padding(
+            padding: const EdgeInsets.only(top: kToolbarHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Album Title
+                Text(
+                  controller.album.albumName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
 
-        Text(
-          controller.album.albumAuthor ??
-              controller.currentTrack.albumArtistName ??
-              controller.currentTrack.authorName ??
-              controller.currentTrack.trackArtistNames!.toList().first!,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 14),
-        ),
+                Text(
+                  controller.album.albumAuthor ??
+                      controller.currentTrack.albumArtistName ??
+                      controller.currentTrack.authorName ??
+                      controller.currentTrack.trackArtistNames!.toList().first!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
 
-        CircleAvatar(
-          radius: SizeConfig.blockSizeHorizontal * 35,
-          backgroundColor: Colors.grey,
-          backgroundImage: controller.album.albumArt != null
-              ? MemoryImage(controller.album.albumArt!)
-              : null,
-        ),
+                CircleAvatar(
+                  radius: SizeConfig.blockSizeHorizontal * 35,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: controller.album.albumArt != null
+                      ? MemoryImage(controller.album.albumArt!)
+                      : null,
+                ),
 
-        SeekBar(
-            onChanged: (value) {
-              audioController.audioPlayer.seek(value);
-            },
-            onChangeEnd: (value) {
-              audioController.updatePlayPosition(
-                  newPosition: value.inMilliseconds);
-            },
-            duration:
-                Duration(milliseconds: controller.currentTrack.trackDuration!),
-            position: Duration(
-                milliseconds: controller.currentTrack.currentPosition ?? 0)),
+                SeekBar(
+                    onChanged: (value) {
+                      audioController.audioPlayer.seek(value);
+                    },
+                    onChangeEnd: (value) {
+                      audioController.updatePlayPosition(
+                          newPosition: value.inMilliseconds);
+                    },
+                    duration: Duration(
+                        milliseconds: controller.currentTrack.trackDuration!),
+                    position: Duration(
+                        milliseconds:
+                            controller.currentTrack.currentPosition ?? 0)),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-                onPressed: () => controller.goToPreviousTrack(),
-                icon: const Icon(Icons.skip_previous_rounded, size: 40)),
-            IconButton(
-                onPressed: () {
-                  audioController.updatePlayPosition(
-                      newPosition:
-                          audioController.audioPlayer.position.inMilliseconds -
-                              const Duration(seconds: 10).inMilliseconds);
-                },
-                icon: const Icon(Icons.replay_10_rounded, size: 40)),
-            PlayPauseButton(
-              audioFilePath: controller.currentTrack.path!,
-              size: 50,
-              onPressed: () {
-                audioController.currentAlbumId = controller.album.albumId!;
-                audioController.currentTrackId =
-                    controller.currentTrack.trackId!;
-                controller.updateCurrentTrack(controller.currentTrack.trackId!);
-              },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                        onPressed: () => controller.goToPreviousTrack(),
+                        icon:
+                            const Icon(Icons.skip_previous_rounded, size: 40)),
+                    IconButton(
+                        onPressed: () {
+                          audioController.updatePlayPosition(
+                              newPosition: audioController
+                                      .audioPlayer.position.inMilliseconds -
+                                  const Duration(seconds: 10).inMilliseconds);
+                        },
+                        icon: const Icon(Icons.replay_10_rounded, size: 40)),
+                    PlayPauseButton(
+                      audioFilePath: controller.currentTrack.path!,
+                      size: 50,
+                      onPressed: () {
+                        audioController.currentAlbumId =
+                            controller.album.albumId!;
+                        audioController.currentTrackId =
+                            controller.currentTrack.trackId!;
+                        controller.updateCurrentTrack(
+                            controller.currentTrack.trackId!);
+                      },
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          audioController.updatePlayPosition(
+                              newPosition: audioController
+                                      .audioPlayer.position.inMilliseconds +
+                                  const Duration(seconds: 10).inMilliseconds);
+                        },
+                        icon: const Icon(Icons.forward_10_rounded, size: 40)),
+                    IconButton(
+                        onPressed: () => controller.goToNextTrack(),
+                        icon: const Icon(Icons.skip_next_rounded, size: 40)),
+                  ],
+                )
+              ],
             ),
-            IconButton(
-                onPressed: () {
-                  audioController.updatePlayPosition(
-                      newPosition:
-                          audioController.audioPlayer.position.inMilliseconds +
-                              const Duration(seconds: 10).inMilliseconds);
-                },
-                icon: const Icon(Icons.forward_10_rounded, size: 40)),
-            IconButton(
-                onPressed: () => controller.goToNextTrack(),
-                icon: const Icon(Icons.skip_next_rounded, size: 40)),
-          ],
-        )
-      ],
-    ));
+          ),
+        ));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
@@ -17,17 +18,34 @@ class AlbumController extends GetxController {
   PlayerProvider get _playerProvider => PlayerProvider(_localDatabase);
 
   final _tracks = List<Track>.empty(growable: true).obs;
+  final _mediaItemsQueue = List<MediaItem>.empty(growable: true).obs;
   final _currentTrack = Track.empty().obs;
 
   List<Track> get tracks => _tracks;
   Track get currentTrack => _currentTrack.value;
+  MediaItem get currentMediaItem => getMediaItemFromTrack(currentTrack);
+  List<MediaItem> get mediaItemsQueue => _mediaItemsQueue;
 
+  /// Queries the database for tracks that contains current album Id
+  /// and stores them in tracks
   Future<void> getTracksInAlbum() async {
     await _trackProvider.getTracksInAlbum(album.albumId!).then((value) {
       _tracks.addAll(value);
+      for (final Track track in value) {
+        final MediaItem mediaItem = getMediaItemFromTrack(track);
+        _mediaItemsQueue.add(mediaItem);
+      }
     });
   }
 
+  MediaItem getMediaItemFromTrack(Track track) {
+    return MediaItem(
+        id: track.path!,
+        album: track.albumName ?? track.trackName ?? '',
+        title: track.trackName ?? track.albumName ?? '');
+  }
+
+  /// Sets the current track in album
   Future<void> updateCurrentTrack(int trackId) async {
     await _albumProvider.updateCurrentTrackInCollection(
         trackId: trackId, albumId: album.albumId!);

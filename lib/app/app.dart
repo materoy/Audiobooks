@@ -5,13 +5,14 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/splash/bindings/splash_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:audiobooks/l10n/l10n.dart';
 import 'package:get/get.dart';
 
-import 'data/theme/theme.dart';
+// import 'data/theme/theme.dart';
 import 'routes/app_pages.dart';
 import 'utils/size_config.dart';
 
@@ -20,8 +21,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      theme: Themes().lightTheme,
+    return GetCupertinoApp(
+      // theme: Themes().lightTheme,
       // darkTheme: Themes.darkTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -34,7 +35,8 @@ class App extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
         SizeConfig().init(context);
-        return child!;
+
+        return AudioServiceWidget(child: child!);
       },
     );
   }

@@ -11,14 +11,17 @@ class ShelfView extends GetView<ShelfController> {
   Widget build(BuildContext context) {
     controller.onReady();
     return CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          previousPageTitle: 'Library',
+        ),
         child: Material(
-      child: Obx(() => GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 3 / 4, crossAxisCount: 2),
-          itemCount: controller.albums.length,
-          itemBuilder: (context, index) {
-            return AlbumCard(album: controller.albums[index]);
-          })),
-    ));
+          child: Obx(() => GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 3 / 4, crossAxisCount: 2),
+              itemCount: controller.albums.length,
+              itemBuilder: (context, index) {
+                return AlbumCard(album: controller.albums[index]);
+              })),
+        ));
   }
 }

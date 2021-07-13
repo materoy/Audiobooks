@@ -7,6 +7,7 @@ import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -51,11 +52,31 @@ class AlbumCard extends GetView<AlbumController> {
               ),
               child: album.albumArt != null
                   ? Image.memory(album.albumArt!, fit: BoxFit.cover)
-                  : Container(),
+                  : Container(
+                      color: Colors.black,
+                    ),
             ),
-            Flexible(
+
+            /// The [album] name
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
               child: RichText(
-                text: TextSpan(text: album.albumName),
+                text: TextSpan(
+                    text: album.albumName,
+                    style: Theme.of(context).textTheme.bodyText1),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            /// Author names
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+              child: RichText(
+                text: TextSpan(
+                    text: album.albumAuthor,
+                    style: Theme.of(context).textTheme.bodyText1),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -73,17 +94,28 @@ class AlbumCard extends GetView<AlbumController> {
                           controller.updateCurrentTrack(
                               controller.currentTrack.trackId!);
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 8),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).buttonColor,
-                              borderRadius: BorderRadius.circular(20.0)),
-                          child: Text(_shelfController.shelf.shelfName ==
-                                  'Recently added'
-                              ? 'Listen'
-                              : 'Continue'),
-                        ),
+                        child: controller.currentTrack.path ==
+                                    audioController.audioPath &&
+                                audioController.playing
+                            ? Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).buttonColor,
+                                ),
+                                child: const Icon(CupertinoIcons.pause_fill),
+                              )
+                            : Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 8),
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).buttonColor,
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                child: Text(_shelfController.shelf.shelfName ==
+                                        'Recently added'
+                                    ? 'Listen'
+                                    : 'Continue'),
+                              ),
                       )
                     : const CircularProgressIndicator.adaptive()),
                 TextButton(onPressed: () {}, child: const Text('View'))
