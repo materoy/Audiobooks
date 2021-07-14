@@ -26,6 +26,8 @@ class AlbumController extends GetxController {
   MediaItem get currentMediaItem => getMediaItemFromTrack(currentTrack);
   List<MediaItem> get mediaItemsQueue => _mediaItemsQueue;
 
+  set currentMediaItem(MediaItem mediaItem) => currentMediaItem = mediaItem;
+
   /// Queries the database for tracks that contains current album Id
   /// and stores them in tracks
   Future<void> getTracksInAlbum() async {
@@ -40,9 +42,13 @@ class AlbumController extends GetxController {
 
   MediaItem getMediaItemFromTrack(Track track) {
     return MediaItem(
-        id: track.path!,
-        album: track.albumName ?? track.trackName ?? '',
-        title: track.trackName ?? track.albumName ?? '');
+      id: track.path!,
+      album: track.albumName ?? track.trackName ?? '',
+      title: track.trackName ?? track.albumName ?? '',
+      artist: track.albumArtistName ??
+          track.trackArtistNames?.toList().first ??
+          track.authorName,
+    );
   }
 
   /// Sets the current track in album

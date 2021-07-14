@@ -2,7 +2,6 @@ import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
-import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';

@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/audio/audio_controller.dart';
@@ -37,7 +38,10 @@ class PlayerView extends GetView<AlbumController> {
                   controller.album.albumAuthor ??
                       controller.currentTrack.albumArtistName ??
                       controller.currentTrack.authorName ??
-                      controller.currentTrack.trackArtistNames!.toList().first!,
+                      controller.currentTrack.trackArtistNames
+                          ?.toList()
+                          .first ??
+                      "",
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 14),
                 ),
@@ -50,19 +54,25 @@ class PlayerView extends GetView<AlbumController> {
                       : null,
                 ),
 
-                SeekBar(
-                    onChanged: (value) {
-                      audioController.audioPlayer.seek(value);
-                    },
-                    onChangeEnd: (value) {
-                      audioController.updatePlayPosition(
-                          newPosition: value.inMilliseconds);
-                    },
-                    duration: Duration(
-                        milliseconds: controller.currentTrack.trackDuration!),
-                    position: Duration(
-                        milliseconds:
-                            controller.currentTrack.currentPosition ?? 0)),
+                StreamBuilder(
+                    stream: AudioService.positionStream,
+                    builder: (context, AsyncSnapshot<Duration> snapshot) {
+                      if (snapshot.hasData) {
+                        return SeekBar(
+                            onChanged: (value) {
+                              AudioService.seekTo(value);
+                            },
+                            onChangeEnd: (value) {
+                              audioController.updatePlayPosition(
+                                  newPosition: value.inMilliseconds);
+                            },
+                            duration: Duration(
+                                milliseconds:
+                                    controller.currentTrack.trackDuration!),
+                            position: snapshot.data!);
+                      }
+                      return Container();
+                    }),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -74,9 +84,10 @@ class PlayerView extends GetView<AlbumController> {
                     IconButton(
                         onPressed: () {
                           audioController.updatePlayPosition(
-                              newPosition: audioController
-                                      .audioPlayer.position.inMilliseconds -
+                              newPosition: AudioService.playbackState
+                                      .currentPosition.inMilliseconds -
                                   const Duration(seconds: 10).inMilliseconds);
+                          // AudioService.seekBackward(begin)
                         },
                         icon: const Icon(Icons.replay_10_rounded, size: 40)),
                     PlayPauseButton(
@@ -94,8 +105,8 @@ class PlayerView extends GetView<AlbumController> {
                     IconButton(
                         onPressed: () {
                           audioController.updatePlayPosition(
-                              newPosition: audioController
-                                      .audioPlayer.position.inMilliseconds +
+                              newPosition: AudioService.playbackState
+                                      .currentPosition.inMilliseconds +
                                   const Duration(seconds: 10).inMilliseconds);
                         },
                         icon: const Icon(Icons.forward_10_rounded, size: 40)),
