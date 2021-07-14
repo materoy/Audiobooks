@@ -1,4 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/audio/audio_controller.dart';
+import 'package:audiobooks/app/modules/splash/controllers/splash_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -22,7 +24,11 @@ class PlayPauseButton extends GetView<AudioController> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        /// Starts the background audio service if it has been disabled
+        /// on the service UI
+        if (!AudioService.running) await startBackgroundAudioService();
+
         controller.playing
             ? controller.pause()
             : controller.play(audioFilePath);

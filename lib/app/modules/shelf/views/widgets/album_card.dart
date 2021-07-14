@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
@@ -14,8 +15,6 @@ class AlbumCard extends GetView<AlbumController> {
   AlbumCard({Key? key, required this.album}) : super(key: key);
 
   final Album album;
-
-  final AudioController audioController = Get.find<AudioController>();
 
   final ShelfController _shelfController = Get.find<ShelfController>();
 
@@ -86,16 +85,21 @@ class AlbumCard extends GetView<AlbumController> {
                     ? PlayPauseButton(
                         audioFilePath: controller.currentTrack.path!,
                         onPressed: () {
-                          audioController.currentAlbumId =
-                              controller.album.albumId!;
-                          audioController.currentTrackId =
-                              controller.currentTrack.trackId!;
+                          // audioController.currentAlbumId =
+                          //     controller.album.albumId!;
+                          // audioController.currentTrackId =
+                          //     controller.currentTrack.trackId!;
                           controller.updateCurrentTrack(
                               controller.currentTrack.trackId!);
+                          AudioService.updateQueue(controller.mediaItemsQueue);
+                          AudioServiceBackground.state.playing
+                              ? AudioService.pause()
+                              : AudioService.play();
                         },
-                        child: controller.currentTrack.path ==
-                                    audioController.audioPath &&
-                                audioController.playing
+                        child: AudioService.currentMediaItem != null &&
+                                controller.currentTrack.path ==
+                                    AudioService.currentMediaItem!.id &&
+                                AudioService.playbackState.playing
                             ? Container(
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(

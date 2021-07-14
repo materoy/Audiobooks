@@ -73,7 +73,7 @@ class AlbumController extends GetxController {
 
   Future<int> getCurrentTrackPosition() async {
     return _playerProvider
-        .getCurrentTrackPlayPosition(_currentTrack.value.trackId!);
+        .getCurrentTrackPlayPosition(_currentTrack.value.path!);
   }
 
   Future<void> goToNextTrack() async {

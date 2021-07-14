@@ -63,8 +63,8 @@ class PlayerView extends GetView<AlbumController> {
                               AudioService.seekTo(value);
                             },
                             onChangeEnd: (value) {
-                              audioController.updatePlayPosition(
-                                  newPosition: value.inMilliseconds);
+                              // audioController.updatePlayPosition(
+                              //     newPosition: value.inMilliseconds);
                             },
                             duration: Duration(
                                 milliseconds:
@@ -83,10 +83,11 @@ class PlayerView extends GetView<AlbumController> {
                             const Icon(Icons.skip_previous_rounded, size: 40)),
                     IconButton(
                         onPressed: () {
-                          audioController.updatePlayPosition(
-                              newPosition: AudioService.playbackState
-                                      .currentPosition.inMilliseconds -
-                                  const Duration(seconds: 10).inMilliseconds);
+                          AudioService.skipToNext();
+                          // audioController.updatePlayPosition(
+                          //     newPosition: AudioService.playbackState
+                          //             .currentPosition.inMilliseconds -
+                          //         const Duration(seconds: 10).inMilliseconds);
                           // AudioService.seekBackward(begin)
                         },
                         icon: const Icon(Icons.replay_10_rounded, size: 40)),
@@ -104,10 +105,11 @@ class PlayerView extends GetView<AlbumController> {
                     ),
                     IconButton(
                         onPressed: () {
-                          audioController.updatePlayPosition(
-                              newPosition: AudioService.playbackState
-                                      .currentPosition.inMilliseconds +
-                                  const Duration(seconds: 10).inMilliseconds);
+                          // AudioService.
+                          // audioController.updatePlayPosition(
+                          //     newPosition: AudioService.playbackState
+                          //             .currentPosition.inMilliseconds +
+                          //         const Duration(seconds: 10).inMilliseconds);
                         },
                         icon: const Icon(Icons.forward_10_rounded, size: 40)),
                     IconButton(

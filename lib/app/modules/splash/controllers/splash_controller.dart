@@ -6,6 +6,21 @@ import 'package:audiobooks/app/modules/splash/controllers/database_controller.da
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 
+void _backgroundAudioEntryPoint() {
+  AudioServiceBackground.run(() => AudioPlayerTask());
+}
+
+Future startBackgroundAudioService() async {
+  /// Starts the background audio service
+  await AudioService.start(
+    backgroundTaskEntrypoint: _backgroundAudioEntryPoint,
+    androidNotificationChannelName: 'Audiobooks',
+    //androidStopForegroundOnPause: true,
+    androidNotificationColor: 0xFF0683E9,
+    androidEnableQueue: true,
+  );
+}
+
 class SplashController extends GetxController {
   // final DatabaseController _databaseController = Get.find<DatabaseController>();
 
@@ -20,9 +35,7 @@ class SplashController extends GetxController {
 
   @override
   Future onInit() async {
-    // TODO: implement onInit
     super.onInit();
-
     databaseOpenStream =
         Get.find<DatabaseController>().databaseOpen.stream.listen;
     await AudioService.connect();
@@ -35,6 +48,7 @@ class SplashController extends GetxController {
     /// Navigates to route [Library] when database is open
     databaseOpenStream((data) {
       if (data != null && data) Get.offAndToNamed(Routes.LIBRARY);
+      startBackgroundAudioService();
     });
   }
 

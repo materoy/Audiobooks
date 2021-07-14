@@ -1,16 +1,27 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:collection/collection.dart';
+import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerTask extends BackgroundAudioTask {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  DatabaseController get _databaseController => Get.find<DatabaseController>();
+  PlayerProvider get _playerProvider =>
+      PlayerProvider(_databaseController.localDatabase);
 
   AudioProcessingState? _skipState;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
 
   final Function eq = const ListEquality().equals;
+
+  List<MediaItem> get queue => AudioServiceBackground.queue!;
+  int? get index => _audioPlayer.currentIndex;
+  MediaItem? get mediaItem => index == null ? null : queue[index!];
 
   /// Broadcasts the current state to all clients.
   Future<void> _broadcastState() async {
@@ -55,6 +66,15 @@ class AudioPlayerTask extends BackgroundAudioTask {
     }
   }
 
+  Future<void> updatePlayPosition({required int newPosition}) async {
+    _playerProvider.updateCurrentTrackPosition(
+        currentPosition: newPosition, path: mediaItem!.id);
+  }
+
+  Future<int> getCurrentPlayPosition() async {
+    return _playerProvider.getCurrentTrackPlayPosition(mediaItem!.id);
+  }
+
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
     _audioPlayer.playbackEventStream.listen((event) async {
@@ -82,7 +102,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onPlay() async {
     await _audioPlayer.play();
-
     return super.onPlay();
   }
 
@@ -104,6 +123,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateQueue(List<MediaItem> queue) async {
     if (!eq(AudioServiceBackground.queue, queue)) {
+      log('Update queue');
       await AudioServiceBackground.setQueue(queue);
     }
     try {
@@ -134,5 +154,26 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> onSkipToPrevious() {
     _audioPlayer.seekToPrevious();
     return super.onSkipToPrevious();
+  }
+
+  @override
+  Future<void> onSkipToQueueItem(String mediaId) async {
+    // Then default implementations of onSkipToNext and onSkipToPrevious will
+    // delegate to this method.
+    final newIndex = queue.indexWhere((item) => item.id == mediaId);
+    if (newIndex == -1) return;
+    // During a skip, the player may enter the buffering state. We could just
+    // propagate that state directly to AudioService clients but AudioService
+    // has some more specific states we could use for skipping to next and
+    // previous. This variable holds the preferred state to send instead of
+    // buffering during a skip, and it is cleared as soon as the player exits
+    // buffering (see the listener in onStart).
+    _skipState = newIndex > index!
+        ? AudioProcessingState.skippingToNext
+        : AudioProcessingState.skippingToPrevious;
+    // This jumps to the beginning of the queue item at newIndex.
+    _audioPlayer.seek(Duration.zero, index: newIndex);
+    // Demonstrate custom events.
+    AudioServiceBackground.sendCustomEvent('skip to $newIndex');
   }
 }
