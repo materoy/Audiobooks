@@ -1,25 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/audio/audio_player_task.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:get/get.dart';
-
-void _backgroundAudioEntryPoint() {
-  AudioServiceBackground.run(() => AudioPlayerTask());
-}
-
-Future startBackgroundAudioService() async {
-  /// Starts the background audio service
-  await AudioService.start(
-    backgroundTaskEntrypoint: _backgroundAudioEntryPoint,
-    androidNotificationChannelName: 'Audiobooks',
-    //androidStopForegroundOnPause: true,
-    androidNotificationColor: 0xFF0683E9,
-    androidEnableQueue: true,
-  );
-}
 
 class SplashController extends GetxController {
   // final DatabaseController _databaseController = Get.find<DatabaseController>();
@@ -42,14 +28,18 @@ class SplashController extends GetxController {
   }
 
   @override
-  void onReady() {
+  Future onReady() async {
     super.onReady();
 
     /// Navigates to route [Library] when database is open
     databaseOpenStream((data) {
       if (data != null && data) Get.offAndToNamed(Routes.LIBRARY);
-      startBackgroundAudioService();
     });
+
+    /// Starts the background audio service which runs on another isolate
+    /// This is lazy loading to ensure it'll be available when needed
+    /// when the audio is to be played, the service will be warmed up
+    await startBackgroundAudioService();
   }
 
   @override
@@ -57,4 +47,23 @@ class SplashController extends GetxController {
     super.dispose();
     databaseOpenStream(null).cancel();
   }
+}
+
+void _backgroundAudioEntryPoint() {
+  AudioServiceBackground.run(
+    () => AudioPlayerTask(),
+  );
+}
+
+Future startBackgroundAudioService({Map<String, dynamic>? params}) async {
+  /// Starts the background audio service
+  await AudioService.start(
+    backgroundTaskEntrypoint: _backgroundAudioEntryPoint,
+    androidNotificationChannelName: 'Audiobooks',
+    //androidStopForegroundOnPause: true,
+    androidNotificationColor: 0xFF0683E9,
+    androidShowNotificationBadge: true,
+    params: params,
+    androidEnableQueue: true,
+  );
 }

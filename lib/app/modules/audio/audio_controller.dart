@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audiobooks/app/modules/audio/audio_player_task.dart';
-import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
