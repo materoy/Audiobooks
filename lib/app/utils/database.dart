@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:get_storage/get_storage.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalDatabase {
@@ -35,11 +34,21 @@ class LocalDatabase {
     return databaseExists(path ?? databaseName);
   }
 
-  Future<bool?> initializeDatabaseSchema() async {
-    final localStorage = GetStorage();
+  /// Queries the top level sqlite Db and returns the number of tables that exist
+  /// Returns 0 if no tables have beeen added
+  Future<int> checkTablesExist() async {
+    final results = await database.transaction((txn) =>
+        txn.rawQuery("SELECT count(*) FROM sqlite_master WHERE type='table'"));
+    if (results.isNotEmpty) return results.first['count(*)']! as int;
+    return 0;
+  }
 
-    if (!localStorage.hasData(databaseInitialisedStatusStorage)) {
-      // if (true) {
+  Future<bool?> initializeDatabaseSchema() async {
+    final int tablesCount = await checkTablesExist();
+
+    /// Total number of table are 6 for now
+    /// So if not all exist please create missing ones, probably all then
+    if (tablesCount != 6) {
       try {
         log('Creating database schema');
 
@@ -108,9 +117,6 @@ class LocalDatabase {
     )''');
         });
 
-        /// Rat to the app that the database is ok
-        GetStorage().write(databaseInitialisedStatusStorage, true);
-
         log('The database schema has been initialised');
 
         return true;
@@ -148,9 +154,6 @@ class LocalDatabase {
   Future<void> resetDatabase() async {
     await deleteDatabase(databaseName);
     await database.close();
-    final localStorage = GetStorage();
-    localStorage.remove(databaseInitialisedStatusStorage);
-    localStorage.remove('InitializedShelves');
     log('The database has been reset');
   }
 }

@@ -1,5 +1,6 @@
 import 'package:audiobooks/app/data/models/shelf.dart';
 import 'package:audiobooks/app/modules/library/providers/library_provider.dart';
+import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -23,13 +24,9 @@ class LibraryController extends GetxController {
   /// or initialize the table in the database
   Future refreshShelves() async {
     if (_shelves.isNotEmpty) _shelves.clear();
-    shelves = await _libraryProvider.getShelves();
-    if (!_storage.hasData('InitializedShelves')) {
-      await _libraryProvider.initializeDefaultShelves();
-      _storage.write('InitializedShelves', true);
+    await _libraryProvider.initializeDefaultShelves();
 
-      shelves = await _libraryProvider.getShelves();
-    }
+    shelves = await _libraryProvider.getShelves();
   }
 
   @override

@@ -13,6 +13,7 @@ class ShelfView extends GetView<ShelfController> {
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
           previousPageTitle: 'Library',
+          backgroundColor: Colors.transparent,
         ),
         child: Material(
           child: Obx(() => GridView.builder(

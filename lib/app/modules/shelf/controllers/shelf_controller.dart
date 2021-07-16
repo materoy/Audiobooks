@@ -6,7 +6,8 @@ import 'package:get/get.dart';
 
 class ShelfController extends GetxController {
   ShelfController({required this.shelf});
-  late final ShelfProvider _shelfProvider;
+  ShelfProvider get _shelfProvider =>
+      ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
 
   final Shelf shelf;
 
@@ -15,13 +16,21 @@ class ShelfController extends GetxController {
   set albums(List<Album> value) => _albums.addAll(value);
   List<Album> get albums => _albums;
 
-  Future refreshShelves() async {}
+  Future<void> moveFromRecentlyAddedToListening({
+    required int currentAlbumId,
+  }) async {
+    final ShelfProvider shelfProvider =
+        ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
+
+    shelfProvider.moveAlbumToAnotherShelf(
+        fromShelfId: shelf.shelfId,
+        toShelfName: 'Listening',
+        albumId: currentAlbumId);
+  }
 
   @override
   Future onInit() async {
     super.onInit();
-    _shelfProvider =
-        ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
     albums = await _shelfProvider.getAlbumsInShelf(shelfId: shelf.shelfId);
   }
 

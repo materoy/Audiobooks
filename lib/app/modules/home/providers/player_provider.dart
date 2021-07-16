@@ -7,19 +7,19 @@ class PlayerProvider {
   final LocalDatabase _localDatabase;
 
   Future<void> updateCurrentTrackPosition(
-      {required int currentPosition, required int trackId}) async {
+      {required int currentPosition, required String path}) async {
     await _localDatabase.database.update(
         LocalDatabase.tracksTable, {'currentPosition': currentPosition},
-        where: 'trackId = ?', whereArgs: [trackId]);
+        where: 'path = ?', whereArgs: [path]);
   }
 
-  Future<int> getCurrentTrackPlayPosition(int trackId) async {
+  Future<int> getCurrentTrackPlayPosition(String path) async {
     try {
       final resultSet = await _localDatabase.database.query(
           LocalDatabase.tracksTable,
           columns: ['currentPosition'],
-          where: 'trackId = ?',
-          whereArgs: [trackId]);
+          where: 'path = ?',
+          whereArgs: [path]);
 
       if (resultSet.isNotEmpty) {
         return resultSet.first['currentPosition']! as int;

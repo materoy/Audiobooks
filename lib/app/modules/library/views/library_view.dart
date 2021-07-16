@@ -13,15 +13,16 @@ class LibraryView extends GetView<LibraryController> {
     controller.onReady();
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        leading: const Text(
+        leading: Text(
           "Library",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+          style: Theme.of(context).textTheme.headline5,
         ),
         trailing: Material(
           child: IconButton(
               onPressed: () => Get.toNamed(Routes.SETTINGS),
               icon: const Icon(CupertinoIcons.settings)),
         ),
+        backgroundColor: Colors.transparent,
       ),
       child: Material(
         child: Padding(

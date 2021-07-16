@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audiobooks/app/modules/audio/audio_player_task.dart';
-import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
@@ -10,16 +8,12 @@ import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:get/get.dart';
 
-void _backgroundAudioEntryPoint() {
-  AudioServiceBackground.run(() => AudioPlayerTask());
-}
-
 class AudioController extends GetxController {
   PlayerProvider get _playerProvider =>
       PlayerProvider(Get.find<DatabaseController>().localDatabase);
 
-  AlbumController get _albumController =>
-      Get.find<AlbumController>(tag: currentAlbumId.toString());
+  // AlbumController get _albumController =>
+  //     Get.find<AlbumController>(tag: currentAlbumId.toString());
 
   late StreamSubscription<PlaybackState> Function(void Function(PlaybackState)?,
       {bool? cancelOnError,
@@ -53,20 +47,14 @@ class AudioController extends GetxController {
   Future<void> play(String path) async {
     _playing.value = true;
     await setAudioPath(path);
-    if (!AudioService.running) await startBackgroundAudioService();
-    await AudioService.updateQueue(_albumController.mediaItemsQueue);
+    // await AudioService.updateQueue(_albumController.mediaItemsQueue);
     // await AudioService.updateMediaItem(_albumController.currentMediaItem);
 
-    final int currentPosition = await getCurrentPlayPosition();
+    // final int currentPosition = await getCurrentPlayPosition();
 
-    await AudioService.seekTo(Duration(milliseconds: currentPosition));
+    // await AudioService.seekTo(Duration(milliseconds: currentPosition));
     await AudioService.play();
     playbackState = AudioService.playbackStateStream.listen;
-
-    if (Get.find<ShelfController>().shelf.shelfName == 'Recently added') {
-      await moveFromRecentlyAddedToListening();
-      await Get.find<LibraryController>().refreshShelves();
-    }
   }
 
   Future moveToNextTrackOnFinish() async {
@@ -78,60 +66,28 @@ class AudioController extends GetxController {
     // });
   }
 
-  Future startBackgroundAudioService() async {
-    /// Starts the background audio service
-    await AudioService.start(
-      backgroundTaskEntrypoint: _backgroundAudioEntryPoint,
-      androidNotificationChannelName: 'Audiobooks',
-      //androidStopForegroundOnPause: true,
-      androidNotificationColor: 0xFF0683E9,
-      androidEnableQueue: true,
-    );
-  }
-
   Future<void> pause() async {
     if (AudioService.playbackState.playing) {
       _playing.value = false;
-      await updatePlayPosition(
-          newPosition:
-              AudioService.playbackState.currentPosition.inMilliseconds);
+      // await updatePlayPosition(
+      //     newPosition:
+      //         AudioService.playbackState.currentPosition.inMilliseconds);
       await AudioService.pause();
       playbackState(null).cancel();
     }
   }
 
-  Future<void> updatePlayPosition({required int newPosition}) async {
-    _playerProvider.updateCurrentTrackPosition(
-        currentPosition: newPosition, trackId: currentTrackId);
-  }
+  // Future<void> updatePlayPosition({required int newPosition}) async {
+  //   _playerProvider.updateCurrentTrackPosition(
+  //       currentPosition: newPosition, trackId: currentTrackId);
+  // }
 
-  Future<int> getCurrentPlayPosition() async {
-    return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
-  }
-
-  Future<void> moveFromRecentlyAddedToListening() async {
-    final ShelfProvider shelfProvider =
-        ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
-
-    shelfProvider.moveAlbumToAnotherShelf(
-        fromShelfId: Get.find<ShelfController>().shelf.shelfId,
-        toShelfName: 'Listening',
-        albumId: currentAlbumId);
-  }
-
-  Stream<Duration> streamPosition() async* {
-    if (AudioService.playbackState.playing) {
-      print(AudioService.playbackState.position);
-      yield* AudioService.positionStream;
-    } else {
-      final int currentPosition = await getCurrentPlayPosition();
-      yield Duration(milliseconds: currentPosition);
-    }
-  }
+  // Future<int> getCurrentPlayPosition() async {
+  //   return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
+  // }
 
   @override
   void onReady() {
     super.onReady();
-    startBackgroundAudioService();
   }
 }
