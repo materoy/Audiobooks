@@ -39,11 +39,6 @@ class SettingsView extends GetView<SettingsController> {
                     .localDatabase
                     .initializeDatabaseSchema(),
                 child: const Text('Initialize db schema')),
-            ElevatedButton(
-                onPressed: () => Get.find<DatabaseController>()
-                    .localDatabase
-                    .checkTablesExist(),
-                child: const Text('Check tables')),
           ],
         ],
       )),

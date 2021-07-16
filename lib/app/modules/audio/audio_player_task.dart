@@ -5,7 +5,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:collection/collection.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerTask extends BackgroundAudioTask {
@@ -70,13 +70,15 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   Future<int> getCurrentPlayPosition(String path) async {
-    return _playerProvider.getCurrentTrackPlayPosition(path);
+    final int currentPosition =
+        await _playerProvider.getCurrentTrackPlayPosition(path);
+    log(currentPosition.toString());
+    return currentPosition;
   }
 
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
-    await GetStorage.init();
-    // _databaseController = params['databaseController'];
+    _databaseController = Get.put(DatabaseController());
     _audioPlayer.currentIndexStream.listen((index) {
       if (index != null) {
         onUpdateMediaItem(AudioServiceBackground.queue![index]);
@@ -106,7 +108,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPlay() async {
+    final int position =
+        await getCurrentPlayPosition(AudioServiceBackground.mediaItem!.id);
+    await onSeekTo(Duration(milliseconds: position));
     await _audioPlayer.play();
+
     return super.onPlay();
   }
 
@@ -188,13 +194,19 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   @override
-  Future onCustomAction(String name, arguments) {
+  Future onCustomAction(String name, dynamic arguments) {
     switch (name) {
-      case "DatabaseController":
-        log("I just found the db controller");
+      case "currentAlbumId":
+        // currentAlbumId = arguments;
         break;
       default:
     }
     return super.onCustomAction(name, arguments);
+  }
+
+  @override
+  Future<void> onStop() async {
+    await _eventSubscription.cancel();
+    return super.onStop();
   }
 }

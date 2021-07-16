@@ -91,18 +91,25 @@ class PlayerView extends GetView<AlbumController> {
                           // AudioService.seekBackward(begin)
                         },
                         icon: const Icon(Icons.replay_10_rounded, size: 40)),
-                    PlayPauseButton(
-                      audioFilePath: controller.currentTrack.path!,
-                      size: 50,
-                      onPressed: () {
-                        audioController.currentAlbumId =
-                            controller.album.albumId!;
-                        audioController.currentTrackId =
-                            controller.currentTrack.trackId!;
-                        controller.updateCurrentTrack(
-                            controller.currentTrack.trackId!);
-                      },
-                    ),
+                    Obx(() => controller.currentTrack.path != null
+                        ? StreamBuilder<PlaybackState>(
+                            stream: AudioService.playbackStateStream,
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) return Container();
+                              return PlayPauseButton(
+                                audioFilePath: controller.currentTrack.path!,
+                                size: 50,
+                                playing: snapshot.data!.playing,
+                                onPressed: () async {
+                                  if (snapshot.data!.playing) {
+                                    controller.onPause();
+                                  } else {
+                                    controller.onPlay();
+                                  }
+                                },
+                              );
+                            })
+                        : const CircularProgressIndicator.adaptive()),
                     IconButton(
                         onPressed: () {
                           // AudioService.

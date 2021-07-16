@@ -4,12 +4,17 @@ import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
+import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
+import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
+import 'package:audiobooks/app/modules/splash/controllers/splash_controller.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:get/get.dart';
 
 class AlbumController extends GetxController {
   AlbumController({required LocalDatabase localDatabase, required this.album})
       : _localDatabase = localDatabase;
+
+  ShelfController get _shelfController => Get.find<ShelfController>();
 
   final LocalDatabase _localDatabase;
   final Album album;
@@ -94,6 +99,26 @@ class AlbumController extends GetxController {
       _currentTrack.value = _tracks[previousTrackIndex];
       await updateCurrentTrack(_tracks[previousTrackIndex].trackId!);
     }
+  }
+
+  Future<void> onPlay() async {
+    if (!AudioService.running) {
+      await startBackgroundAudioService();
+    }
+
+    await AudioService.updateQueue(mediaItemsQueue);
+    await AudioService.updateMediaItem(currentMediaItem);
+    await AudioService.play();
+
+    if (_shelfController.shelf.shelfName == 'Recently added') {
+      await _shelfController.moveFromRecentlyAddedToListening(
+          currentAlbumId: album.albumId!);
+      await Get.find<LibraryController>().refreshShelves();
+    }
+  }
+
+  Future<void> onPause() async {
+    await AudioService.pause();
   }
 
   @override

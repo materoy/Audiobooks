@@ -55,11 +55,6 @@ class AudioController extends GetxController {
     // await AudioService.seekTo(Duration(milliseconds: currentPosition));
     await AudioService.play();
     playbackState = AudioService.playbackStateStream.listen;
-
-    if (Get.find<ShelfController>().shelf.shelfName == 'Recently added') {
-      await moveFromRecentlyAddedToListening();
-      await Get.find<LibraryController>().refreshShelves();
-    }
   }
 
   Future moveToNextTrackOnFinish() async {
@@ -90,16 +85,6 @@ class AudioController extends GetxController {
   // Future<int> getCurrentPlayPosition() async {
   //   return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
   // }
-
-  Future<void> moveFromRecentlyAddedToListening() async {
-    final ShelfProvider shelfProvider =
-        ShelfProvider(database: Get.find<DatabaseController>().localDatabase);
-
-    shelfProvider.moveAlbumToAnotherShelf(
-        fromShelfId: Get.find<ShelfController>().shelf.shelfId,
-        toShelfName: 'Listening',
-        albumId: currentAlbumId);
-  }
 
   @override
   void onReady() {

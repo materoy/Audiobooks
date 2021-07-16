@@ -88,17 +88,10 @@ class AlbumCard extends GetView<AlbumController> {
                           return PlayPauseButton(
                             audioFilePath: controller.currentTrack.path!,
                             onPressed: () async {
-                              if (!AudioService.running) {
-                                await startBackgroundAudioService();
-                              }
-                              if (!snapshot.data!.playing) {
-                                await AudioService.updateQueue(
-                                    controller.mediaItemsQueue);
-                                await AudioService.updateMediaItem(
-                                    controller.currentMediaItem);
-                                await AudioService.play();
+                              if (snapshot.data!.playing) {
+                                controller.onPause();
                               } else {
-                                await AudioService.pause();
+                                controller.onPlay();
                               }
                             },
                             child: AudioService.currentMediaItem != null &&
