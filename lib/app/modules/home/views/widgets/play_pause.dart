@@ -17,8 +17,6 @@ class PlayPauseButton extends StatelessWidget {
   final double? size;
   final Widget? child;
   final bool? playing;
-  // @override
-  // String? get tag => entryName;
 
   @override
   Widget build(BuildContext context) {
