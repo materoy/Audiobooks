@@ -81,6 +81,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPlay() async {
+    // await _audioPlayer.set/
     await _audioPlayer.play();
 
     return super.onPlay();
