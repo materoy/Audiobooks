@@ -1,20 +1,10 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
-import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
-import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
-import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
-import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
+
 import 'package:get/get.dart';
 
 class AudioController extends GetxController {
-  PlayerProvider get _playerProvider =>
-      PlayerProvider(Get.find<DatabaseController>().localDatabase);
-
-  // AlbumController get _albumController =>
-  //     Get.find<AlbumController>(tag: currentAlbumId.toString());
-
   late StreamSubscription<PlaybackState> Function(void Function(PlaybackState)?,
       {bool? cancelOnError,
       void Function()? onDone,
@@ -86,8 +76,4 @@ class AudioController extends GetxController {
   //   return _playerProvider.getCurrentTrackPlayPosition(currentTrackId);
   // }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 }

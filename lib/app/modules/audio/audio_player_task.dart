@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
@@ -86,8 +85,9 @@ class AudioPlayerTask extends BackgroundAudioTask {
     /// Updates the current position every [DELTA_UPDATE_TIME]
     _audioPlayer.positionStream.listen((event) async {
       if (event.inSeconds % DELTA_UPDATE_TIME == 0) {
-        await updatePlayPosition(newPosition: event);
-        log("new ${event.inSeconds}");
+        if (AudioServiceBackground.mediaItem != null) {
+          await updatePlayPosition(newPosition: event);
+        }
       }
     });
     _databaseController = Get.put(DatabaseController());

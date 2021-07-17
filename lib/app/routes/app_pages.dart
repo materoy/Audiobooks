@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import 'package:audiobooks/app/modules/home/views/home_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
 import 'package:audiobooks/app/modules/library/views/library_view.dart';
 import 'package:audiobooks/app/modules/media_folders/bindings/media_folders_binding.dart';

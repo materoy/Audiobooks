@@ -9,11 +9,11 @@ class MediaFoldersController extends GetxController {
   final _mediaFolders = List<String>.empty(growable: true).obs;
 
   List<String> get mediaFolders => _mediaFolders;
-  @override
-  void onInit() {
-    super.onInit();
-    queryMediaFolders();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   queryMediaFolders();
+  // }
 
   Future<void> queryMediaFolders() async {
     final results =

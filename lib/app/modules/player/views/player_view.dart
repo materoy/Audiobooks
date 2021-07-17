@@ -77,13 +77,25 @@ class PlayerView extends GetView<AlbumController> {
                           : null,
                     ),
 
-                    // CircleAvatar(
-                    //   radius: SizeConfig.blockSizeHorizontal * 35,
-                    //   backgroundColor: Colors.grey,
-                    //   backgroundImage: controller.album.albumArt != null
-                    //       ? MemoryImage(controller.album.albumArt!)
-                    //       : null,
-                    // ),
+                    Column(
+                      children: List.generate(
+                          controller.tracks.length < 4
+                              ? controller.tracks.length
+                              : 4, (index) {
+                        // final int currentTrackIndex = controller.tracks
+                        //     .indexWhere((element) =>
+                        //         element.trackId ==
+                        //         controller.currentTrack.trackId);
+
+                        return Row(
+                          children: [
+                            Text(
+                                "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}"),
+                            // Text(controller.)
+                          ],
+                        );
+                      }),
+                    ),
 
                     StreamBuilder(
                         stream: AudioService.positionStream,
