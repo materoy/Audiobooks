@@ -24,6 +24,22 @@ class TrackProvider {
     }
   }
 
+  Future<Track> getTrackByPath(String path) async {
+    try {
+      final resultSet = await localDatabase.database.query(
+          LocalDatabase.tracksTable,
+          where: 'path = ?',
+          whereArgs: [path]);
+      if (resultSet.isNotEmpty) {
+        return Track.fromMap(resultSet.first);
+      }
+      return Track.empty();
+    } catch (e) {
+      log(e.toString());
+      return Track.empty();
+    }
+  }
+
   Future<List<Track>> getTracksInAlbum(int albumId) async {
     List<Track> tracksInCollection;
     tracksInCollection = [];

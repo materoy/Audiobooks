@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/data/models/track.dart';
@@ -15,6 +18,8 @@ class AlbumController extends GetxController {
       : _localDatabase = localDatabase;
 
   ShelfController get _shelfController => Get.find<ShelfController>();
+
+  StreamSubscription? currentMediaItemStream;
 
   final LocalDatabase _localDatabase;
   final Album album;
@@ -123,7 +128,27 @@ class AlbumController extends GetxController {
 
   @override
   void onInit() {
-    getTracksInAlbum().then((value) => getCurrentTrack());
     super.onInit();
+    getTracksInAlbum().then((value) => getCurrentTrack());
+
+    /// Listens for changes in current media from the audio service
+    /// updates the album table when there is a change in current media
+    currentMediaItemStream =
+        AudioService.currentMediaItemStream.listen((event) async {
+      if (event != null) {
+        if (event.album == album.albumName && event.id != currentTrack.path) {
+          final Track newTrack = await _trackProvider.getTrackByPath(event.id);
+          await _albumProvider.updateCurrentTrackInCollection(
+              trackId: newTrack.trackId!, albumId: album.albumId!);
+          log(event.title.toString());
+        }
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    currentMediaItemStream?.cancel();
   }
 }

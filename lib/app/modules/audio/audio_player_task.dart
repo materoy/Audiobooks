@@ -11,12 +11,17 @@ import 'package:just_audio/just_audio.dart';
 class AudioPlayerTask extends BackgroundAudioTask {
   final AudioPlayer _audioPlayer = AudioPlayer();
   late final DatabaseController _databaseController;
+  static const int DELTA_UPDATE_TIME = 5;
 
   PlayerProvider get _playerProvider =>
       PlayerProvider(_databaseController.localDatabase);
 
+  // PlayerProvider get _playerProvider =>
+  // PlayerProvider(_databaseController.localDatabase);
+
   AudioProcessingState? _skipState;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
+  StreamSubscription? _positionStream;
 
   final Function eq = const ListEquality().equals;
 
@@ -72,12 +77,19 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<int> getCurrentPlayPosition(String path) async {
     final int currentPosition =
         await _playerProvider.getCurrentTrackPlayPosition(path);
-    log(currentPosition.toString());
     return currentPosition;
   }
 
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
+    /// Listens for changes in playback position
+    /// Updates the current position every [DELTA_UPDATE_TIME]
+    _audioPlayer.positionStream.listen((event) async {
+      if (event.inSeconds % DELTA_UPDATE_TIME == 0) {
+        await updatePlayPosition(newPosition: event);
+        log("new ${event.inSeconds}");
+      }
+    });
     _databaseController = Get.put(DatabaseController());
     _audioPlayer.currentIndexStream.listen((index) {
       if (index != null) {
@@ -112,7 +124,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
         await getCurrentPlayPosition(AudioServiceBackground.mediaItem!.id);
     await onSeekTo(Duration(milliseconds: position));
     await _audioPlayer.play();
-
     return super.onPlay();
   }
 
@@ -137,7 +148,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateQueue(List<MediaItem> queue) async {
     if (!eq(AudioServiceBackground.queue, queue)) {
-      log('Update queue');
       await AudioServiceBackground.setQueue(queue);
     }
     try {
@@ -207,6 +217,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onStop() async {
     await _eventSubscription.cancel();
+    await _positionStream?.cancel();
     return super.onStop();
   }
 }
