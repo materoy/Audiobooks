@@ -2,7 +2,6 @@ import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/utils/base/base_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 class ShelfProvider extends BaseProvider {
   const ShelfProvider({required LocalDatabase database})

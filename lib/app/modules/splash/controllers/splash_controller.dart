@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/audio/audio_player_task.dart';

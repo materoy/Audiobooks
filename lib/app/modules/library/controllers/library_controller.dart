@@ -1,17 +1,13 @@
 import 'package:audiobooks/app/data/models/shelf.dart';
 import 'package:audiobooks/app/modules/library/providers/library_provider.dart';
-import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 enum ShelfMode { RecentlyAdded, Listening, Completed, Favorites }
 
 class LibraryController extends GetxController {
   LibraryProvider get _libraryProvider =>
       LibraryProvider(database: Get.find<DatabaseController>().localDatabase);
-
-  final GetStorage _storage = GetStorage();
 
   final _shelves = List<Shelf>.empty(growable: true).obs;
 

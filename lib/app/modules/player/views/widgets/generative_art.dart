@@ -113,7 +113,7 @@ class MyPainter extends CustomPainter {
     // double radius = 200.0;
 
     // paint brush
-    var paint = Paint()..strokeWidth = 5;
+    final paint = Paint()..strokeWidth = 5;
 
     /// Calulation:
     /// ----------
@@ -123,14 +123,16 @@ class MyPainter extends CustomPainter {
     /// vary `theta` to generate different points
     ///
 
+    // ignore: avoid_function_literals_in_foreach_calls
     particles.forEach((particle) {
-      double randomTheta = particle.startingTheta + theta;
-      double radius = particle.radius;
+      final double randomTheta = particle.startingTheta + theta;
+      final double radius = particle.radius;
 
-      double dx = radius * theta * math.cos(randomTheta) + size.width / 2;
-      double dy = radius * theta * math.sin(randomTheta) + size.height / 2;
+      final double dx = radius * theta * math.cos(randomTheta) + size.width / 2;
+      final double dy =
+          radius * theta * math.sin(randomTheta) + size.height / 2;
 
-      Offset position = Offset(dx, dy);
+      final Offset position = Offset(dx, dy);
 
       paint.color = particle.color;
 
