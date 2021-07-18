@@ -9,13 +9,12 @@ import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 
 class AlbumCard extends GetView<AlbumController> {
   AlbumCard({Key? key, required this.album}) : super(key: key);
 
   final Album album;
-
-  final ShelfController _shelfController = Get.find<ShelfController>();
 
   @override
   AlbumController get controller => Get.put(
@@ -29,106 +28,163 @@ class AlbumCard extends GetView<AlbumController> {
     controller.onReady();
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-            color: const Color(0xFFC4C4C4),
-            borderRadius: BorderRadius.circular(15.0)),
-        margin: EdgeInsets.symmetric(
-            vertical: SizeConfig.blockSizeVertical * 2,
-            horizontal: SizeConfig.blockSizeHorizontal * 3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              clipBehavior: Clip.hardEdge,
-              width: double.infinity,
-              height: SizeConfig.blockSizeVertical * 18,
-              decoration: BoxDecoration(
-                color: Colors.brown[50],
-              ),
-              child: album.albumArt != null
-                  ? Image.memory(album.albumArt!, fit: BoxFit.cover)
-                  : Container(
-                      color: Colors.black,
-                    ),
-            ),
-
-            /// The [album] name
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
-              child: RichText(
-                text: TextSpan(
-                    text: album.albumName,
-                    style: Theme.of(context).textTheme.bodyText1),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            /// Author names
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
-              child: RichText(
-                text: TextSpan(
-                    text: album.albumAuthor,
-                    style: Theme.of(context).textTheme.bodyText1),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
+        children: [
+          Container(
+            height: SizeConfig.blockSizeVertical * 29.0,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+                color: const Color(0xFFC4C4C4),
+                borderRadius: BorderRadius.circular(15.0)),
+            margin: EdgeInsets.symmetric(
+                vertical: SizeConfig.blockSizeVertical * 2,
+                horizontal: SizeConfig.blockSizeHorizontal * 3),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Obx(() => controller.currentTrack.path != null
-                    ? StreamBuilder<PlaybackState>(
-                        stream: AudioService.playbackStateStream,
-                        builder: (context, snapshot) {
-                          return PlayPauseButton(
-                            audioFilePath: controller.currentTrack.path!,
-                            onPressed: () async {
-                              if (snapshot.data!.playing) {
-                                controller.onPause();
-                              } else {
-                                controller.onPlay();
-                              }
-                            },
-                            child: AudioService.currentMediaItem != null &&
-                                    controller.currentTrack.path ==
-                                        AudioService.currentMediaItem!.id &&
-                                    AudioService.playbackState.playing
-                                ? Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Theme.of(context).buttonColor,
-                                    ),
-                                    child:
-                                        const Icon(CupertinoIcons.pause_fill),
-                                  )
-                                : Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 8),
-                                    decoration: BoxDecoration(
-                                        color: Theme.of(context).buttonColor,
-                                        borderRadius:
-                                            BorderRadius.circular(20.0)),
-                                    child: Text(
-                                        _shelfController.shelf.shelfName ==
-                                                'Recently added'
-                                            ? 'Listen'
-                                            : 'Continue'),
-                                  ),
-                          );
-                        })
-                    : const CircularProgressIndicator.adaptive()),
-                TextButton(onPressed: () {}, child: const Text('View'))
+                Container(
+                  clipBehavior: Clip.hardEdge,
+                  width: double.infinity,
+                  height: SizeConfig.blockSizeVertical * 18,
+                  decoration: BoxDecoration(
+                    color: Colors.brown[50],
+                  ),
+                  child: album.albumArt != null
+                      ? Image.memory(album.albumArt!, fit: BoxFit.cover)
+                      : Container(
+                          color: Colors.black,
+                        ),
+                ),
+
+                /// The [album] name
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 10.0),
+                    height: SizeConfig.blockSizeVertical * 3.0,
+                    child: Marquee(
+                      text: album.albumName,
+                      style: Theme.of(context).textTheme.bodyText2,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      blankSpace: 100.0,
+                      velocity: 30.0,
+                      pauseAfterRound: const Duration(seconds: 4),
+                      startPadding: 15.0,
+                      accelerationDuration: const Duration(seconds: 2),
+                      accelerationCurve: Curves.easeOut,
+                      decelerationDuration: const Duration(milliseconds: 500),
+                      decelerationCurve: Curves.easeOut,
+                    )),
+
+                // /// Author names
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //       vertical: 2.0, horizontal: 10.0),
+                //   child: RichText(
+                //     text: TextSpan(
+                //         text: album.albumAuthor,
+                //         style: Theme.of(context).textTheme.bodyText1),
+                //     overflow: TextOverflow.ellipsis,
+                //   ),
+                // ),
+                ListenViewButton(controller: controller),
+                const Spacer(),
               ],
             ),
-            const Spacer(),
-          ],
-        ),
+          ),
+          // SizedBox(
+          //     height: SizeConfig.blockSizeVertical * 2,
+          //     child: ),
+        ],
       ),
+    );
+  }
+}
+
+class ListenViewButton extends StatefulWidget {
+  const ListenViewButton({Key? key, required this.controller})
+      : super(key: key);
+  final AlbumController controller;
+  @override
+  _ListenViewButtonState createState() => _ListenViewButtonState();
+}
+
+class _ListenViewButtonState extends State<ListenViewButton> {
+  final ShelfController _shelfController = Get.find<ShelfController>();
+
+  late bool _playing;
+
+  @override
+  void initState() {
+    super.initState();
+    _playing = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Obx(() => widget.controller.currentTrack.path != null
+            ? PlayPauseButton(
+                audioFilePath: widget.controller.currentTrack.path!,
+                onPressed: () async {
+                  setState(() {
+                    _playing = AudioService.currentMediaItem != null &&
+                        widget.controller.currentTrack.path ==
+                            AudioService.currentMediaItem!.id &&
+                        AudioService.playbackState.playing;
+                  });
+                  if (AudioService.playbackState.playing) {
+                    widget.controller.onPause();
+                  } else {
+                    widget.controller.onPlay();
+                  }
+                },
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 1000),
+                  switchInCurve: Curves.ease,
+                  switchOutCurve: Curves.ease,
+                  child: _playing
+                      ? Container(
+                          key: UniqueKey(),
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).buttonColor,
+                          ),
+                          child: const Icon(CupertinoIcons.pause_fill),
+                        )
+                      : Container(
+                          key: UniqueKey(),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 8),
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).buttonColor,
+                              borderRadius: BorderRadius.circular(20.0)),
+                          child: Text(_shelfController.shelf.shelfName ==
+                                  'Recently added'
+                              ? 'Listen'
+                              : 'Continue'),
+                        ),
+                ),
+
+                // child: AudioService.currentMediaItem != null &&
+                //         widget.controller.currentTrack.path ==
+                //             AudioService.currentMediaItem!.id &&
+                //         AudioService.playbackState.playing
+                //     ? Container(
+                //         padding: const EdgeInsets.all(8.0),
+                //         decoration: BoxDecoration(
+                //           shape: BoxShape.circle,
+                //           color: Theme.of(context).buttonColor,
+                //         ),
+                //         child: const Icon(CupertinoIcons.pause_fill),
+                //       )
+                //     :
+              )
+            : const CircularProgressIndicator.adaptive()),
+        TextButton(onPressed: () {}, child: const Text('View'))
+      ],
     );
   }
 }

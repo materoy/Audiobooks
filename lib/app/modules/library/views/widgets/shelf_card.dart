@@ -1,5 +1,6 @@
 import 'package:audiobooks/app/data/models/shelf.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ShelfCard extends StatelessWidget {
@@ -15,13 +16,13 @@ class ShelfCard extends StatelessWidget {
   IconData? get commonIcons {
     switch (shelf.shelfName) {
       case 'Recently added':
-        return Icons.book;
+        return CupertinoIcons.book;
       case 'Listening':
-        return Icons.book;
+        return CupertinoIcons.headphones;
       case 'Completed':
-        return Icons.book;
+        return CupertinoIcons.padlock;
       case 'Favorites':
-        return Icons.book;
+        return CupertinoIcons.heart_fill;
       case 'New shelf':
         return Icons.add_task_rounded;
     }
@@ -64,7 +65,10 @@ class ShelfCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF110000)),
                   ),
-                  Text('${shelf.amount} books'),
+                  Text(
+                    '${shelf.amount} books',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                   const Divider(
                     color: Color(0xFFAFAFAF),
                     thickness: .7,

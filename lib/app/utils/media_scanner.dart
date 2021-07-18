@@ -37,7 +37,7 @@ class MediaScanner {
           final Track track = await getMediaInfo(entity.path);
 
           /// Adds album
-          if (!(track.albumName == null && track.trackName == null)) {
+          if (track.albumName != null && track.trackName != null) {
             print('Added ${track.trackName} to db');
             _addAlbumToDatabase(Album(
               albumName: track.albumName!,
@@ -51,7 +51,7 @@ class MediaScanner {
           }
 
           // if (Get.isSnackbarOpen!) Get.back();
-          Get.snackbar("New book !", 'Added new audiobook ${track.trackName}');
+          // Get.snackbar("New book !", 'Added new audiobook ${track.trackName}');
         }
       }
     }
@@ -64,9 +64,17 @@ class MediaScanner {
     final retriever = MetadataRetriever();
     await retriever.setFile(File(mediaPath));
     final Metadata metadata = await retriever.metadata;
-    final Track _audiobook = Track.fromMap(metadata.toMap())
-      ..path = mediaPath
-      ..albumArt = retriever.albumArt;
+    final Track _audiobook = Track.fromMap(metadata.toMap())..path = mediaPath;
+
+    /// This enforces the limit size for the sqlite database which is 2MB
+    /// all album art greater than 2 mb in size will be discarded
+    /// Future improvements will need to have this stored in the file system
+    /// and it's pointer stored in the sqlite database
+    /// Or the native C api could be used which has no limit in storing blobs
+    if (retriever.albumArt != null &&
+        retriever.albumArt!.lengthInBytes < 2097152) {
+      _audiobook.albumArt = retriever.albumArt;
+    }
     return _audiobook;
   }
 

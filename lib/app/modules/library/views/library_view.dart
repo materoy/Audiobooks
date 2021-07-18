@@ -26,7 +26,7 @@ class LibraryView extends GetView<LibraryController> {
       ),
       child: Material(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Obx(() => ListView(
                 children: [
                   ...List.generate(controller.shelves.length, (index) {

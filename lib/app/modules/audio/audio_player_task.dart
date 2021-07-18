@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
@@ -68,7 +69,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   Future<void> updatePlayPosition({required Duration newPosition}) async {
-    _playerProvider.updateCurrentTrackPosition(
+    await _playerProvider.updateCurrentTrackPosition(
         currentPosition: newPosition.inMilliseconds,
         path: AudioServiceBackground.mediaItem!.id);
   }
@@ -84,7 +85,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     /// Listens for changes in playback position
     /// Updates the current position every [DELTA_UPDATE_TIME]
     _audioPlayer.positionStream.listen((event) async {
-      if (event.inSeconds % DELTA_UPDATE_TIME == 0) {
+      if (event.inSeconds % DELTA_UPDATE_TIME == 0 && event.inSeconds != 0) {
         if (AudioServiceBackground.mediaItem != null) {
           await updatePlayPosition(newPosition: event);
         }
@@ -129,8 +130,8 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPause() async {
-    if (_audioPlayer.playing) await _audioPlayer.pause();
     await updatePlayPosition(newPosition: _audioPlayer.position);
+    if (_audioPlayer.playing) await _audioPlayer.pause();
     return super.onPause();
   }
 

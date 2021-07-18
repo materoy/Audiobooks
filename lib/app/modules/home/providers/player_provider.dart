@@ -8,9 +8,9 @@ class PlayerProvider {
 
   Future<void> updateCurrentTrackPosition(
       {required int currentPosition, required String path}) async {
-    await _localDatabase.database.update(
+    await _localDatabase.database.transaction((txn) async => txn.update(
         LocalDatabase.tracksTable, {'currentPosition': currentPosition},
-        where: 'path = ?', whereArgs: [path]);
+        where: 'path = ?', whereArgs: [path]));
   }
 
   Future<int> getCurrentTrackPlayPosition(String path) async {

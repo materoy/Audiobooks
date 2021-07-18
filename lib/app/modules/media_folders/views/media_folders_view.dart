@@ -18,7 +18,7 @@ class MediaFoldersDialog extends GetView<MediaFoldersController> {
     return CupertinoAlertDialog(
       title: const Text('Media folders'),
       content: Obx(
-        () => controller.mediaFolders.isBlank!
+        () => controller.mediaFolders.isEmpty
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

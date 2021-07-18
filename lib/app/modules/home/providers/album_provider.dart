@@ -14,12 +14,31 @@ class AlbumProvider {
           LocalDatabase.albumsTable,
           where: 'albumId = ?',
           whereArgs: [albumId]);
+
       if (resultsSet.isNotEmpty) {
         return Album.fromMap(resultsSet.first);
       }
       return Album.empty();
     } catch (e) {
       log(e.toString());
+
+      final resultsSet =
+          await _localDatabase.database.query(LocalDatabase.albumsTable,
+              columns: [
+                'albumId',
+                'albumDuration',
+                'currentTrackId',
+                'albumName',
+                'albumAuthor',
+                'albumLength',
+                'albumCoverage'
+              ],
+              where: 'albumId = ?',
+              whereArgs: [albumId]);
+
+      if (resultsSet.isNotEmpty) {
+        return Album.fromMap(resultsSet.first);
+      }
       return Album.empty();
     }
   }

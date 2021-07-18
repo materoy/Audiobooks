@@ -28,22 +28,23 @@ class PlayerView extends GetView<AlbumController> {
         child: Material(
           child: Stack(
             children: [
-              ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
-                child: SizedBox(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: controller.album.albumArt != null
-                      ? Image.memory(
-                          controller.album.albumArt!,
-                          fit: BoxFit.cover,
-                          colorBlendMode: BlendMode.softLight,
-                        )
-                      : GenerativeArt(),
+              Opacity(
+                opacity: .8,
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: controller.album.albumArt != null
+                        ? Image.memory(
+                            controller.album.albumArt!,
+                            fit: BoxFit.cover,
+                          )
+                        : GenerativeArt(),
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight),
+              SafeArea(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -73,7 +74,10 @@ class PlayerView extends GetView<AlbumController> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.0)),
                       child: controller.album.albumArt != null
-                          ? Image.memory(controller.album.albumArt!)
+                          ? Image.memory(
+                              controller.album.albumArt!,
+                              fit: BoxFit.cover,
+                            )
                           : null,
                     ),
 
@@ -117,65 +121,101 @@ class PlayerView extends GetView<AlbumController> {
                           return Container();
                         }),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                            onPressed: () => controller.goToPreviousTrack(),
-                            icon: const Icon(Icons.skip_previous_rounded,
-                                size: 40)),
-                        IconButton(
-                            onPressed: () {
-                              AudioService.skipToNext();
-                              // audioController.updatePlayPosition(
-                              //     newPosition: AudioService.playbackState
-                              //             .currentPosition.inMilliseconds -
-                              //         const Duration(seconds: 10).inMilliseconds);
-                              // AudioService.seekBackward(begin)
-                            },
-                            icon:
-                                const Icon(Icons.replay_10_rounded, size: 40)),
-                        Obx(() => controller.currentTrack.path != null
-                            ? StreamBuilder<PlaybackState>(
-                                stream: AudioService.playbackStateStream,
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) return Container();
-                                  return PlayPauseButton(
-                                    audioFilePath:
-                                        controller.currentTrack.path!,
-                                    size: 50,
-                                    playing: snapshot.data!.playing,
-                                    onPressed: () async {
-                                      if (snapshot.data!.playing) {
-                                        controller.onPause();
-                                      } else {
-                                        controller.onPlay();
-                                      }
-                                    },
-                                  );
-                                })
-                            : const CircularProgressIndicator.adaptive()),
-                        IconButton(
-                            onPressed: () {
-                              // AudioService.
-                              // audioController.updatePlayPosition(
-                              //     newPosition: AudioService.playbackState
-                              //             .currentPosition.inMilliseconds +
-                              //         const Duration(seconds: 10).inMilliseconds);
-                            },
-                            icon:
-                                const Icon(Icons.forward_10_rounded, size: 40)),
-                        IconButton(
-                            onPressed: () => controller.goToNextTrack(),
-                            icon:
-                                const Icon(Icons.skip_next_rounded, size: 40)),
-                      ],
-                    )
+                    PlayerControlls(controller: controller),
                   ],
                 ),
               ),
             ],
           ),
         ));
+  }
+}
+
+class PlayerControlls extends StatefulWidget {
+  const PlayerControlls({Key? key, required this.controller}) : super(key: key);
+  final AlbumController controller;
+  @override
+  _PlayerControllsState createState() => _PlayerControllsState();
+}
+
+class _PlayerControllsState extends State<PlayerControlls> {
+  AlbumController get controller => widget.controller;
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+        child: Container(
+          margin: EdgeInsets.symmetric(
+              horizontal: SizeConfig.blockSizeHorizontal * 4.0),
+          width: SizeConfig.screenWidth,
+          height: SizeConfig.blockSizeVertical * 8.0,
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(.3),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                    onPressed: () => controller.goToPreviousTrack(),
+                    icon: Icon(
+                      Icons.skip_previous_rounded,
+                      size: 40,
+                      color: Theme.of(context).iconTheme.color,
+                    )),
+                IconButton(
+                    onPressed: () {
+                      AudioService.seekBackward(true);
+                      Future.delayed(const Duration(seconds: 2),
+                          () => AudioService.seekBackward(false));
+                    },
+                    icon: Icon(
+                      Icons.replay_10_rounded,
+                      size: 40,
+                      color: Theme.of(context).iconTheme.color,
+                    )),
+                Obx(() => controller.currentTrack.path != null
+                    ? StreamBuilder<PlaybackState>(
+                        stream: AudioService.playbackStateStream,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return Container();
+                          return PlayPauseButton(
+                            audioFilePath: controller.currentTrack.path!,
+                            size: 50,
+                            playing: snapshot.data!.playing,
+                            onPressed: () async {
+                              if (snapshot.data!.playing) {
+                                controller.onPause();
+                              } else {
+                                controller.onPlay();
+                              }
+                            },
+                          );
+                        })
+                    : const CircularProgressIndicator.adaptive()),
+                IconButton(
+                  onPressed: () {
+                    // AudioService.
+                    // audioController.updatePlayPosition(
+                    //     newPosition: AudioService.playbackState
+                    //             .currentPosition.inMilliseconds +
+                    //         const Duration(seconds: 10).inMilliseconds);
+                  },
+                  icon: const Icon(Icons.forward_10_rounded, size: 40),
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                IconButton(
+                  onPressed: () => controller.goToNextTrack(),
+                  icon: const Icon(Icons.skip_next_rounded, size: 40),
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

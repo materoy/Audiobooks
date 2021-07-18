@@ -48,6 +48,7 @@ class TrackProvider {
       where: 'albumId = ?',
       whereArgs: [albumId],
     );
+
     for (final result in results) {
       tracksInCollection.add(Track.fromMap(result));
     }

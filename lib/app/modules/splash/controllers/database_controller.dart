@@ -9,8 +9,8 @@ class DatabaseController extends GetxController {
 
   Future<bool> checkDirectoryPathsExist() async {
     final results =
-        await localDatabase.query(table: LocalDatabase.directoryPaths);
-    return !results.isBlank!;
+        await localDatabase.database.query(LocalDatabase.directoryPaths);
+    return results.isNotEmpty;
   }
 
   Future<bool> openLocalDatabase() async => localDatabase.openLocalDatabase();

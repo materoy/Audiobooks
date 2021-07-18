@@ -2,7 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PlayPauseButton extends StatelessWidget {
+class PlayPauseButton extends StatefulWidget {
   const PlayPauseButton(
       {Key? key,
       required this.audioFilePath,
@@ -19,23 +19,41 @@ class PlayPauseButton extends StatelessWidget {
   final bool? playing;
 
   @override
+  _PlayPauseButtonState createState() => _PlayPauseButtonState();
+}
+
+class _PlayPauseButtonState extends State<PlayPauseButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _playPauseAnimation;
+  @override
+  void initState() {
+    super.initState();
+    _playPauseAnimation = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 700));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        if (onPressed != null) {
-          onPressed!();
+        if (widget.onPressed != null) {
+          widget.onPressed!();
+          if (AudioService.currentMediaItem != null &&
+              widget.audioFilePath == AudioService.currentMediaItem!.id &&
+              AudioService.playbackState.playing) {
+            _playPauseAnimation.reverse();
+          } else {
+            _playPauseAnimation.forward();
+          }
         }
       },
-      child: child ??
+      child: widget.child ??
           Center(
-              child: Icon(
-            AudioService.currentMediaItem != null &&
-                    audioFilePath == AudioService.currentMediaItem!.id &&
-                    AudioService.playbackState.playing
-                ? Icons.pause_circle_outline_rounded
-                : Icons.play_circle_fill_rounded,
-            size: size ?? 40.0,
-            color: const Color(0xFF2E429C),
+              child: AnimatedIcon(
+            progress: _playPauseAnimation,
+            icon: AnimatedIcons.play_pause,
+            size: widget.size ?? 45.0,
+            color: Theme.of(context).iconTheme.color,
           )),
     );
   }
