@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
@@ -128,17 +130,22 @@ class _ListenViewButtonState extends State<ListenViewButton> {
             ? PlayPauseButton(
                 audioFilePath: widget.controller.currentTrack.path!,
                 onPressed: () async {
+                  if (AudioService.playbackState.playing) {
+                    await widget.controller.onPause();
+                  } else {
+                    await widget.controller.onPlay();
+                  }
                   setState(() {
                     _playing = AudioService.currentMediaItem != null &&
                         widget.controller.currentTrack.path ==
                             AudioService.currentMediaItem!.id &&
                         AudioService.playbackState.playing;
+
+                    print(AudioService.currentMediaItem != null &&
+                        widget.controller.currentTrack.path ==
+                            AudioService.currentMediaItem!.id &&
+                        AudioService.playbackState.playing);
                   });
-                  if (AudioService.playbackState.playing) {
-                    widget.controller.onPause();
-                  } else {
-                    widget.controller.onPlay();
-                  }
                 },
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 1000),

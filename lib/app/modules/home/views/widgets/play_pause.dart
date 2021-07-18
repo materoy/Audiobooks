@@ -48,13 +48,23 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
         }
       },
       child: widget.child ??
-          Center(
+          Container(
+            height: 50.0,
+            width: 50.0,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(color: Colors.blue, width: 2.0),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
               child: AnimatedIcon(
-            progress: _playPauseAnimation,
-            icon: AnimatedIcons.play_pause,
-            size: widget.size ?? 45.0,
-            color: Theme.of(context).iconTheme.color,
-          )),
+                progress: _playPauseAnimation,
+                icon: AnimatedIcons.play_pause,
+                size: 35.0,
+                color: Theme.of(context).iconTheme.color,
+              ),
+            ),
+          ),
     );
   }
 }

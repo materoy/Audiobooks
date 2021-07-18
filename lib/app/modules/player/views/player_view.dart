@@ -91,13 +91,15 @@ class PlayerView extends GetView<AlbumController> {
                         //         element.trackId ==
                         //         controller.currentTrack.trackId);
 
-                        return Row(
-                          children: [
-                            Text(
-                                "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}"),
-                            // Text(controller.)
-                          ],
-                        );
+                        return RichText(
+                            text: TextSpan(
+                                text:
+                                    "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}. ",
+                                children: [
+                              TextSpan(
+                                  text:
+                                      controller.tracks[index].trackName ?? '')
+                            ]));
                       }),
                     ),
 
