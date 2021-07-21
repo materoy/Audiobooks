@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
+import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
@@ -14,12 +15,12 @@ import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 
 class AlbumCard extends GetView<AlbumController> {
-  AlbumCard({Key? key, required this.album}) : super(key: key);
+  const AlbumCard({Key? key, required this.album}) : super(key: key);
 
   final Album album;
 
   @override
-  AlbumController get controller => Get.put(
+  AlbumController get controller => Get.put<AlbumController>(
       AlbumController(
           localDatabase: Get.find<DatabaseController>().localDatabase,
           album: album),
@@ -27,7 +28,6 @@ class AlbumCard extends GetView<AlbumController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.onReady();
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
       child: Column(
@@ -88,7 +88,9 @@ class AlbumCard extends GetView<AlbumController> {
                 //     overflow: TextOverflow.ellipsis,
                 //   ),
                 // ),
-                ListenViewButton(controller: controller),
+                ListenViewButton(
+                    currenTrack: controller.currentTrack,
+                    controler: controller),
                 const Spacer(),
               ],
             ),
@@ -103,55 +105,39 @@ class AlbumCard extends GetView<AlbumController> {
 }
 
 class ListenViewButton extends StatefulWidget {
-  const ListenViewButton({Key? key, required this.controller})
+  const ListenViewButton(
+      {Key? key, required this.currenTrack, required this.controler})
       : super(key: key);
-  final AlbumController controller;
+  final AlbumController controler;
+  final Track currenTrack;
   @override
   _ListenViewButtonState createState() => _ListenViewButtonState();
 }
 
 class _ListenViewButtonState extends State<ListenViewButton> {
   final ShelfController _shelfController = Get.find<ShelfController>();
-
-  late bool _playing;
-
-  @override
-  void initState() {
-    super.initState();
-    _playing = false;
-  }
+  AlbumController get controller => widget.controler;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Obx(() => widget.controller.currentTrack.path != null
+        Obx(() => controller.currentTrack.path != null
             ? PlayPauseButton(
-                audioFilePath: widget.controller.currentTrack.path!,
+                audioFilePath: controller.currentTrack.path!,
                 onPressed: () async {
                   if (AudioService.playbackState.playing) {
-                    await widget.controller.onPause();
+                    await controller.onPause();
                   } else {
-                    await widget.controller.onPlay();
+                    await controller.onPlay();
                   }
-                  setState(() {
-                    _playing = AudioService.currentMediaItem != null &&
-                        widget.controller.currentTrack.path ==
-                            AudioService.currentMediaItem!.id &&
-                        AudioService.playbackState.playing;
-
-                    print(AudioService.currentMediaItem != null &&
-                        widget.controller.currentTrack.path ==
-                            AudioService.currentMediaItem!.id &&
-                        AudioService.playbackState.playing);
-                  });
                 },
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 1000),
                   switchInCurve: Curves.ease,
                   switchOutCurve: Curves.ease,
-                  child: _playing
+                  child: controller.playing
                       ? Container(
                           key: UniqueKey(),
                           padding: const EdgeInsets.all(8.0),
@@ -176,7 +162,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
                 ),
 
                 // child: AudioService.currentMediaItem != null &&
-                //         widget.controller.currentTrack.path ==
+                //         controller.currentTrack.path ==
                 //             AudioService.currentMediaItem!.id &&
                 //         AudioService.playbackState.playing
                 //     ? Container(

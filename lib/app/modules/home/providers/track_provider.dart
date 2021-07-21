@@ -47,6 +47,7 @@ class TrackProvider {
       LocalDatabase.tracksTable,
       where: 'albumId = ?',
       whereArgs: [albumId],
+      orderBy: 'trackNumber',
     );
 
     for (final result in results) {

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:audiobooks/app/data/models/album.dart';
+import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
 
 class AlbumProvider {
@@ -111,5 +112,59 @@ class AlbumProvider {
       log(e.toString());
       return 0;
     }
+  }
+
+  ShelfProvider get _shelfProvider => ShelfProvider(database: _localDatabase);
+
+  Future likeAlbum(int albumId) async {
+    await _localDatabase.database.transaction((txn) async {
+      final resultsSet = await txn.query(LocalDatabase.shelvesTable,
+          where: 'shelfName =?',
+          whereArgs: ['Favorites'],
+          columns: ['shelfId']);
+      final int favoritesShelfId = resultsSet.first['shelfId']! as int;
+
+      await txn.insert(
+        LocalDatabase.shelfMembersTable,
+        {'shelfId': favoritesShelfId, 'albumId': albumId},
+      );
+
+      await _shelfProvider.incrementDecrementAmountInShelf(
+          shelfId: favoritesShelfId, increment: true);
+    });
+  }
+
+  Future unlikeAlbum(int albumId) async {
+    await _localDatabase.database.transaction((txn) async {
+      final resultsSet = await txn.query(LocalDatabase.shelvesTable,
+          where: 'shelfName =?',
+          whereArgs: ['Favorites'],
+          columns: ['shelfId']);
+      final int favoritesShelfId = resultsSet.first['shelfId']! as int;
+
+      await txn.delete(
+        LocalDatabase.shelfMembersTable,
+        where: 'shelfId = ? AND albumId = ?',
+        whereArgs: [favoritesShelfId, albumId],
+      );
+      await _shelfProvider.incrementDecrementAmountInShelf(
+          shelfId: favoritesShelfId, increment: false);
+    });
+  }
+
+  Future<bool> checkLiked(int albumId) async {
+    List records = [];
+    await _localDatabase.database.transaction((txn) async {
+      final resultsSet = await txn.query(LocalDatabase.shelvesTable,
+          where: 'shelfName =?',
+          whereArgs: ['Favorites'],
+          columns: ['shelfId']);
+      final int favoritesShelfId = resultsSet.first['shelfId']! as int;
+
+      records = await txn.query(LocalDatabase.shelfMembersTable,
+          where: 'albumId = ? AND shelfId = ?',
+          whereArgs: [albumId, favoritesShelfId]);
+    });
+    return records.isNotEmpty;
   }
 }

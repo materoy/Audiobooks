@@ -6,6 +6,7 @@ import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/audio/audio_controller.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
+import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
 import 'package:audiobooks/app/modules/player/views/widgets/generative_art.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
@@ -81,26 +82,53 @@ class PlayerView extends GetView<AlbumController> {
                           : null,
                     ),
 
-                    Column(
-                      children: List.generate(
-                          controller.tracks.length < 4
-                              ? controller.tracks.length
-                              : 4, (index) {
-                        // final int currentTrackIndex = controller.tracks
-                        //     .indexWhere((element) =>
-                        //         element.trackId ==
-                        //         controller.currentTrack.trackId);
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: SizeConfig.blockSizeHorizontal * 4),
+                      child: Column(
+                        children: List.generate(
+                            controller.tracks.length < 4
+                                ? controller.tracks.length
+                                : 4, (index) {
+                          // final int currentTrackIndex = controller.tracks
+                          //     .indexWhere((element) =>
+                          //         element.trackId ==
+                          //         controller.currentTrack.trackId);
 
-                        return RichText(
-                            text: TextSpan(
-                                text:
-                                    "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}. ",
-                                children: [
-                              TextSpan(
+                          return RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
                                   text:
-                                      controller.tracks[index].trackName ?? '')
-                            ]));
-                      }),
+                                      "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}. ",
+                                  style: TextStyle(
+                                    color:
+                                        AudioService.currentMediaItem != null &&
+                                                controller.tracks[index].path ==
+                                                    AudioService
+                                                        .currentMediaItem!.id
+                                            ? Colors.blue
+                                            : Colors.black,
+                                    fontSize: 11.0,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          controller.tracks[index].trackName ??
+                                              '',
+                                      style: TextStyle(
+                                        color: AudioService.currentMediaItem !=
+                                                    null &&
+                                                controller.tracks[index].path ==
+                                                    AudioService
+                                                        .currentMediaItem!.id
+                                            ? Colors.blue
+                                            : Colors.black,
+                                        fontSize: 11.0,
+                                      ),
+                                    )
+                                  ]));
+                        }),
+                      ),
                     ),
 
                     StreamBuilder(
@@ -124,6 +152,26 @@ class PlayerView extends GetView<AlbumController> {
                         }),
 
                     PlayerControlls(controller: controller),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Obx(() => IconButton(
+                            onPressed: () async {
+                              controller.liked
+                                  ? await controller.unlikeAlbum()
+                                  : await controller.likeAlbum();
+                              await Get.find<LibraryController>()
+                                  .refreshShelves();
+                            },
+                            icon: Icon(
+                              controller.liked
+                                  ? CupertinoIcons.heart_fill
+                                  : CupertinoIcons.heart,
+                              size: 40,
+                            )))
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -164,18 +212,16 @@ class _PlayerControllsState extends State<PlayerControlls> {
                     onPressed: () => controller.goToPreviousTrack(),
                     icon: Icon(
                       Icons.skip_previous_rounded,
-                      size: 40,
+                      size: 30,
                       color: Theme.of(context).iconTheme.color,
                     )),
                 IconButton(
-                    onPressed: () {
-                      AudioService.seekBackward(true);
-                      Future.delayed(const Duration(seconds: 2),
-                          () => AudioService.seekBackward(false));
+                    onPressed: () async {
+                      await AudioService.seekBackward(true);
                     },
                     icon: Icon(
                       Icons.replay_10_rounded,
-                      size: 40,
+                      size: 30,
                       color: Theme.of(context).iconTheme.color,
                     )),
                 Obx(() => controller.currentTrack.path != null
@@ -186,7 +232,7 @@ class _PlayerControllsState extends State<PlayerControlls> {
                           return PlayPauseButton(
                             audioFilePath: controller.currentTrack.path!,
                             size: 50,
-                            playing: snapshot.data!.playing,
+                            playing: controller.playing,
                             onPressed: () async {
                               if (snapshot.data!.playing) {
                                 controller.onPause();
@@ -198,19 +244,15 @@ class _PlayerControllsState extends State<PlayerControlls> {
                         })
                     : const CircularProgressIndicator.adaptive()),
                 IconButton(
-                  onPressed: () {
-                    // AudioService.
-                    // audioController.updatePlayPosition(
-                    //     newPosition: AudioService.playbackState
-                    //             .currentPosition.inMilliseconds +
-                    //         const Duration(seconds: 10).inMilliseconds);
+                  onPressed: () async {
+                    await AudioService.seekForward(true);
                   },
-                  icon: const Icon(Icons.forward_10_rounded, size: 40),
+                  icon: const Icon(Icons.forward_10_rounded, size: 30),
                   color: Theme.of(context).iconTheme.color,
                 ),
                 IconButton(
                   onPressed: () => controller.goToNextTrack(),
-                  icon: const Icon(Icons.skip_next_rounded, size: 40),
+                  icon: const Icon(Icons.skip_next_rounded, size: 30),
                   color: Theme.of(context).iconTheme.color,
                 ),
               ],

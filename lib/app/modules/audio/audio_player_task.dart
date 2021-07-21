@@ -21,6 +21,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   AudioProcessingState? _skipState;
   late StreamSubscription<PlaybackEvent> _eventSubscription;
   StreamSubscription? _positionStream;
+  MediaItem? _currentMediaItem;
 
   final Function eq = const ListEquality().equals;
 
@@ -91,9 +92,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
       }
     });
     _databaseController = Get.put(DatabaseController());
-    _audioPlayer.currentIndexStream.listen((index) {
+    _audioPlayer.currentIndexStream.listen((index) async {
       if (index != null) {
-        onUpdateMediaItem(AudioServiceBackground.queue![index]);
+        await onUpdateMediaItem(AudioServiceBackground.queue![index]);
+        _currentMediaItem = AudioServiceBackground.queue![index];
       }
     });
     _audioPlayer.playbackEventStream.listen((event) async {
@@ -137,6 +139,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
   @override
   Future<void> onUpdateMediaItem(MediaItem mediaItem) async {
     if (AudioServiceBackground.mediaItem != mediaItem) {
+      _currentMediaItem = mediaItem;
       await AudioServiceBackground.setMediaItem(mediaItem);
       await AudioServiceBackground.notifyChildrenChanged();
       final int position = await getCurrentPlayPosition(mediaItem.id);
@@ -171,14 +174,21 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   @override
-  Future<void> onSkipToNext() {
-    _audioPlayer.seekToNext();
+  Future<void> onSkipToNext() async {
+    await _audioPlayer.seekToNext();
+    if (_currentMediaItem != null) {
+      await AudioServiceBackground.setMediaItem(_currentMediaItem!);
+    }
     return super.onSkipToNext();
   }
 
   @override
-  Future<void> onSkipToPrevious() {
-    _audioPlayer.seekToPrevious();
+  Future<void> onSkipToPrevious() async {
+    await _audioPlayer.seekToPrevious();
+    if (_currentMediaItem != null) {
+      await AudioServiceBackground.setMediaItem(_currentMediaItem!);
+    }
+
     return super.onSkipToPrevious();
   }
 
@@ -219,5 +229,23 @@ class AudioPlayerTask extends BackgroundAudioTask {
     await _eventSubscription.cancel();
     await _positionStream?.cancel();
     return super.onStop();
+  }
+
+  @override
+  Future<void> onSeekBackward(bool begin) async {
+    if (begin) {
+      _audioPlayer
+          .seek(Duration(seconds: _audioPlayer.position.inSeconds - 10));
+    }
+    return super.onSeekBackward(begin);
+  }
+
+  @override
+  Future<void> onSeekForward(bool begin) {
+    if (begin) {
+      _audioPlayer
+          .seek(Duration(seconds: _audioPlayer.position.inSeconds + 10));
+    }
+    return super.onSeekForward(begin);
   }
 }

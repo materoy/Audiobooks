@@ -30,6 +30,9 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
     super.initState();
     _playPauseAnimation = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 700));
+    if (widget.playing != null && widget.playing!) {
+      _playPauseAnimation.forward();
+    }
   }
 
   @override
@@ -53,7 +56,7 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
             width: 50.0,
             decoration: BoxDecoration(
               color: Colors.transparent,
-              border: Border.all(color: Colors.blue, width: 2.0),
+              border: Border.all(color: Colors.black45, width: 3.5),
               shape: BoxShape.circle,
             ),
             child: Center(

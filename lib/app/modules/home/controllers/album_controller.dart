@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
@@ -30,11 +29,16 @@ class AlbumController extends GetxController {
   final _tracks = List<Track>.empty(growable: true).obs;
   final _mediaItemsQueue = List<MediaItem>.empty(growable: true).obs;
   final _currentTrack = Track.empty().obs;
+  final _liked = false.obs;
+
+  final _playing = false.obs;
 
   List<Track> get tracks => _tracks;
   Track get currentTrack => _currentTrack.value;
   MediaItem get currentMediaItem => getMediaItemFromTrack(currentTrack);
   List<MediaItem> get mediaItemsQueue => _mediaItemsQueue;
+  bool get playing => _playing.value;
+  bool get liked => _liked.value;
 
   set currentMediaItem(MediaItem mediaItem) => currentMediaItem = mediaItem;
 
@@ -43,6 +47,7 @@ class AlbumController extends GetxController {
   Future<void> getTracksInAlbum() async {
     await _trackProvider.getTracksInAlbum(album.albumId!).then((value) {
       _tracks.addAll(value);
+
       for (final Track track in value) {
         final MediaItem mediaItem = getMediaItemFromTrack(track);
         _mediaItemsQueue.add(mediaItem);
@@ -87,8 +92,9 @@ class AlbumController extends GetxController {
   }
 
   Future<void> goToNextTrack() async {
+    await AudioService.skipToNext();
     final int currentIndex = _tracks.indexWhere(
-        (element) => element.trackId == _currentTrack.value.trackId);
+        (element) => element.path == AudioServiceBackground.mediaItem!.id);
     final int nextTrackIndex = currentIndex + 1;
     if (_tracks.length > nextTrackIndex) {
       _currentTrack.value = _tracks[nextTrackIndex];
@@ -97,8 +103,9 @@ class AlbumController extends GetxController {
   }
 
   Future<void> goToPreviousTrack() async {
+    await AudioService.skipToPrevious();
     final int currentIndex = _tracks.indexWhere(
-        (element) => element.trackId == _currentTrack.value.trackId);
+        (element) => element.path == AudioServiceBackground.mediaItem!.id);
     final int previousTrackIndex = currentIndex - 1;
     if (previousTrackIndex >= 0) {
       _currentTrack.value = _tracks[previousTrackIndex];
@@ -106,11 +113,16 @@ class AlbumController extends GetxController {
     }
   }
 
+  void showInfoDialog(String message) {
+    Get.snackbar('Audiobooks', message);
+  }
+
   Future<void> onPlay() async {
     if (!AudioService.running) {
       await startBackgroundAudioService();
     }
 
+    _playing.value = true;
     await AudioService.updateQueue(mediaItemsQueue);
     await AudioService.updateMediaItem(currentMediaItem);
     await AudioService.play();
@@ -124,12 +136,32 @@ class AlbumController extends GetxController {
 
   Future<void> onPause() async {
     await AudioService.pause();
+    _playing.value = false;
+  }
+
+  Future likeAlbum() async {
+    await _albumProvider.likeAlbum(album.albumId!);
+    _liked.value = true;
+  }
+
+  Future unlikeAlbum() async {
+    await _albumProvider.unlikeAlbum(album.albumId!);
+    _liked.value = false;
+  }
+
+  Future checkLiked() async {
+    _liked.value = await _albumProvider.checkLiked(album.albumId!);
   }
 
   @override
-  void onInit() {
+  Future onInit() async {
     super.onInit();
-    getTracksInAlbum().then((value) => getCurrentTrack());
+    await getTracksInAlbum();
+    await getCurrentTrack();
+
+    _playing.value = AudioService.currentMediaItem != null &&
+        currentTrack.path == AudioService.currentMediaItem!.id &&
+        AudioService.playbackState.playing;
 
     /// Listens for changes in current media from the audio service
     /// updates the album table when there is a change in current media
@@ -140,7 +172,6 @@ class AlbumController extends GetxController {
           final Track newTrack = await _trackProvider.getTrackByPath(event.id);
           await _albumProvider.updateCurrentTrackInCollection(
               trackId: newTrack.trackId!, albumId: album.albumId!);
-          log(event.title.toString());
         }
       }
     });
@@ -150,5 +181,11 @@ class AlbumController extends GetxController {
   void onClose() {
     super.onClose();
     currentMediaItemStream?.cancel();
+  }
+
+  @override
+  Future onReady() async {
+    super.onReady();
+    await checkLiked();
   }
 }
