@@ -28,12 +28,13 @@ class AlbumCard extends GetView<AlbumController> {
 
   @override
   Widget build(BuildContext context) {
+    print(album.albumName);
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
       child: Column(
         children: [
           Container(
-            height: SizeConfig.blockSizeVertical * 29.0,
+            height: SizeConfig.blockSizeVertical * 33.0,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
                 color: const Color(0xFFC4C4C4),
@@ -47,14 +48,15 @@ class AlbumCard extends GetView<AlbumController> {
                 Container(
                   clipBehavior: Clip.hardEdge,
                   width: double.infinity,
-                  height: SizeConfig.blockSizeVertical * 18,
+                  height: SizeConfig.blockSizeVertical * 20.0,
                   decoration: BoxDecoration(
                     color: Colors.brown[50],
                   ),
                   child: album.albumArt != null
                       ? Image.memory(album.albumArt!, fit: BoxFit.cover)
                       : Container(
-                          color: Colors.black,
+                          color: Colors.grey,
+                          // child: ,
                         ),
                 ),
 
@@ -77,17 +79,23 @@ class AlbumCard extends GetView<AlbumController> {
                       decelerationCurve: Curves.easeOut,
                     )),
 
-                // /// Author names
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //       vertical: 2.0, horizontal: 10.0),
-                //   child: RichText(
-                //     text: TextSpan(
-                //         text: album.albumAuthor,
-                //         style: Theme.of(context).textTheme.bodyText1),
-                //     overflow: TextOverflow.ellipsis,
-                //   ),
-                // ),
+                if (album.albumAuthor != '')
+
+                  // /// Author names
+                  Container(
+                    padding:
+                        const EdgeInsets.only(top: 1.0, bottom: 1.0, left: 8.0),
+                    alignment: Alignment.centerLeft,
+                    child: RichText(
+                      text: TextSpan(
+                          text: album.albumAuthor,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 10)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ListenViewButton(
                     currenTrack: controller.currentTrack,
                     controler: controller),

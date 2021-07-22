@@ -10,6 +10,7 @@ abstract class Routes {
   static const LIBRARY = _Paths.LIBRARY;
   static const SETTINGS = _Paths.SETTINGS;
   static const SHELF = _Paths.SHELF;
+  static const FEEDBACK = _Paths.FEEDBACK;
 }
 
 abstract class _Paths {
@@ -19,4 +20,5 @@ abstract class _Paths {
   static const LIBRARY = '/library';
   static const SETTINGS = '/settings';
   static const SHELF = '/shelf';
+  static const FEEDBACK = '/feedback';
 }

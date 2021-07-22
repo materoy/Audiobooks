@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import 'package:audiobooks/app/modules/feedback/bindings/feedback_binding.dart';
+import 'package:audiobooks/app/modules/feedback/views/feedback_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
 import 'package:audiobooks/app/modules/library/views/library_view.dart';
 import 'package:audiobooks/app/modules/media_folders/bindings/media_folders_binding.dart';
@@ -50,6 +52,11 @@ class AppPages {
       name: _Paths.SHELF,
       page: () => ShelfView(),
       binding: ShelfBinding(),
+    ),
+    GetPage(
+      name: _Paths.FEEDBACK,
+      page: () => FeedbackView(),
+      binding: FeedbackBinding(),
     ),
   ];
 }
