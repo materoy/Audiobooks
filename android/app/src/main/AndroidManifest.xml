@@ -4,6 +4,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"  />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.SENDTO" />
+        <data android:scheme="mailto" />
+      </intent>
+    </queries>
+
    <application
       android:requestLegacyExternalStorage="true"
         android:label="Audiobooks"
