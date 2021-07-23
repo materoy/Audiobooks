@@ -49,12 +49,10 @@ class MediaScanner {
             /// Adds media to database
             await _addAudiobookToDatabase(track);
           }
-
-          // if (Get.isSnackbarOpen!) Get.back();
-          // Get.snackbar("New book !", 'Added new audiobook ${track.trackName}');
         }
       }
     }
+    Get.snackbar('Done!', 'New Audiobooks added to Library');
 
     /// Refreshes the state of the shelves since new media has been added
     Get.find<LibraryController>().refreshShelves();

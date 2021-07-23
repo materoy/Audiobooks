@@ -9,11 +9,11 @@ class MediaFoldersController extends GetxController {
   final _mediaFolders = List<String>.empty(growable: true).obs;
 
   List<String> get mediaFolders => _mediaFolders;
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   queryMediaFolders();
-  // }
+  @override
+  void onInit() {
+    super.onInit();
+    queryMediaFolders();
+  }
 
   Future<void> queryMediaFolders() async {
     final results =
@@ -22,7 +22,7 @@ class MediaFoldersController extends GetxController {
       final String path = result['directoryPath']! as String;
       if (!_mediaFolders.contains(path)) {
         _mediaFolders.add(path);
-        MediaScanner(_localDatabase).queryMediaFolders();
+        await MediaScanner(_localDatabase).queryMediaFolders();
       }
     }
   }

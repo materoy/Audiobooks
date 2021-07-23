@@ -22,37 +22,39 @@ class SettingsView extends GetView<SettingsController> {
         middle: Text('Settings'),
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            SettingsEntry(
-              onPressed: () => MediaFoldersDialog.open(),
-              child: const Text('Media folders'),
-            ),
-            SettingsEntry(
-              onPressed: () => Get.toNamed(Routes.FEEDBACK),
-              child: const Text('Feedback'),
-            ),
-            if (kDebugMode) ...[
+        child: Material(
+          child: Column(
+            children: [
               SettingsEntry(
-                onPressed: () =>
-                    MediaScanner(Get.find<DatabaseController>().localDatabase)
-                        .queryMediaFolders(),
-                child: const Text('Query media Folders'),
+                onPressed: () => MediaFoldersDialog.open(),
+                child: const Text('Media folders'),
               ),
               SettingsEntry(
-                onPressed: () => Get.find<DatabaseController>()
-                    .localDatabase
-                    .resetDatabase(),
-                child: const Text('Reset Db'),
+                onPressed: () => Get.toNamed(Routes.FEEDBACK),
+                child: const Text('Feedback'),
               ),
-              SettingsEntry(
-                onPressed: () => Get.find<DatabaseController>()
-                    .localDatabase
-                    .initializeDatabaseSchema(),
-                child: const Text('Initialize db schema'),
-              ),
+              if (kDebugMode) ...[
+                SettingsEntry(
+                  onPressed: () =>
+                      MediaScanner(Get.find<DatabaseController>().localDatabase)
+                          .queryMediaFolders(),
+                  child: const Text('Query media Folders'),
+                ),
+                SettingsEntry(
+                  onPressed: () => Get.find<DatabaseController>()
+                      .localDatabase
+                      .resetDatabase(),
+                  child: const Text('Reset Db'),
+                ),
+                SettingsEntry(
+                  onPressed: () => Get.find<DatabaseController>()
+                      .localDatabase
+                      .initializeDatabaseSchema(),
+                  child: const Text('Initialize db schema'),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -67,37 +69,21 @@ class SettingsEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal * 3,
-              vertical: SizeConfig.blockSizeVertical * 1,
-            ),
-            margin: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal * 5,
-              vertical: SizeConfig.blockSizeVertical * 1,
-            ),
-            // decoration: const BoxDecoration(
-            //     border: Border(bottom: BorderSide(color: Colors.grey))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(alignment: Alignment.centerLeft, child: child),
-                const Icon(CupertinoIcons.chevron_forward)
-              ],
-            ),
-          ),
-          const Divider(
-            color: Colors.grey,
-            thickness: 1.0,
-            endIndent: 20.0,
-            indent: 10.0,
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        ListTile(
+          onTap: onPressed,
+          title: child,
+          // shape: ,
+          trailing: const Icon(CupertinoIcons.chevron_forward),
+        ),
+        const Divider(
+          color: Colors.grey,
+          thickness: 1.0,
+          endIndent: 20.0,
+          indent: 10.0,
+        ),
+      ],
     );
   }
 }
