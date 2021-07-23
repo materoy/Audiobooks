@@ -18,11 +18,11 @@ class MediaScanner {
   static const List<String> AUDIO_MEDIA_TYPES = ['.mp3', '.m4b'];
 
   Future<void> queryMediaFolders() async {
-    final results =
-        await localDatabase.query(table: LocalDatabase.directoryPaths);
+    final results = await localDatabase.database
+        .transaction((txn) async => txn.query(LocalDatabase.directoryPaths));
     // ignore: prefer_final_locals
     List<String> paths = [];
-    for (final result in results!) {
+    for (final result in results) {
       paths.add(result['directoryPath']! as String);
     }
 

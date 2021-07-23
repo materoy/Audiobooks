@@ -128,10 +128,10 @@ class AlbumController extends GetxController {
       AudioService.pause();
     }
 
-    _playing.value = true;
     await AudioService.updateQueue(mediaItemsQueue);
     await AudioService.updateMediaItem(currentMediaItem);
     await AudioService.play();
+    _playing.value = true;
 
     if (_shelfController.shelf.shelfName == 'Recently added') {
       await _shelfController.moveFromRecentlyAddedToListening(

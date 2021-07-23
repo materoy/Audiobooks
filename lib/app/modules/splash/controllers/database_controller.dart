@@ -38,4 +38,10 @@ class DatabaseController extends GetxController {
       });
     }
   }
+
+  @override
+  void onClose() {
+    super.onClose();
+    localDatabase.database.close();
+  }
 }

@@ -37,7 +37,7 @@ class LocalDatabase {
   /// Queries the top level sqlite Db and returns the number of tables that exist
   /// Returns 0 if no tables have beeen added
   Future<int> checkTablesExist() async {
-    final results = await database.transaction((txn) =>
+    final results = await database.transaction((txn) async =>
         txn.rawQuery("SELECT count(*) FROM sqlite_master WHERE type='table'"));
     if (results.isNotEmpty) return results.first['count(*)']! as int;
     return 0;
@@ -131,11 +131,12 @@ class LocalDatabase {
       {required String table, List<String>? columns, bool? distinct}) async {
     final bool open = await databaseOpened;
     if (open) {
-      final List<Map<String, dynamic>> results = await database.query(
-        table,
-        columns: columns,
-        distinct: distinct,
-      );
+      final List<Map<String, dynamic>> results =
+          await database.transaction((txn) async => txn.query(
+                table,
+                columns: columns,
+                distinct: distinct,
+              ));
       return results;
     }
   }

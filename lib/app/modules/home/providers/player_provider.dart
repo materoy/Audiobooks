@@ -15,11 +15,11 @@ class PlayerProvider {
 
   Future<int> getCurrentTrackPlayPosition(String path) async {
     try {
-      final resultSet = await _localDatabase.database.query(
-          LocalDatabase.tracksTable,
-          columns: ['currentPosition'],
-          where: 'path = ?',
-          whereArgs: [path]);
+      final resultSet = await _localDatabase.database.transaction((txn) async =>
+          txn.query(LocalDatabase.tracksTable,
+              columns: ['currentPosition'],
+              where: 'path = ?',
+              whereArgs: [path]));
 
       if (resultSet.isNotEmpty) {
         return resultSet.first['currentPosition']! as int;

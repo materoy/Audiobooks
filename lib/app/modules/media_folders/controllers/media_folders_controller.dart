@@ -16,9 +16,9 @@ class MediaFoldersController extends GetxController {
   }
 
   Future<void> queryMediaFolders() async {
-    final results =
-        await _localDatabase.query(table: LocalDatabase.directoryPaths);
-    for (final result in results!) {
+    final results = await _localDatabase.database
+        .transaction((txn) async => txn.query(LocalDatabase.directoryPaths));
+    for (final result in results) {
       final String path = result['directoryPath']! as String;
       if (!_mediaFolders.contains(path)) {
         _mediaFolders.add(path);

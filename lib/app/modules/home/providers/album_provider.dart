@@ -11,10 +11,9 @@ class AlbumProvider {
 
   Future<Album> getAlbumById(int albumId) async {
     try {
-      final resultsSet = await _localDatabase.database.query(
-          LocalDatabase.albumsTable,
-          where: 'albumId = ?',
-          whereArgs: [albumId]);
+      final resultsSet = await _localDatabase.database.transaction(
+          (txn) async => txn.query(LocalDatabase.albumsTable,
+              where: 'albumId = ?', whereArgs: [albumId]));
 
       if (resultsSet.isNotEmpty) {
         return Album.fromMap(resultsSet.first);
@@ -23,8 +22,8 @@ class AlbumProvider {
     } catch (e) {
       log(e.toString());
 
-      final resultsSet =
-          await _localDatabase.database.query(LocalDatabase.albumsTable,
+      final resultsSet = await _localDatabase.database
+          .transaction((txn) async => txn.query(LocalDatabase.albumsTable,
               columns: [
                 'albumId',
                 'albumDuration',
@@ -35,7 +34,7 @@ class AlbumProvider {
                 'albumCoverage'
               ],
               where: 'albumId = ?',
-              whereArgs: [albumId]);
+              whereArgs: [albumId]));
 
       if (resultsSet.isNotEmpty) {
         return Album.fromMap(resultsSet.first);
@@ -46,10 +45,9 @@ class AlbumProvider {
 
   Future<int> getCurrentTrackId(int albumId) async {
     try {
-      final resultsSet = await _localDatabase.database.query(
-          LocalDatabase.albumsTable,
-          where: 'albumId = ?',
-          whereArgs: [albumId]);
+      final resultsSet = await _localDatabase.database.transaction(
+          (txn) async => txn.query(LocalDatabase.albumsTable,
+              where: 'albumId = ?', whereArgs: [albumId]));
       if (resultsSet.isNotEmpty) {
         return resultsSet.first['currentTrackId']! as int;
       }
@@ -62,17 +60,18 @@ class AlbumProvider {
 
   Future<void> updateCurrentTrackInCollection(
       {required int trackId, required int albumId}) async {
-    await _localDatabase.database.update(
+    await _localDatabase.database.transaction((txn) async => txn.update(
         LocalDatabase.albumsTable,
         {
           'currentTrackId': trackId,
         },
         where: 'albumId = ?',
-        whereArgs: [albumId]);
+        whereArgs: [albumId]));
   }
 
   Future<List<Album>> getAlbumsInCategory(String categoryTableName) async {
-    final resultsSet = await _localDatabase.database.query(categoryTableName);
+    final resultsSet = await _localDatabase.database
+        .transaction((txn) async => txn.query(categoryTableName));
     List<Album> albums;
     albums = [];
     for (final result in resultsSet) {

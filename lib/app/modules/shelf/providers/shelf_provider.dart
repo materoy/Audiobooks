@@ -10,10 +10,9 @@ class ShelfProvider extends BaseProvider {
   Future<List<Album>> getAlbumsInShelf({required int shelfId}) async {
     final AlbumProvider albumProvider = AlbumProvider(localDatabase);
     List<Album> albums;
-    final resultsSet = await localDatabase.database.query(
-        LocalDatabase.shelfMembersTable,
-        where: 'shelfId = ?',
-        whereArgs: [shelfId]);
+    final resultsSet = await localDatabase.database.transaction((txn) async =>
+        txn.query(LocalDatabase.shelfMembersTable,
+            where: 'shelfId = ?', whereArgs: [shelfId]));
     albums = [];
     for (final result in resultsSet) {
       final Album album =

@@ -10,10 +10,9 @@ class TrackProvider {
 
   Future<Track> getTrackById(int trackId) async {
     try {
-      final resultSet = await localDatabase.database.query(
-          LocalDatabase.tracksTable,
-          where: 'trackId = ?',
-          whereArgs: [trackId]);
+      final resultSet = await localDatabase.database.transaction((txn) async =>
+          txn.query(LocalDatabase.tracksTable,
+              where: 'trackId = ?', whereArgs: [trackId]));
       if (resultSet.isNotEmpty) {
         return Track.fromMap(resultSet.first);
       }
@@ -26,10 +25,9 @@ class TrackProvider {
 
   Future<Track> getTrackByPath(String path) async {
     try {
-      final resultSet = await localDatabase.database.query(
-          LocalDatabase.tracksTable,
-          where: 'path = ?',
-          whereArgs: [path]);
+      final resultSet = await localDatabase.database.transaction((txn) async =>
+          txn.query(LocalDatabase.tracksTable,
+              where: 'path = ?', whereArgs: [path]));
       if (resultSet.isNotEmpty) {
         return Track.fromMap(resultSet.first);
       }
@@ -43,12 +41,13 @@ class TrackProvider {
   Future<List<Track>> getTracksInAlbum(int albumId) async {
     List<Track> tracksInCollection;
     tracksInCollection = [];
-    final results = await localDatabase.database.query(
-      LocalDatabase.tracksTable,
-      where: 'albumId = ?',
-      whereArgs: [albumId],
-      orderBy: 'trackNumber',
-    );
+    final results =
+        await localDatabase.database.transaction((txn) async => txn.query(
+              LocalDatabase.tracksTable,
+              where: 'albumId = ?',
+              whereArgs: [albumId],
+              orderBy: 'trackNumber',
+            ));
 
     for (final result in results) {
       tracksInCollection.add(Track.fromMap(result));
