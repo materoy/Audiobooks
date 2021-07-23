@@ -86,8 +86,8 @@ class InputField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       autovalidateMode: Get.find<FeedbackController>().validate
-          ? AutovalidateMode.onUserInteraction
-          : AutovalidateMode.always,
+          ? AutovalidateMode.always
+          : AutovalidateMode.onUserInteraction,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please fill the required fields';
