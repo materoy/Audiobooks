@@ -28,7 +28,6 @@ class AlbumCard extends GetView<AlbumController> {
 
   @override
   Widget build(BuildContext context) {
-    print(album.albumName);
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.PLAYER, arguments: album),
       child: Column(
@@ -135,7 +134,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
             ? PlayPauseButton(
                 audioFilePath: controller.currentTrack.path!,
                 onPressed: () async {
-                  if (AudioService.playbackState.playing) {
+                  if (controller.playing) {
                     await controller.onPause();
                   } else {
                     await controller.onPlay();
@@ -168,20 +167,6 @@ class _ListenViewButtonState extends State<ListenViewButton> {
                               : 'Continue'),
                         ),
                 ),
-
-                // child: AudioService.currentMediaItem != null &&
-                //         controller.currentTrack.path ==
-                //             AudioService.currentMediaItem!.id &&
-                //         AudioService.playbackState.playing
-                //     ? Container(
-                //         padding: const EdgeInsets.all(8.0),
-                //         decoration: BoxDecoration(
-                //           shape: BoxShape.circle,
-                //           color: Theme.of(context).buttonColor,
-                //         ),
-                //         child: const Icon(CupertinoIcons.pause_fill),
-                //       )
-                //     :
               )
             : const CircularProgressIndicator.adaptive()),
         TextButton(onPressed: () {}, child: const Text('View'))

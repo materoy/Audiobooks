@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
@@ -10,6 +11,7 @@ import 'package:audiobooks/app/modules/library/controllers/library_controller.da
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
 import 'package:audiobooks/app/modules/splash/controllers/splash_controller.dart';
 import 'package:audiobooks/app/utils/database.dart';
+import 'package:audiobooks/app/utils/logger.dart';
 import 'package:get/get.dart';
 
 class AlbumController extends GetxController {
@@ -121,6 +123,10 @@ class AlbumController extends GetxController {
     if (!AudioService.running) {
       await startBackgroundAudioService();
     }
+    log(AudioService.playbackState.playing.toString());
+    if (AudioService.playbackState.playing) {
+      AudioService.pause();
+    }
 
     _playing.value = true;
     await AudioService.updateQueue(mediaItemsQueue);
@@ -153,6 +159,8 @@ class AlbumController extends GetxController {
     _liked.value = await _albumProvider.checkLiked(album.albumId!);
   }
 
+  late StreamSubscription playBackState;
+
   @override
   Future onInit() async {
     super.onInit();
@@ -162,6 +170,27 @@ class AlbumController extends GetxController {
     _playing.value = AudioService.currentMediaItem != null &&
         currentTrack.path == AudioService.currentMediaItem!.id &&
         AudioService.playbackState.playing;
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    currentMediaItemStream?.cancel();
+    playBackState.cancel();
+  }
+
+  @override
+  Future onReady() async {
+    super.onReady();
+    await checkLiked();
+
+    /// Listens for changes in playback stream
+    ///  updates the playing state of the respective album
+    playBackState = AudioService.playbackStateStream.listen((event) {
+      _playing.value = AudioService.currentMediaItem != null &&
+          currentTrack.path == AudioService.currentMediaItem!.id &&
+          AudioService.playbackState.playing;
+    });
 
     /// Listens for changes in current media from the audio service
     /// updates the album table when there is a change in current media
@@ -175,17 +204,5 @@ class AlbumController extends GetxController {
         }
       }
     });
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    currentMediaItemStream?.cancel();
-  }
-
-  @override
-  Future onReady() async {
-    super.onReady();
-    await checkLiked();
   }
 }

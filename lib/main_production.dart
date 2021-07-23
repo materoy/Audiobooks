@@ -11,14 +11,12 @@ import 'dart:developer';
 import 'package:flutter/widgets.dart';
 
 import 'package:audiobooks/app/app.dart';
-import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
-  await GetStorage.init();
 
   runZonedGuarded(
     () => runApp(const App()),

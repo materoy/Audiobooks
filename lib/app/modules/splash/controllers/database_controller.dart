@@ -8,8 +8,8 @@ class DatabaseController extends GetxController {
   final databaseOpen = false.obs;
 
   Future<bool> checkDirectoryPathsExist() async {
-    final results =
-        await localDatabase.database.query(LocalDatabase.directoryPaths);
+    final results = await localDatabase.database
+        .transaction((txn) async => txn.query(LocalDatabase.directoryPaths));
     return results.isNotEmpty;
   }
 
@@ -22,15 +22,20 @@ class DatabaseController extends GetxController {
         await localDatabase.initializeDatabaseSchema();
         databaseOpen.value = true;
 
-        // Checks if there are loaded paths
-        await checkDirectoryPathsExist().then((directoryLoaded) {
-          // And if there are no directories configured open the select
-          // media directory dialog
-          if (!directoryLoaded) MediaFoldersDialog.open();
-        });
+        super.onInit();
       }
     });
+  }
 
-    super.onInit();
+  @override
+  Future onReady() async {
+    super.onReady();
+    if (databaseOpen.value) {
+      await checkDirectoryPathsExist().then((directoryLoaded) async {
+        // And if there are no directories configured open the select
+        // media directory dialog
+        if (!directoryLoaded) MediaFoldersDialog.open();
+      });
+    }
   }
 }

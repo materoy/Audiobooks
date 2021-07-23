@@ -92,7 +92,7 @@ class SettingsEntry extends StatelessWidget {
           ),
           const Divider(
             color: Colors.grey,
-            thickness: 1.5,
+            thickness: 1.0,
             endIndent: 20.0,
             indent: 10.0,
           ),

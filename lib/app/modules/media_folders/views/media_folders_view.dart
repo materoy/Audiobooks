@@ -10,7 +10,11 @@ import '../controllers/media_folders_controller.dart';
 class MediaFoldersDialog extends GetView<MediaFoldersController> {
   static void open() {
     Get.lazyPut(() => MediaFoldersController());
-    Get.dialog(MediaFoldersDialog());
+    Get.generalDialog(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return MediaFoldersDialog();
+      },
+    );
   }
 
   @override
