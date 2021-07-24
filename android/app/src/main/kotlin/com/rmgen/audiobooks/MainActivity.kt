@@ -1,4 +1,4 @@
-package com.example.audiobooks
+package com.rmgen.audiobooks
 
 import io.flutter.embedding.android.FlutterActivity
 
