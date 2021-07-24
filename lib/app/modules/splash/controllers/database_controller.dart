@@ -1,5 +1,6 @@
 import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.dart';
 import 'package:audiobooks/app/utils/database.dart';
+import 'package:audiobooks/app/utils/logger.dart';
 import 'package:get/get.dart';
 
 class DatabaseController extends GetxController {
@@ -21,22 +22,24 @@ class DatabaseController extends GetxController {
       if (isOpen) {
         await localDatabase.initializeDatabaseSchema();
         databaseOpen.value = true;
-
-        super.onInit();
       }
     });
+    super.onInit();
   }
 
   @override
   Future onReady() async {
     super.onReady();
-    if (databaseOpen.value) {
-      await checkDirectoryPathsExist().then((directoryLoaded) async {
-        // And if there are no directories configured open the select
-        // media directory dialog
-        if (!directoryLoaded) MediaFoldersDialog.open();
-      });
-    }
+    Logger.log(databaseOpen.value.toString());
+    Future.delayed(const Duration(seconds: 2), () async {
+      if (databaseOpen.value) {
+        await checkDirectoryPathsExist().then((directoryLoaded) async {
+          // And if there are no directories configured open the select
+          // media directory dialog
+          if (!directoryLoaded) MediaFoldersDialog.open();
+        });
+      }
+    });
   }
 
   @override

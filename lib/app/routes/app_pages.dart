@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import 'package:audiobooks/app/modules/bottom_overlay/bindings/bottom_overlay_binding.dart';
+import 'package:audiobooks/app/modules/bottom_overlay/views/bottom_overlay_view.dart';
 import 'package:audiobooks/app/modules/feedback/bindings/feedback_binding.dart';
 import 'package:audiobooks/app/modules/feedback/views/feedback_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
@@ -57,6 +59,11 @@ class AppPages {
       name: _Paths.FEEDBACK,
       page: () => FeedbackView(),
       binding: FeedbackBinding(),
+    ),
+    GetPage(
+      name: _Paths.BOTTOM_OVERLAY,
+      page: () => BottomOverlayView(),
+      binding: BottomOverlayBinding(),
     ),
   ];
 }

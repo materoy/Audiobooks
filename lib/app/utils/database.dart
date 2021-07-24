@@ -14,6 +14,7 @@ class LocalDatabase {
   static const String shelvesTable = 'Shelves';
   static const String shelfMembersTable = 'ShelfMembers';
   static const String directoryPaths = 'AudiobooksDirectoryPaths';
+  static const String metadataTable = 'Metadata';
 
   LocalDatabase({Database? testDatabase}) {
     if (testDatabase != null) {
@@ -46,9 +47,9 @@ class LocalDatabase {
   Future<bool?> initializeDatabaseSchema() async {
     final int tablesCount = await checkTablesExist();
 
-    /// Total number of table are 6 for now
+    /// Total number of table are 7 for now
     /// So if not all exist please create missing ones, probably all then
-    if (tablesCount != 6) {
+    if (tablesCount != 7) {
       try {
         log('Creating database schema');
 
@@ -114,6 +115,12 @@ class LocalDatabase {
         shelfId INTEGER NOT NULL,
         albumId INTEGER NOT NULL,
         UNIQUE(shelfId, albumId)
+    )''');
+
+          await txn.execute('''
+      CREATE TABLE $metadataTable (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
     )''');
         });
 

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
+import 'package:audiobooks/app/utils/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
