@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class BottomOverlayController extends GetxController {
-  //TODO: Implement BottomOverlayController
+class OverlayController extends GetxController {
+  //TODO: Implement OverlayController
 
   final count = 0.obs;
   @override

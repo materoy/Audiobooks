@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 
-import 'package:audiobooks/app/modules/bottom_overlay/bindings/bottom_overlay_binding.dart';
-import 'package:audiobooks/app/modules/bottom_overlay/views/bottom_overlay_view.dart';
 import 'package:audiobooks/app/modules/feedback/bindings/feedback_binding.dart';
 import 'package:audiobooks/app/modules/feedback/views/feedback_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
 import 'package:audiobooks/app/modules/library/views/library_view.dart';
 import 'package:audiobooks/app/modules/media_folders/bindings/media_folders_binding.dart';
 import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.dart';
+import 'package:audiobooks/app/modules/overlay/bindings/overlay_binding.dart';
+import 'package:audiobooks/app/modules/overlay/views/overlay_view.dart';
 import 'package:audiobooks/app/modules/player/bindings/player_binding.dart';
 import 'package:audiobooks/app/modules/player/views/player_view.dart';
 import 'package:audiobooks/app/modules/settings/bindings/settings_binding.dart';
@@ -61,9 +61,9 @@ class AppPages {
       binding: FeedbackBinding(),
     ),
     GetPage(
-      name: _Paths.BOTTOM_OVERLAY,
-      page: () => BottomOverlayView(),
-      binding: BottomOverlayBinding(),
+      name: _Paths.OVERLAY,
+      page: () => OverlayView(),
+      binding: OverlayBinding(),
     ),
   ];
 }

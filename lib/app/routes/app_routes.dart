@@ -11,7 +11,7 @@ abstract class Routes {
   static const SETTINGS = _Paths.SETTINGS;
   static const SHELF = _Paths.SHELF;
   static const FEEDBACK = _Paths.FEEDBACK;
-  static const BOTTOM_OVERLAY = _Paths.BOTTOM_OVERLAY;
+  static const OVERLAY = _Paths.OVERLAY;
 }
 
 abstract class _Paths {
@@ -22,5 +22,5 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const SHELF = '/shelf';
   static const FEEDBACK = '/feedback';
-  static const BOTTOM_OVERLAY = '/bottom-overlay';
+  static const OVERLAY = '/overlay';
 }
