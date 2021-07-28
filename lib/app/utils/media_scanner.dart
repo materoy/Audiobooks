@@ -20,42 +20,47 @@ class MediaScanner {
   Future<void> queryMediaFolders() async {
     final results = await localDatabase.database
         .transaction((txn) async => txn.query(LocalDatabase.directoryPaths));
-    // ignore: prefer_final_locals
-    List<String> paths = [];
+    List<String> paths;
+    paths = [];
     for (final result in results) {
       paths.add(result['directoryPath']! as String);
     }
 
     for (final String path in paths) {
-      final Directory directory = Directory(path);
-      final List<FileSystemEntity> entitites =
-          await directory.list(recursive: true).toList();
-
-      for (final FileSystemEntity entity in entitites) {
-        final String extensiton = p.extension(entity.path);
-        if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
-          final Track track = await getMediaInfo(entity.path);
-
-          /// Adds album
-          if (track.albumName != null && track.trackName != null) {
-            print('Added ${track.trackName} to db');
-            _addAlbumToDatabase(Album(
-              albumName: track.albumName!,
-              albumAuthor: track.albumArtistName,
-              albumArt: track.albumArt,
-              albumLength: track.albumLength,
-            ));
-
-            /// Adds media to database
-            await _addAudiobookToDatabase(track);
-          }
-        }
-      }
+      await addMediaFromPath(path);
     }
     Get.snackbar('Done!', 'New Audiobooks added to Library');
 
     /// Refreshes the state of the shelves since new media has been added
     Get.find<LibraryController>().refreshShelves();
+  }
+
+  Future addMediaFromPath(String path) async {
+    final Directory directory = Directory(path);
+    final List<FileSystemEntity> entitites = await directory.list(recursive: true).toList();
+
+    for (final FileSystemEntity entity in entitites) {
+      final String extensiton = p.extension(entity.path);
+      if (AUDIO_MEDIA_TYPES.contains(extensiton)) {
+        final Track track = await getMediaInfo(entity.path);
+
+        /// Adds album
+        if (track.albumName != null && track.trackName != null) {
+          print('Added ${track.trackName} to db');
+          _addAlbumToDatabase(Album(
+            albumName: track.albumName!,
+            albumAuthor: track.albumArtistName,
+            albumArt: track.albumArt,
+            albumLength: track.albumLength,
+          ));
+
+          /// Adds media to database
+          await _addAudiobookToDatabase(track);
+        }
+      } else if (entity is Directory) {
+        addMediaFromPath(entity.path);
+      }
+    }
   }
 
   Future<Track> getMediaInfo(String mediaPath) async {
@@ -69,8 +74,7 @@ class MediaScanner {
     /// Future improvements will need to have this stored in the file system
     /// and it's pointer stored in the sqlite database
     /// Or the native C api could be used which has no limit in storing blobs
-    if (retriever.albumArt != null &&
-        retriever.albumArt!.lengthInBytes < 2097152) {
+    if (retriever.albumArt != null && retriever.albumArt!.lengthInBytes < 2097152) {
       _audiobook.albumArt = retriever.albumArt;
     }
     return _audiobook;
@@ -101,9 +105,7 @@ class MediaScanner {
         // recently added huh
 
         final shelfIdMap = await txn.query(LocalDatabase.shelvesTable,
-            columns: ['shelfId'],
-            where: 'shelfName = ?',
-            whereArgs: ['Recently added']);
+            columns: ['shelfId'], where: 'shelfName = ?', whereArgs: ['Recently added']);
 
         final int recentlyAddedShelfId = shelfIdMap.first['shelfId']! as int;
         await txn.rawInsert('''
@@ -113,9 +115,7 @@ class MediaScanner {
 
         // This queries the number of objects present in the shelves table
         final resultsSet = await txn.query(LocalDatabase.shelvesTable,
-            columns: ['amount'],
-            where: 'shelfName = ?',
-            whereArgs: ['Recently added']);
+            columns: ['amount'], where: 'shelfName = ?', whereArgs: ['Recently added']);
         if (resultsSet.isNotEmpty) {
           final int amount = resultsSet.first['amount']! as int;
           // Updates the number of objects in the shelves table
@@ -135,9 +135,7 @@ class MediaScanner {
       int? albumId;
       if (track.albumName != null) {
         final resultsSet = await txn.query(albumsTable,
-            columns: ['albumId'],
-            where: 'albumName = ?',
-            whereArgs: [track.albumName]);
+            columns: ['albumId'], where: 'albumName = ?', whereArgs: [track.albumName]);
         albumId = resultsSet.first['albumId'] as int?;
       }
       await txn.rawInsert('''
@@ -152,10 +150,7 @@ class MediaScanner {
       ''', [
         albumId,
         track.trackName,
-        if (track.trackArtistNames != null)
-          track.trackArtistNames!.join('|').toString()
-        else
-          null,
+        if (track.trackArtistNames != null) track.trackArtistNames!.join('|').toString() else null,
         track.albumName,
         track.albumArtistName,
         track.trackNumber,
