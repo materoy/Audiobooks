@@ -3,11 +3,9 @@ import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
-// import 'package:permission_handler/permission_handler.dart';
 
 class MediaFoldersController extends GetxController {
-  final LocalDatabase _localDatabase =
-      Get.find<DatabaseController>().localDatabase;
+  final LocalDatabase _localDatabase = Get.find<DatabaseController>().localDatabase;
   final _mediaFolders = List<String>.empty(growable: true).obs;
 
   List<String> get mediaFolders => _mediaFolders;
@@ -29,6 +27,7 @@ class MediaFoldersController extends GetxController {
     }
   }
 
+  /// Adds the newly selected folder to the database
   Future<void> addMediaFolder(String path) async {
     await _localDatabase.insert(table: LocalDatabase.directoryPaths, values: {
       'directoryPath': path,

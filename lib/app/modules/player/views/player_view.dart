@@ -16,11 +16,13 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import 'widgets/audio_player_controlls.dart';
+
 class PlayerView extends GetView<AlbumController> {
   final AudioController audioController = Get.find<AudioController>();
   @override
-  AlbumController get controller => Get.find<AlbumController>(
-      tag: (Get.arguments as Album).albumId.toString());
+  AlbumController get controller =>
+      Get.find<AlbumController>(tag: (Get.arguments as Album).albumId.toString());
   @override
   Widget build(BuildContext context) {
     return ExitOnDragDownWidget(
@@ -67,9 +69,7 @@ class PlayerView extends GetView<AlbumController> {
                         controller.album.albumAuthor ??
                             controller.currentTrack.albumArtistName ??
                             controller.currentTrack.authorName ??
-                            controller.currentTrack.trackArtistNames
-                                ?.toList()
-                                .first ??
+                            controller.currentTrack.trackArtistNames?.toList().first ??
                             "",
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 14),
@@ -79,8 +79,7 @@ class PlayerView extends GetView<AlbumController> {
                       Container(
                         height: SizeConfig.blockSizeVertical * 35,
                         clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0)),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                         child: controller.album.albumArt != null
                             ? Image.memory(
                                 controller.album.albumArt!,
@@ -90,13 +89,11 @@ class PlayerView extends GetView<AlbumController> {
                       ),
 
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: SizeConfig.blockSizeHorizontal * 4),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 4),
                         child: Column(
                           children: List.generate(
-                              controller.tracks.length < 4
-                                  ? controller.tracks.length
-                                  : 4, (index) {
+                              controller.tracks.length < 4 ? controller.tracks.length : 4, (index) {
                             // final int currentTrackIndex = controller.tracks
                             //     .indexWhere((element) =>
                             //         element.trackId ==
@@ -116,20 +113,13 @@ class PlayerView extends GetView<AlbumController> {
                                     ),
                                     children: [
                                       TextSpan(
-                                        text: controller
-                                                .tracks[index].trackName ??
-                                            '',
+                                        text: controller.tracks[index].trackName ?? '',
                                         style: TextStyle(
-                                          color:
-                                              AudioService.currentMediaItem !=
-                                                          null &&
-                                                      controller.tracks[index]
-                                                              .path ==
-                                                          AudioService
-                                                              .currentMediaItem!
-                                                              .id
-                                                  ? Colors.blue
-                                                  : Colors.black,
+                                          color: AudioService.currentMediaItem != null &&
+                                                  controller.tracks[index].path ==
+                                                      AudioService.currentMediaItem!.id
+                                              ? Colors.blue
+                                              : Colors.black,
                                           fontSize: 11.0,
                                         ),
                                       )
@@ -151,8 +141,7 @@ class PlayerView extends GetView<AlbumController> {
                                     //     newPosition: value.inMilliseconds);
                                   },
                                   duration: Duration(
-                                      milliseconds: controller
-                                          .currentTrack.trackDuration!),
+                                      milliseconds: controller.currentTrack.trackDuration!),
                                   position: snapshot.data!);
                             }
                             return Container();
@@ -168,13 +157,10 @@ class PlayerView extends GetView<AlbumController> {
                                 controller.liked
                                     ? await controller.unlikeAlbum()
                                     : await controller.likeAlbum();
-                                await Get.find<LibraryController>()
-                                    .refreshShelves();
+                                await Get.find<LibraryController>().refreshShelves();
                               },
                               icon: Icon(
-                                controller.liked
-                                    ? CupertinoIcons.heart_fill
-                                    : CupertinoIcons.heart,
+                                controller.liked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
                                 size: 40,
                               )))
                         ],
@@ -185,89 +171,6 @@ class PlayerView extends GetView<AlbumController> {
               ],
             ),
           )),
-    );
-  }
-}
-
-class PlayerControlls extends StatefulWidget {
-  const PlayerControlls({Key? key, required this.controller}) : super(key: key);
-  final AlbumController controller;
-  @override
-  _PlayerControllsState createState() => _PlayerControllsState();
-}
-
-class _PlayerControllsState extends State<PlayerControlls> {
-  AlbumController get controller => widget.controller;
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-        child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal * 4.0),
-          width: SizeConfig.screenWidth,
-          height: SizeConfig.blockSizeVertical * 8.0,
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(.3),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                    onPressed: () => controller.goToPreviousTrack(),
-                    icon: Icon(
-                      Icons.skip_previous_rounded,
-                      size: 30,
-                      color: Theme.of(context).iconTheme.color,
-                    )),
-                IconButton(
-                    onPressed: () async {
-                      await AudioService.seekBackward(true);
-                    },
-                    icon: Icon(
-                      Icons.replay_10_rounded,
-                      size: 30,
-                      color: Theme.of(context).iconTheme.color,
-                    )),
-                Obx(() => controller.currentTrack.path != null
-                    ? StreamBuilder<PlaybackState>(
-                        stream: AudioService.playbackStateStream,
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) return Container();
-                          return PlayPauseButton(
-                            audioFilePath: controller.currentTrack.path!,
-                            size: 50,
-                            playing: controller.playing,
-                            onPressed: () async {
-                              if (snapshot.data!.playing) {
-                                controller.onPause();
-                              } else {
-                                controller.onPlay();
-                              }
-                            },
-                          );
-                        })
-                    : const CircularProgressIndicator.adaptive()),
-                IconButton(
-                  onPressed: () async {
-                    await AudioService.seekForward(true);
-                  },
-                  icon: const Icon(Icons.forward_10_rounded, size: 30),
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                IconButton(
-                  onPressed: () => controller.goToNextTrack(),
-                  icon: const Icon(Icons.skip_next_rounded, size: 30),
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

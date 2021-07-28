@@ -21,16 +21,14 @@ class OverlayController extends GetxController {
 
   Future<void> refreshAlbum() async {
     _currentAlbum.value = (await getCurrentPlayingAlbum())!;
-    albumController =
-        Get.find<AlbumController>(tag: _currentAlbum.value.albumId.toString());
+    albumController = Get.find<AlbumController>(tag: _currentAlbum.value.albumId.toString());
     update();
   }
 
   @override
   Future onInit() async {
     super.onInit();
-    _albumProvider =
-        AlbumProvider(Get.find<DatabaseController>().localDatabase);
+    _albumProvider = AlbumProvider(Get.find<DatabaseController>().localDatabase);
 
     _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
 
@@ -42,6 +40,7 @@ class OverlayController extends GetxController {
           ),
           tag: _currentAlbum.value.albumId.toString());
     }
+    update();
   }
 
   @override

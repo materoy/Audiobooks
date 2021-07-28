@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
-class Track {
+import 'package:equatable/equatable.dart';
+
+class Track extends Equatable {
   Track({
     required this.trackId,
     this.albumId,
@@ -103,4 +105,27 @@ class Track {
 
   @override
   String toString() => trackName ?? albumName ?? 'Unnamed track';
+
+  @override
+  List<Object?> get props => [
+        trackId,
+        albumId,
+        trackName,
+        trackArtistNames,
+        albumName,
+        albumArtistName,
+        trackNumber,
+        albumLength,
+        year,
+        genre,
+        authorName,
+        writerName,
+        discNumber,
+        mimeType,
+        trackDuration,
+        bitrate,
+        path,
+        albumArt,
+        currentPosition,
+      ];
 }
