@@ -2,7 +2,6 @@ import 'package:audiobooks/app/modules/media_folders/views/media_folders_view.da
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
-import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

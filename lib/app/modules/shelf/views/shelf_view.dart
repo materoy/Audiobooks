@@ -1,4 +1,6 @@
+import 'package:audiobooks/app/global/base_page.dart';
 import 'package:audiobooks/app/modules/shelf/views/widgets/album_card.dart';
+import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +12,7 @@ class ShelfView extends GetView<ShelfController> {
   @override
   Widget build(BuildContext context) {
     controller.onReady();
-    return CupertinoPageScaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    return BasePage(
         navigationBar: const CupertinoNavigationBar(
           previousPageTitle: 'Library',
           backgroundColor: Colors.transparent,
@@ -23,6 +24,9 @@ class ShelfView extends GetView<ShelfController> {
                 crossAxisCount: 2,
               ),
               shrinkWrap: true,
+              padding: EdgeInsets.only(
+                  bottom: SizeConfig.blockSizeVertical * 40,
+                  top: kToolbarHeight + SizeConfig.blockSizeVertical * 5.0),
               itemCount: controller.albums.length,
               itemBuilder: (context, index) {
                 return AlbumCard(album: controller.albums[index]);

@@ -1,4 +1,6 @@
+import 'package:audiobooks/app/global/base_page.dart';
 import 'package:audiobooks/app/modules/library/views/widgets/shelf_card.dart';
+import 'package:audiobooks/app/modules/overlay/views/overlay_view.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ class LibraryView extends GetView<LibraryController> {
   @override
   Widget build(BuildContext context) {
     controller.onReady();
-    return CupertinoPageScaffold(
+    return BasePage(
       navigationBar: CupertinoNavigationBar(
         leading: Text(
           "Library",

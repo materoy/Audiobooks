@@ -1,20 +1,49 @@
+import 'package:audiobooks/app/data/models/album.dart';
+import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
+import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
+import 'package:audiobooks/app/utils/logger.dart';
 import 'package:get/get.dart';
 
 class OverlayController extends GetxController {
-  //TODO: Implement OverlayController
+  late AlbumController albumController;
+  late final AlbumProvider _albumProvider;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  final _currentAlbum = Album.empty().obs;
+  Album get currentAlbum => _currentAlbum.value;
+
+  Future<Album?> getCurrentPlayingAlbum() async {
+    final int? albumId = await _albumProvider.getCurrentPlayingAlbum();
+    if (albumId != null) {
+      return _albumProvider.getAlbumById(albumId);
+    }
+  }
+
+  Future<void> refreshAlbum() async {
+    _currentAlbum.value = (await getCurrentPlayingAlbum())!;
+    albumController =
+        Get.find<AlbumController>(tag: _currentAlbum.value.albumId.toString());
+    update();
   }
 
   @override
-  void onReady() {
-    super.onReady();
+  Future onInit() async {
+    super.onInit();
+    _albumProvider =
+        AlbumProvider(Get.find<DatabaseController>().localDatabase);
+
+    _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
+
+    if (_currentAlbum.value != Album.empty()) {
+      albumController = Get.put(
+          AlbumController(
+            localDatabase: Get.find<DatabaseController>().localDatabase,
+            album: _currentAlbum.value,
+          ),
+          tag: _currentAlbum.value.albumId.toString());
+    }
   }
 
   @override
   void onClose() {}
-  void increment() => count.value++;
 }

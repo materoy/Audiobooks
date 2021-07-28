@@ -11,6 +11,7 @@ import 'package:audiobooks/app/modules/player/views/widgets/exit_on_drag_down_wi
 import 'package:audiobooks/app/modules/player/views/widgets/generative_art.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -43,7 +44,11 @@ class PlayerView extends GetView<AlbumController> {
                               controller.album.albumArt!,
                               fit: BoxFit.cover,
                             )
-                          : GenerativeArt(),
+
+                          /// Would not play in debug mode to save for some perfomance
+                          : kDebugMode
+                              ? null
+                              : GenerativeArt(),
                     ),
                   ),
                 ),
@@ -97,17 +102,14 @@ class PlayerView extends GetView<AlbumController> {
                             //         element.trackId ==
                             //         controller.currentTrack.trackId);
 
-                            return RichText(
+                            return Obx(() => RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                     text:
                                         "${controller.tracks[index].discNumber ?? controller.tracks[index].trackNumber ?? index}. ",
                                     style: TextStyle(
-                                      color: AudioService.currentMediaItem !=
-                                                  null &&
-                                              controller.tracks[index].path ==
-                                                  AudioService
-                                                      .currentMediaItem!.id
+                                      color: controller.tracks[index].trackId ==
+                                              controller.currentTrack.trackId
                                           ? Colors.blue
                                           : Colors.black,
                                       fontSize: 11.0,
@@ -131,7 +133,7 @@ class PlayerView extends GetView<AlbumController> {
                                           fontSize: 11.0,
                                         ),
                                       )
-                                    ]));
+                                    ])));
                           }),
                         ),
                       ),

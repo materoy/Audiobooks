@@ -8,10 +8,10 @@ import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/home/providers/track_provider.dart';
 import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
+import 'package:audiobooks/app/modules/overlay/controllers/overlay_controller.dart';
 import 'package:audiobooks/app/modules/shelf/controllers/shelf_controller.dart';
 import 'package:audiobooks/app/modules/splash/controllers/splash_controller.dart';
 import 'package:audiobooks/app/utils/database.dart';
-import 'package:audiobooks/app/utils/logger.dart';
 import 'package:get/get.dart';
 
 class AlbumController extends GetxController {
@@ -72,6 +72,8 @@ class AlbumController extends GetxController {
   Future<void> updateCurrentTrack(int trackId) async {
     await _albumProvider.updateCurrentTrackInCollection(
         trackId: trackId, albumId: album.albumId!);
+
+    await _albumProvider.updateCurrentPlayngAlbum(albumId: album.albumId!);
   }
 
   Future<void> getCurrentTrack() async {
@@ -123,17 +125,19 @@ class AlbumController extends GetxController {
     if (!AudioService.running) {
       await startBackgroundAudioService();
     }
-    log(AudioService.playbackState.playing.toString());
     if (AudioService.playbackState.playing) {
       AudioService.pause();
     }
 
     await AudioService.updateQueue(mediaItemsQueue);
     await AudioService.updateMediaItem(currentMediaItem);
+    await _albumProvider.updateCurrentPlayngAlbum(albumId: album.albumId!);
+    await Get.find<OverlayController>().refreshAlbum();
     await AudioService.play();
     _playing.value = true;
 
-    if (_shelfController.shelf.shelfName == 'Recently added') {
+    if (Get.isRegistered<ShelfController>() &&
+        _shelfController.shelf.shelfName == 'Recently added') {
       await _shelfController.moveFromRecentlyAddedToListening(
           currentAlbumId: album.albumId!);
       await Get.find<LibraryController>().refreshShelves();
@@ -173,13 +177,6 @@ class AlbumController extends GetxController {
   }
 
   @override
-  void onClose() {
-    super.onClose();
-    currentMediaItemStream?.cancel();
-    playBackState.cancel();
-  }
-
-  @override
   Future onReady() async {
     super.onReady();
     await checkLiked();
@@ -199,10 +196,22 @@ class AlbumController extends GetxController {
       if (event != null) {
         if (event.album == album.albumName && event.id != currentTrack.path) {
           final Track newTrack = await _trackProvider.getTrackByPath(event.id);
+
+          /// Update controllers current track
+          _currentTrack.value = newTrack;
+
+          /// Update in the database
           await _albumProvider.updateCurrentTrackInCollection(
               trackId: newTrack.trackId!, albumId: album.albumId!);
         }
       }
     });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    currentMediaItemStream?.cancel();
+    playBackState.cancel();
   }
 }

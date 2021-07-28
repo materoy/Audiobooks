@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
-class Album {
-  Album({
+import 'package:equatable/equatable.dart';
+
+class Album extends Equatable {
+  const Album({
     this.albumId,
     this.currentTrackId,
     this.albumDuration,
@@ -49,4 +51,21 @@ class Album {
   final int? albumLength;
   final Uint8List? albumArt;
   final int? albumCoverage;
+
+  @override
+  List<Object?> get props => [
+        albumId,
+        currentTrackId,
+        albumDuration,
+        albumName,
+        albumAuthor,
+        albumLength,
+        albumArt,
+        albumCoverage
+      ];
+
+  @override
+  String toString() {
+    return albumName;
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
 import 'package:audiobooks/app/utils/media_scanner.dart';
 import 'package:audiobooks/app/utils/database.dart';
 import 'package:file_picker/file_picker.dart';
@@ -5,7 +6,8 @@ import 'package:get/get.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 class MediaFoldersController extends GetxController {
-  final LocalDatabase _localDatabase = LocalDatabase();
+  final LocalDatabase _localDatabase =
+      Get.find<DatabaseController>().localDatabase;
   final _mediaFolders = List<String>.empty(growable: true).obs;
 
   List<String> get mediaFolders => _mediaFolders;

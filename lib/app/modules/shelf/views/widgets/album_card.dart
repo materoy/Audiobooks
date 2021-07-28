@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';

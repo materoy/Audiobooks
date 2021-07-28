@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/modules/home/providers/player_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
-import 'package:audiobooks/app/utils/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -154,17 +152,17 @@ class AudioPlayerTask extends BackgroundAudioTask {
   Future<void> onUpdateQueue(List<MediaItem> queue) async {
     if (!eq(AudioServiceBackground.queue, queue)) {
       await AudioServiceBackground.setQueue(queue);
-    }
-    try {
-      await _audioPlayer.setAudioSource(ConcatenatingAudioSource(
-        children:
-            queue.map((item) => AudioSource.uri(Uri.file(item.id))).toList(),
-      ));
+      try {
+        await _audioPlayer.setAudioSource(ConcatenatingAudioSource(
+          children:
+              queue.map((item) => AudioSource.uri(Uri.file(item.id))).toList(),
+        ));
 
-      await _audioPlayer.load();
-    } catch (e) {
-      print("Error: $e");
-      onStop();
+        await _audioPlayer.load();
+      } catch (e) {
+        print("Error: $e");
+        onStop();
+      }
     }
     return super.onUpdateQueue(queue);
   }

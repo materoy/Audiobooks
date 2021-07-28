@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/shelf/providers/shelf_provider.dart';
 import 'package:audiobooks/app/utils/database.dart';
+import 'package:audiobooks/app/utils/logger.dart';
 
 class AlbumProvider {
   const AlbumProvider(LocalDatabase database) : _localDatabase = database;
@@ -67,6 +68,31 @@ class AlbumProvider {
         },
         where: 'albumId = ?',
         whereArgs: [albumId]));
+  }
+
+  Future updateCurrentPlayngAlbum({required int albumId}) async {
+    await _localDatabase.database.transaction((txn) async {
+      await txn.rawUpdate('''
+      INSERT INTO ${LocalDatabase.metadataTable} (key, value)
+
+      VALUES ("currentAlbum", ?)
+      ON CONFLICT (key) DO
+      UPDATE SET value = ?
+      
+      ''', [albumId, albumId]);
+    });
+  }
+
+  Future<int?> getCurrentPlayingAlbum() async {
+    try {
+      final resultSet =
+          await _localDatabase.query(table: LocalDatabase.metadataTable);
+      if (resultSet!.isNotEmpty) {
+        return int.parse(resultSet.first['value'].toString());
+      }
+    } catch (e) {
+      Logger.log(e.toString());
+    }
   }
 
   Future<List<Album>> getAlbumsInCategory(String categoryTableName) async {
