@@ -2,7 +2,6 @@ import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
 import 'package:audiobooks/app/modules/splash/controllers/database_controller.dart';
-import 'package:audiobooks/app/utils/logger.dart';
 import 'package:get/get.dart';
 
 class OverlayController extends GetxController {
@@ -26,10 +25,14 @@ class OverlayController extends GetxController {
   }
 
   @override
-  Future onInit() async {
+  void onInit() {
     super.onInit();
     _albumProvider = AlbumProvider(Get.find<DatabaseController>().localDatabase);
+  }
 
+  @override
+  Future onReady() async {
+    super.onReady();
     _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
 
     if (_currentAlbum.value != Album.empty()) {

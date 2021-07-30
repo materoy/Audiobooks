@@ -9,7 +9,7 @@ import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:marquee/marquee.dart';
+import 'package:marquee_text/marquee_text.dart';
 
 class AlbumCard extends GetView<AlbumController> {
   const AlbumCard({Key? key, required this.album}) : super(key: key);
@@ -18,9 +18,7 @@ class AlbumCard extends GetView<AlbumController> {
 
   @override
   AlbumController get controller => Get.put<AlbumController>(
-      AlbumController(
-          localDatabase: Get.find<DatabaseController>().localDatabase,
-          album: album),
+      AlbumController(localDatabase: Get.find<DatabaseController>().localDatabase, album: album),
       tag: album.albumId.toString());
 
   @override
@@ -33,8 +31,7 @@ class AlbumCard extends GetView<AlbumController> {
             height: SizeConfig.blockSizeVertical * 33.0,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-                color: const Color(0xFFC4C4C4),
-                borderRadius: BorderRadius.circular(15.0)),
+                color: const Color(0xFFC4C4C4), borderRadius: BorderRadius.circular(15.0)),
             margin: EdgeInsets.symmetric(
                 vertical: SizeConfig.blockSizeVertical * 2,
                 horizontal: SizeConfig.blockSizeHorizontal * 3),
@@ -58,43 +55,29 @@ class AlbumCard extends GetView<AlbumController> {
 
                 /// The [album] name
                 Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 3.0, horizontal: 10.0),
-                    height: SizeConfig.blockSizeVertical * 3.0,
-                    child: Marquee(
-                      text: album.albumName,
-                      style: Theme.of(context).textTheme.bodyText2,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      blankSpace: 100.0,
-                      velocity: 30.0,
-                      pauseAfterRound: const Duration(seconds: 4),
-                      startPadding: 15.0,
-                      accelerationDuration: const Duration(seconds: 2),
-                      accelerationCurve: Curves.easeOut,
-                      decelerationDuration: const Duration(milliseconds: 500),
-                      decelerationCurve: Curves.easeOut,
-                    )),
+                  padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+                  height: SizeConfig.blockSizeVertical * 3.0,
+                  child: MarqueeText(
+                    text: album.albumName,
+                    style: Theme.of(context).textTheme.bodyText2,
+                    speed: 7.0,
+                  ),
+                ),
 
                 if (album.albumAuthor != '')
 
                   // /// Author names
                   Container(
-                    padding:
-                        const EdgeInsets.only(top: 1.0, bottom: 1.0, left: 8.0),
+                    padding: const EdgeInsets.only(top: 1.0, bottom: 1.0, left: 8.0),
                     alignment: Alignment.centerLeft,
                     child: RichText(
                       text: TextSpan(
                           text: album.albumAuthor,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(fontSize: 10)),
+                          style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 10)),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ListenViewButton(
-                    currenTrack: controller.currentTrack,
-                    controler: controller),
+                ListenViewButton(currenTrack: controller.currentTrack, controler: controller),
                 const Spacer(),
               ],
             ),
@@ -109,8 +92,7 @@ class AlbumCard extends GetView<AlbumController> {
 }
 
 class ListenViewButton extends StatefulWidget {
-  const ListenViewButton(
-      {Key? key, required this.currenTrack, required this.controler})
+  const ListenViewButton({Key? key, required this.currenTrack, required this.controler})
       : super(key: key);
   final AlbumController controler;
   final Track currenTrack;
@@ -130,6 +112,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
         Obx(() => controller.currentTrack.path != null
             ? PlayPauseButton(
                 audioFilePath: controller.currentTrack.path!,
+                color: Colors.white,
                 onPressed: () async {
                   if (controller.playing) {
                     await controller.onPause();
@@ -153,13 +136,11 @@ class _ListenViewButtonState extends State<ListenViewButton> {
                         )
                       : Container(
                           key: UniqueKey(),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                           decoration: BoxDecoration(
                               color: Theme.of(context).buttonColor,
                               borderRadius: BorderRadius.circular(20.0)),
-                          child: Text(_shelfController.shelf.shelfName ==
-                                  'Recently added'
+                          child: Text(_shelfController.shelf.shelfName == 'Recently added'
                               ? 'Listen'
                               : 'Continue'),
                         ),

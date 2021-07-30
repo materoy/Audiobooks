@@ -1,5 +1,5 @@
 name: audiobooks
-version: 0.0.3+2
+version: 0.0.4+3
 publish_to: none
 description: An audiobook player
 environment:
@@ -19,7 +19,7 @@ dependencies:
   get: 4.2.4
   intl: ^0.17.0
   just_audio: ^0.9.3
-  marquee: ^2.2.0
+  marquee_text: ^2.0.0
   sqflite: ^2.0.0+3
 
 dev_dependencies:

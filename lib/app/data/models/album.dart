@@ -28,7 +28,7 @@ class Album extends Equatable {
   }
 
   factory Album.empty() {
-    return Album(albumName: '');
+    return const Album(albumName: '');
   }
 
   Map<String, dynamic> toMap(Album audiobookCollection) {

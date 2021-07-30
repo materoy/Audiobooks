@@ -1,3 +1,4 @@
+import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,12 +12,8 @@ class ExitOnDragDownWidget extends StatefulWidget {
 }
 
 class _ExitOnDragDownWidgetState extends State<ExitOnDragDownWidget> {
-  late Offset _offset;
-  @override
-  void initState() {
-    super.initState();
-    _offset = Offset.zero;
-  }
+  Offset _offset = Offset.zero;
+  double _scale = 1;
 
   void updatePosition(double dy) {
     setState(() {

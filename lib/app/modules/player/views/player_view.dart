@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
@@ -9,6 +10,7 @@ import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
 import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
 import 'package:audiobooks/app/modules/player/views/widgets/exit_on_drag_down_widget.dart';
 import 'package:audiobooks/app/modules/player/views/widgets/generative_art.dart';
+import 'package:audiobooks/app/modules/player/views/widgets/tracks_overlay.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -18,18 +20,38 @@ import 'package:get/get.dart';
 
 import 'widgets/audio_player_controlls.dart';
 
-class PlayerView extends GetView<AlbumController> {
-  final AudioController audioController = Get.find<AudioController>();
+class PlayerView extends StatefulWidget {
   @override
-  AlbumController get controller =>
-      Get.find<AlbumController>(tag: (Get.arguments as Album).albumId.toString());
+  _PlayerViewState createState() => _PlayerViewState();
+}
+
+class _PlayerViewState extends State<PlayerView> {
+  final AudioController audioController = Get.find<AudioController>();
+
+  late final String id;
+  AlbumController get controller => Get.find<AlbumController>(tag: id);
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.arguments != null) {
+      log(Get.arguments.toString());
+      id = (Get.arguments as Album).albumId.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExitOnDragDownWidget(
       child: CupertinoPageScaffold(
-          navigationBar: const CupertinoNavigationBar(
+          navigationBar: CupertinoNavigationBar(
             previousPageTitle: 'Shelf',
             backgroundColor: Colors.transparent,
+            trailing: Material(
+                color: Colors.transparent,
+                child: IconButton(
+                    onPressed: () => TracksOverlay.show(context, controller.album.albumId!),
+                    icon: const Icon(CupertinoIcons.chevron_down))),
           ),
           child: Material(
             child: Stack(
@@ -77,7 +99,8 @@ class PlayerView extends GetView<AlbumController> {
 
                       /// The album art image
                       Container(
-                        height: SizeConfig.blockSizeVertical * 35,
+                        height: SizeConfig.blockSizeVertical * 40,
+                        width: SizeConfig.blockSizeHorizontal * 88,
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
                         child: controller.album.albumArt != null
@@ -94,11 +117,6 @@ class PlayerView extends GetView<AlbumController> {
                         child: Column(
                           children: List.generate(
                               controller.tracks.length < 4 ? controller.tracks.length : 4, (index) {
-                            // final int currentTrackIndex = controller.tracks
-                            //     .indexWhere((element) =>
-                            //         element.trackId ==
-                            //         controller.currentTrack.trackId);
-
                             return Obx(() => RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
@@ -147,7 +165,11 @@ class PlayerView extends GetView<AlbumController> {
                             return Container();
                           }),
 
-                      PlayerControlls(controller: controller),
+                      PlayerControlls(
+                        controller: controller,
+                        iconColor: Colors.white,
+                        iconSize: 35.0,
+                      ),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -162,6 +184,7 @@ class PlayerView extends GetView<AlbumController> {
                               icon: Icon(
                                 controller.liked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
                                 size: 40,
+                                color: CupertinoColors.systemRed,
                               )))
                         ],
                       ),

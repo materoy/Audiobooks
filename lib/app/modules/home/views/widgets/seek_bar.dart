@@ -92,13 +92,21 @@ class _SeekBarState extends State<SeekBar> {
         ),
         Positioned(
           right: 16.0,
-          bottom: 0.0,
+          top: 0.0,
           child: Text(
               RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("$_remaining")
+                      .firstMatch("${widget.duration}")
                       ?.group(1) ??
+                  '${widget.duration}',
+              style: const TextStyle(color: Colors.white, fontSize: 10)),
+        ),
+        Positioned(
+          left: 16.0,
+          top: 0.0,
+          child: Text(
+              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ??
                   '$_remaining',
-              style: const TextStyle(color: Colors.blue, fontSize: 10)),
+              style: const TextStyle(color: Colors.white, fontSize: 10)),
         ),
       ],
     );
@@ -158,9 +166,7 @@ void showSliderDialog({
             children: [
               Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
                   style: const TextStyle(
-                      fontFamily: 'Fixed',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0)),
+                      fontFamily: 'Fixed', fontWeight: FontWeight.bold, fontSize: 24.0)),
               Slider(
                 divisions: divisions,
                 min: min,
@@ -174,18 +180,4 @@ void showSliderDialog({
       ),
     ),
   );
-}
-
-class ProgressBar extends StatelessWidget {
-  const ProgressBar({Key? key, required this.duration, required this.position})
-      : super(key: key);
-  final int duration;
-  final int position;
-
-  @override
-  Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: position / duration,
-    );
-  }
 }

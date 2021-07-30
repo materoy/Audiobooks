@@ -13,6 +13,7 @@ class ShelfView extends GetView<ShelfController> {
   Widget build(BuildContext context) {
     controller.onReady();
     return BasePage(
+        hasNavigationBar: false,
         navigationBar: const CupertinoNavigationBar(
           previousPageTitle: 'Library',
           backgroundColor: Colors.transparent,

@@ -9,7 +9,8 @@ class PlayPauseButton extends StatefulWidget {
       this.onPressed,
       this.size,
       this.child,
-      this.playing})
+      this.playing,
+      required this.color})
       : super(key: key);
 
   final String audioFilePath;
@@ -17,19 +18,19 @@ class PlayPauseButton extends StatefulWidget {
   final double? size;
   final Widget? child;
   final bool? playing;
+  final Color color;
 
   @override
   _PlayPauseButtonState createState() => _PlayPauseButtonState();
 }
 
-class _PlayPauseButtonState extends State<PlayPauseButton>
-    with SingleTickerProviderStateMixin {
+class _PlayPauseButtonState extends State<PlayPauseButton> with SingleTickerProviderStateMixin {
   late final AnimationController _playPauseAnimation;
   @override
   void initState() {
     super.initState();
-    _playPauseAnimation = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 700));
+    _playPauseAnimation =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
     if (widget.playing != null && widget.playing!) {
       _playPauseAnimation.forward();
     }
@@ -51,21 +52,12 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
         }
       },
       child: widget.child ??
-          Container(
-            height: 50.0,
-            width: 50.0,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(color: Colors.black45, width: 3.5),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: AnimatedIcon(
-                progress: _playPauseAnimation,
-                icon: AnimatedIcons.play_pause,
-                size: 35.0,
-                color: Theme.of(context).iconTheme.color,
-              ),
+          Center(
+            child: AnimatedIcon(
+              progress: _playPauseAnimation,
+              icon: AnimatedIcons.play_pause,
+              size: widget.size,
+              color: widget.color,
             ),
           ),
     );
