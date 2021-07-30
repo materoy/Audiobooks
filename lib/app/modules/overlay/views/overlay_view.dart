@@ -73,8 +73,8 @@ class OverlayView extends GetView<OverlayController> {
                             ),
                             PlayerControlls(
                               controller: controller.albumController,
-                              iconColor: Colors.black54,
-                              iconSize: 30.0,
+                              iconColor: Colors.brown,
+                              iconSize: 35.0,
                             ),
                           ],
                         ),

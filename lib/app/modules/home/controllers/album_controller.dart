@@ -62,24 +62,20 @@ class AlbumController extends GetxController {
       id: track.path!,
       album: track.albumName ?? track.trackName ?? '',
       title: track.trackName ?? track.albumName ?? '',
-      artist: track.albumArtistName ??
-          track.trackArtistNames?.toList().first ??
-          track.authorName,
+      artist: track.albumArtistName ?? track.trackArtistNames?.toList().first ?? track.authorName,
     );
   }
 
   /// Sets the current track in album
   Future<void> updateCurrentTrack(int trackId) async {
-    await _albumProvider.updateCurrentTrackInCollection(
-        trackId: trackId, albumId: album.albumId!);
+    await _albumProvider.updateCurrentTrackInCollection(trackId: trackId, albumId: album.albumId!);
 
     await _albumProvider.updateCurrentPlayngAlbum(albumId: album.albumId!);
   }
 
   Future<void> getCurrentTrack() async {
     if (album.currentTrackId != null) {
-      final int currentTrackId =
-          await _albumProvider.getCurrentTrackId(album.currentTrackId!);
+      final int currentTrackId = await _albumProvider.getCurrentTrackId(album.currentTrackId!);
       if (currentTrackId != 0) {
         _currentTrack.value = await _trackProvider.getTrackById(currentTrackId);
       } else {
@@ -91,14 +87,13 @@ class AlbumController extends GetxController {
   }
 
   Future<int> getCurrentTrackPosition() async {
-    return _playerProvider
-        .getCurrentTrackPlayPosition(_currentTrack.value.path!);
+    return _playerProvider.getCurrentTrackPlayPosition(_currentTrack.value.path!);
   }
 
   Future<void> goToNextTrack() async {
     await AudioService.skipToNext();
-    final int currentIndex = _tracks.indexWhere(
-        (element) => element.path == AudioServiceBackground.mediaItem!.id);
+    final int currentIndex =
+        _tracks.indexWhere((element) => element.path == AudioServiceBackground.mediaItem!.id);
     final int nextTrackIndex = currentIndex + 1;
     if (_tracks.length > nextTrackIndex) {
       _currentTrack.value = _tracks[nextTrackIndex];
@@ -108,8 +103,8 @@ class AlbumController extends GetxController {
 
   Future<void> goToPreviousTrack() async {
     await AudioService.skipToPrevious();
-    final int currentIndex = _tracks.indexWhere(
-        (element) => element.path == AudioServiceBackground.mediaItem!.id);
+    final int currentIndex =
+        _tracks.indexWhere((element) => element.path == AudioServiceBackground.mediaItem!.id);
     final int previousTrackIndex = currentIndex - 1;
     if (previousTrackIndex >= 0) {
       _currentTrack.value = _tracks[previousTrackIndex];
@@ -133,13 +128,12 @@ class AlbumController extends GetxController {
     await AudioService.updateMediaItem(currentMediaItem);
     await _albumProvider.updateCurrentPlayngAlbum(albumId: album.albumId!);
     await Get.find<OverlayController>().refreshAlbum();
-    await AudioService.play();
+    AudioService.play();
     _playing.value = true;
 
     if (Get.isRegistered<ShelfController>() &&
         _shelfController.shelf.shelfName == 'Recently added') {
-      await _shelfController.moveFromRecentlyAddedToListening(
-          currentAlbumId: album.albumId!);
+      await _shelfController.moveFromRecentlyAddedToListening(currentAlbumId: album.albumId!);
       await Get.find<LibraryController>().refreshShelves();
     }
   }
@@ -191,8 +185,7 @@ class AlbumController extends GetxController {
 
     /// Listens for changes in current media from the audio service
     /// updates the album table when there is a change in current media
-    currentMediaItemStream =
-        AudioService.currentMediaItemStream.listen((event) async {
+    currentMediaItemStream = AudioService.currentMediaItemStream.listen((event) async {
       if (event != null) {
         if (event.album == album.albumName && event.id != currentTrack.path) {
           final Track newTrack = await _trackProvider.getTrackByPath(event.id);

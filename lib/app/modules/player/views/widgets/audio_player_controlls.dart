@@ -55,6 +55,7 @@ class _PlayerControllsState extends State<PlayerControlls> {
                     size: widget.iconSize + 10.0,
                     playing: controller.playing,
                     color: widget.iconColor,
+                    albumController: controller,
                     onPressed: () async {
                       if (snapshot.data!.playing) {
                         controller.onPause();

@@ -33,17 +33,20 @@ class OverlayController extends GetxController {
   @override
   Future onReady() async {
     super.onReady();
-    _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
 
-    if (_currentAlbum.value != Album.empty()) {
-      albumController = Get.put(
-          AlbumController(
-            localDatabase: Get.find<DatabaseController>().localDatabase,
-            album: _currentAlbum.value,
-          ),
-          tag: _currentAlbum.value.albumId.toString());
-    }
-    update();
+    Future.delayed(const Duration(seconds: 3), () async {
+      _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
+
+      if (_currentAlbum.value != Album.empty()) {
+        albumController = Get.put(
+            AlbumController(
+              localDatabase: Get.find<DatabaseController>().localDatabase,
+              album: _currentAlbum.value,
+            ),
+            tag: _currentAlbum.value.albumId.toString());
+      }
+      update();
+    });
   }
 
   @override

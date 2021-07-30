@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
+import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +13,8 @@ class PlayPauseButton extends StatefulWidget {
       this.size,
       this.child,
       this.playing,
-      required this.color})
+      required this.color,
+      required this.albumController})
       : super(key: key);
 
   final String audioFilePath;
@@ -19,6 +23,7 @@ class PlayPauseButton extends StatefulWidget {
   final Widget? child;
   final bool? playing;
   final Color color;
+  final AlbumController albumController;
 
   @override
   _PlayPauseButtonState createState() => _PlayPauseButtonState();
@@ -33,6 +38,16 @@ class _PlayPauseButtonState extends State<PlayPauseButton> with SingleTickerProv
         AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
     if (widget.playing != null && widget.playing!) {
       _playPauseAnimation.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant PlayPauseButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.albumController.playing) {
+      _playPauseAnimation.forward();
+    } else {
+      _playPauseAnimation.reverse();
     }
   }
 

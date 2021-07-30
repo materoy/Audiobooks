@@ -113,6 +113,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
             ? PlayPauseButton(
                 audioFilePath: controller.currentTrack.path!,
                 color: Colors.white,
+                albumController: controller,
                 onPressed: () async {
                   if (controller.playing) {
                     await controller.onPause();
@@ -127,7 +128,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
                   child: controller.playing
                       ? Container(
                           key: UniqueKey(),
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(3.0),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Theme.of(context).buttonColor,
@@ -136,7 +137,7 @@ class _ListenViewButtonState extends State<ListenViewButton> {
                         )
                       : Container(
                           key: UniqueKey(),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
                           decoration: BoxDecoration(
                               color: Theme.of(context).buttonColor,
                               borderRadius: BorderRadius.circular(20.0)),

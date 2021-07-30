@@ -12,9 +12,8 @@ class AlbumProvider {
 
   Future<Album> getAlbumById(int albumId) async {
     try {
-      final resultsSet = await _localDatabase.database.transaction(
-          (txn) async => txn.query(LocalDatabase.albumsTable,
-              where: 'albumId = ?', whereArgs: [albumId]));
+      final resultsSet = await _localDatabase.database.transaction((txn) async =>
+          txn.query(LocalDatabase.albumsTable, where: 'albumId = ?', whereArgs: [albumId]));
 
       if (resultsSet.isNotEmpty) {
         return Album.fromMap(resultsSet.first);
@@ -46,9 +45,8 @@ class AlbumProvider {
 
   Future<int> getCurrentTrackId(int albumId) async {
     try {
-      final resultsSet = await _localDatabase.database.transaction(
-          (txn) async => txn.query(LocalDatabase.albumsTable,
-              where: 'albumId = ?', whereArgs: [albumId]));
+      final resultsSet = await _localDatabase.database.transaction((txn) async =>
+          txn.query(LocalDatabase.albumsTable, where: 'albumId = ?', whereArgs: [albumId]));
       if (resultsSet.isNotEmpty) {
         return resultsSet.first['currentTrackId']! as int;
       }
@@ -59,8 +57,7 @@ class AlbumProvider {
     }
   }
 
-  Future<void> updateCurrentTrackInCollection(
-      {required int trackId, required int albumId}) async {
+  Future<void> updateCurrentTrackInCollection({required int trackId, required int albumId}) async {
     await _localDatabase.database.transaction((txn) async => txn.update(
         LocalDatabase.albumsTable,
         {
@@ -72,22 +69,17 @@ class AlbumProvider {
 
   Future updateCurrentPlayngAlbum({required int albumId}) async {
     await _localDatabase.database.transaction((txn) async {
-      await txn.rawUpdate('''
-      INSERT INTO ${LocalDatabase.metadataTable} (key, value)
-
-      VALUES ("currentAlbum", ?)
-      ON CONFLICT (key) DO
-      UPDATE SET value = ?
-      
-      ''', [albumId, albumId]);
+      await txn.rawQuery('''
+          INSERT OR REPLACE INTO ${LocalDatabase.metadataTable} (key, value)
+          VALUES ("currentAlbum", $albumId)
+        ''');
     });
   }
 
   Future<int?> getCurrentPlayingAlbum() async {
     try {
-      final resultSet =
-          await _localDatabase.query(table: LocalDatabase.metadataTable);
-      if (resultSet!.isNotEmpty) {
+      final resultSet = await _localDatabase.query(table: LocalDatabase.metadataTable);
+      if (resultSet != null && resultSet.isNotEmpty) {
         return int.parse(resultSet.first['value'].toString());
       }
     } catch (e) {
@@ -96,8 +88,8 @@ class AlbumProvider {
   }
 
   Future<List<Album>> getAlbumsInCategory(String categoryTableName) async {
-    final resultsSet = await _localDatabase.database
-        .transaction((txn) async => txn.query(categoryTableName));
+    final resultsSet =
+        await _localDatabase.database.transaction((txn) async => txn.query(categoryTableName));
     List<Album> albums;
     albums = [];
     for (final result in resultsSet) {
@@ -111,14 +103,11 @@ class AlbumProvider {
   /// This function moves track entries from Given table to another table
   /// eg . from unread to now reading table
   Future<int> changeReadingState(
-      {required int albumId,
-      required String fromTable,
-      required String toTable}) async {
+      {required int albumId, required String fromTable, required String toTable}) async {
     try {
       print(albumId);
       await _localDatabase.database.transaction((txn) async {
-        final resultSet = await txn
-            .query(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
+        final resultSet = await txn.query(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
         if (resultSet.isNotEmpty) {
           final int newId = await txn.rawInsert('''
           INSERT OR REPLACE INTO $toTable
@@ -127,8 +116,7 @@ class AlbumProvider {
             resultSet.first['albumId'],
           ]);
 
-          await txn
-              .delete(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
+          await txn.delete(fromTable, where: 'albumId = ?', whereArgs: [albumId]);
           return newId;
         }
       });
@@ -144,9 +132,7 @@ class AlbumProvider {
   Future likeAlbum(int albumId) async {
     await _localDatabase.database.transaction((txn) async {
       final resultsSet = await txn.query(LocalDatabase.shelvesTable,
-          where: 'shelfName =?',
-          whereArgs: ['Favorites'],
-          columns: ['shelfId']);
+          where: 'shelfName =?', whereArgs: ['Favorites'], columns: ['shelfId']);
       final int favoritesShelfId = resultsSet.first['shelfId']! as int;
 
       await txn.insert(
@@ -162,9 +148,7 @@ class AlbumProvider {
   Future unlikeAlbum(int albumId) async {
     await _localDatabase.database.transaction((txn) async {
       final resultsSet = await txn.query(LocalDatabase.shelvesTable,
-          where: 'shelfName =?',
-          whereArgs: ['Favorites'],
-          columns: ['shelfId']);
+          where: 'shelfName =?', whereArgs: ['Favorites'], columns: ['shelfId']);
       final int favoritesShelfId = resultsSet.first['shelfId']! as int;
 
       await txn.delete(
@@ -181,14 +165,11 @@ class AlbumProvider {
     List records = [];
     await _localDatabase.database.transaction((txn) async {
       final resultsSet = await txn.query(LocalDatabase.shelvesTable,
-          where: 'shelfName =?',
-          whereArgs: ['Favorites'],
-          columns: ['shelfId']);
+          where: 'shelfName =?', whereArgs: ['Favorites'], columns: ['shelfId']);
       final int favoritesShelfId = resultsSet.first['shelfId']! as int;
 
       records = await txn.query(LocalDatabase.shelfMembersTable,
-          where: 'albumId = ? AND shelfId = ?',
-          whereArgs: [albumId, favoritesShelfId]);
+          where: 'albumId = ? AND shelfId = ?', whereArgs: [albumId, favoritesShelfId]);
     });
     return records.isNotEmpty;
   }

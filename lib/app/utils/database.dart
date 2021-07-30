@@ -38,8 +38,8 @@ class LocalDatabase {
   /// Queries the top level sqlite Db and returns the number of tables that exist
   /// Returns 0 if no tables have beeen added
   Future<int> checkTablesExist() async {
-    final results = await database.transaction((txn) async =>
-        txn.rawQuery("SELECT count(*) FROM sqlite_master WHERE type='table'"));
+    final results = await database.transaction(
+        (txn) async => txn.rawQuery("SELECT count(*) FROM sqlite_master WHERE type='table'"));
     if (results.isNotEmpty) return results.first['count(*)']! as int;
     return 0;
   }
@@ -54,6 +54,12 @@ class LocalDatabase {
         log('Creating database schema');
 
         await database.transaction((txn) async {
+          await txn.execute('''
+      CREATE TABLE $metadataTable (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
+    )''');
+
           /// Create audiobooks collection table
           await txn.execute('''
       CREATE TABLE $albumsTable (
@@ -116,12 +122,6 @@ class LocalDatabase {
         albumId INTEGER NOT NULL,
         UNIQUE(shelfId, albumId)
     )''');
-
-          await txn.execute('''
-      CREATE TABLE $metadataTable (
-        key TEXT PRIMARY KEY NOT NULL,
-        value TEXT NOT NULL
-    )''');
         });
 
         log('The database schema has been initialised');
@@ -148,8 +148,7 @@ class LocalDatabase {
     }
   }
 
-  Future<int> insert(
-      {required String table, required Map<String, dynamic> values}) async {
+  Future<int> insert({required String table, required Map<String, dynamic> values}) async {
     final bool open = await databaseOpened;
 
     if (open) {

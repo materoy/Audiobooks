@@ -24,13 +24,14 @@ class BasePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OverlayView(),
-                  if (hasNavigationBar)
-                    CupertinoTabBar(backgroundColor: Colors.transparent, items: const [
-                      BottomNavigationBarItem(icon: Icon(Icons.my_library_books_rounded)),
-                      BottomNavigationBarItem(icon: Icon(CupertinoIcons.search)),
-                      BottomNavigationBarItem(icon: Icon(CupertinoIcons.headphones)),
-                      BottomNavigationBarItem(icon: Icon(CupertinoIcons.bookmark_fill)),
-                    ]),
+                  // if (hasNavigationBar)
+                  //   CupertinoTabBar(backgroundColor: Colors.transparent, items: const [
+                  //     // BottomNavigationBarItem(icon: Icon(Icons.brows)),
+                  //     BottomNavigationBarItem(icon: Icon(CupertinoIcons.book)),
+                  //     BottomNavigationBarItem(icon: Icon(CupertinoIcons.search)),
+                  //     BottomNavigationBarItem(icon: Icon(CupertinoIcons.headphones)),
+                  //     BottomNavigationBarItem(icon: Icon(CupertinoIcons.bookmark_fill)),
+                  //   ]),
                 ],
               ),
             ],
