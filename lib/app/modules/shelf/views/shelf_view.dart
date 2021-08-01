@@ -19,19 +19,21 @@ class ShelfView extends GetView<ShelfController> {
           backgroundColor: Colors.transparent,
         ),
         child: Material(
-          child: Obx(() => GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 3 / 4.5,
-                crossAxisCount: 2,
-              ),
-              shrinkWrap: true,
-              padding: EdgeInsets.only(
-                  bottom: SizeConfig.blockSizeVertical * 40,
-                  top: kToolbarHeight + SizeConfig.blockSizeVertical * 5.0),
-              itemCount: controller.albums.length,
-              itemBuilder: (context, index) {
-                return AlbumCard(album: controller.albums[index]);
-              })),
+          child: Obx(
+            () => GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 3 / 4.5,
+                  crossAxisCount: 2,
+                ),
+                shrinkWrap: true,
+                padding: EdgeInsets.only(
+                    bottom: SizeConfig.blockSizeVertical * 40,
+                    top: kToolbarHeight + SizeConfig.blockSizeVertical * 5.0),
+                itemCount: controller.albums.length,
+                itemBuilder: (context, index) {
+                  return AlbumCard(album: controller.albums[index]);
+                }),
+          ),
         ));
   }
 }
