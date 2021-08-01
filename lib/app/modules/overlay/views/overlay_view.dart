@@ -19,7 +19,7 @@ class OverlayView extends GetView<OverlayController> {
     return Align(
         alignment: Alignment.bottomCenter,
         child: Obx(
-          () => controller.currentAlbum == Album.empty()
+          () => controller.currentAlbum == Album.empty() || !AudioService.playbackState.playing
               ? const SizedBox()
               : SizedBox(
                   // height: SizeConfig.blockSizeVertical * 16,

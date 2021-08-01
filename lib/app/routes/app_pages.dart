@@ -10,6 +10,8 @@ import 'package:audiobooks/app/modules/overlay/bindings/overlay_binding.dart';
 import 'package:audiobooks/app/modules/overlay/views/overlay_view.dart';
 import 'package:audiobooks/app/modules/player/bindings/player_binding.dart';
 import 'package:audiobooks/app/modules/player/views/player_view.dart';
+import 'package:audiobooks/app/modules/search/bindings/search_binding.dart';
+import 'package:audiobooks/app/modules/search/views/search_view.dart';
 import 'package:audiobooks/app/modules/settings/bindings/settings_binding.dart';
 import 'package:audiobooks/app/modules/settings/views/settings_view.dart';
 import 'package:audiobooks/app/modules/shelf/bindings/shelf_binding.dart';
@@ -64,6 +66,11 @@ class AppPages {
       name: _Paths.OVERLAY,
       page: () => OverlayView(),
       binding: OverlayBinding(),
+    ),
+    GetPage(
+      name: _Paths.SEARCH,
+      page: () => SearchView(),
+      binding: SearchBinding(),
     ),
   ];
 }

@@ -40,6 +40,8 @@ class _PlayerViewState extends State<PlayerView> {
     }
   }
 
+  double get blurSigma => controller.album.albumArt != null ? 30.0 : 10.0;
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -52,7 +54,7 @@ class _PlayerViewState extends State<PlayerView> {
           child: Stack(
             children: [
               ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
+                imageFilter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
                 child: SizedBox(
                   height: double.infinity,
                   width: double.infinity,
@@ -63,9 +65,7 @@ class _PlayerViewState extends State<PlayerView> {
                         )
 
                       /// Would not play in debug mode to save for some perfomance
-                      : kDebugMode
-                          ? null
-                          : GenerativeArt(),
+                      : GenerativeArt(),
                 ),
               ),
               SafeArea(
@@ -73,10 +73,13 @@ class _PlayerViewState extends State<PlayerView> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     // Album Title
-                    Text(
-                      controller.album.albumName,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14),
+                    MarqueeText(
+                      text: controller.album.albumName,
+                      speed: 8.0,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6!
+                          .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                     ),
 
                     /// The album art image
@@ -159,7 +162,8 @@ class _PlayerViewState extends State<PlayerView> {
                                 position: controller.playing
                                     ? snapshot.data!
                                     : Duration(
-                                        milliseconds: controller.currentTrack.currentPosition!));
+                                        milliseconds:
+                                            controller.currentTrack.currentPosition ?? 0));
                           }
                           return Container();
                         }),

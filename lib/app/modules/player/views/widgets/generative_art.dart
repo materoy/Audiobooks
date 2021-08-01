@@ -20,8 +20,7 @@ class GenerativeArt extends StatefulWidget {
   _GenerativeArtState createState() => _GenerativeArtState();
 }
 
-class _GenerativeArtState extends State<GenerativeArt>
-    with SingleTickerProviderStateMixin {
+class _GenerativeArtState extends State<GenerativeArt> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late AnimationController controller;
 
@@ -91,12 +90,16 @@ class _GenerativeArtState extends State<GenerativeArt>
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: MyPainter(
-        particles: particles,
-        theta: animation.value,
+    return Container(
+      color: Colors.black45,
+      width: double.infinity,
+      child: CustomPaint(
+        painter: MyPainter(
+          particles: particles,
+          theta: animation.value,
+        ),
+        child: const SizedBox(),
       ),
-      child: Container(),
     );
   }
 }
@@ -129,8 +132,7 @@ class MyPainter extends CustomPainter {
       final double radius = particle.radius;
 
       final double dx = radius * theta * math.cos(randomTheta) + size.width / 2;
-      final double dy =
-          radius * theta * math.sin(randomTheta) + size.height / 2;
+      final double dy = radius * theta * math.sin(randomTheta) + size.height / 2;
 
       final Offset position = Offset(dx, dy);
 
