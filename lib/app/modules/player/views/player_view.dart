@@ -42,138 +42,138 @@ class _PlayerViewState extends State<PlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    return ExitOnDragDownWidget(
-      child: CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            previousPageTitle: 'Shelf',
-            backgroundColor: Colors.transparent,
-            trailing:
-                Material(color: Colors.transparent, child: TracksMenu(controller: controller)),
-          ),
-          child: Material(
-            child: Stack(
-              children: [
-                ImageFiltered(
-                  imageFilter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-                  child: SizedBox(
-                    height: double.infinity,
-                    width: double.infinity,
-                    child: controller.album.albumArt != null
-                        ? Image.memory(
-                            controller.album.albumArt!,
-                            fit: BoxFit.cover,
-                          )
+    return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          previousPageTitle: 'Shelf',
+          backgroundColor: Colors.transparent,
+          trailing: Material(color: Colors.transparent, child: TracksMenu(controller: controller)),
+        ),
+        child: Material(
+          child: Stack(
+            children: [
+              ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
+                child: SizedBox(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: controller.album.albumArt != null
+                      ? Image.memory(
+                          controller.album.albumArt!,
+                          fit: BoxFit.cover,
+                        )
 
-                        /// Would not play in debug mode to save for some perfomance
-                        : kDebugMode
-                            ? null
-                            : GenerativeArt(),
-                  ),
+                      /// Would not play in debug mode to save for some perfomance
+                      : kDebugMode
+                          ? null
+                          : GenerativeArt(),
                 ),
-                SafeArea(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // Album Title
-                      Text(
-                        controller.album.albumName,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14),
-                      ),
+              ),
+              SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Album Title
+                    Text(
+                      controller.album.albumName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 14),
+                    ),
 
-                      /// The album art image
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical * 40,
-                        width: SizeConfig.blockSizeHorizontal * 88,
-                        child: controller.album.albumArt != null
-                            ? Card(
-                                clipBehavior: Clip.hardEdge,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0)),
-                                elevation: 10.0,
-                                shadowColor: Colors.black,
-                                child: Image.memory(
-                                  controller.album.albumArt!,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : null,
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const Spacer(flex: 5),
-
-                          /// Book author(s)
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 70,
-                            child: Center(
-                              child: MarqueeText(
-                                text: controller.album.albumAuthor ??
-                                    controller.currentTrack.albumArtistName ??
-                                    controller.currentTrack.authorName ??
-                                    controller.currentTrack.trackArtistNames?.toList().first ??
-                                    "",
-                                speed: 8.0,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6!
-                                    .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                    /// The album art image
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical * 40,
+                      width: SizeConfig.blockSizeHorizontal * 88,
+                      child: controller.album.albumArt != null
+                          ? Card(
+                              clipBehavior: Clip.hardEdge,
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                              elevation: 10.0,
+                              shadowColor: Colors.black,
+                              child: Image.memory(
+                                controller.album.albumArt!,
+                                fit: BoxFit.cover,
                               ),
+                            )
+                          : null,
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Spacer(flex: 5),
+
+                        /// Book author(s)
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 70,
+                          child: Center(
+                            child: MarqueeText(
+                              text: controller.album.albumAuthor ??
+                                  controller.currentTrack.albumArtistName ??
+                                  controller.currentTrack.authorName ??
+                                  controller.currentTrack.trackArtistNames?.toList().first ??
+                                  "",
+                              speed: 8.0,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
+                        ),
 
-                          const Spacer(flex: 2),
+                        const Spacer(flex: 2),
 
-                          /// Like button
-                          Obx(() => IconButton(
-                              onPressed: () async {
-                                controller.liked
-                                    ? await controller.unlikeAlbum()
-                                    : await controller.likeAlbum();
-                                await Get.find<LibraryController>().refreshShelves();
-                              },
-                              icon: Icon(
-                                controller.liked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                                size: 30.0,
-                                color: controller.liked ? CupertinoColors.systemRed : Colors.white,
-                              ))),
+                        /// Like button
+                        Obx(() => IconButton(
+                            onPressed: () async {
+                              controller.liked
+                                  ? await controller.unlikeAlbum()
+                                  : await controller.likeAlbum();
+                              await Get.find<LibraryController>().refreshShelves();
+                            },
+                            icon: Icon(
+                              controller.liked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                              size: 30.0,
+                              color: controller.liked ? CupertinoColors.systemRed : Colors.white,
+                            ))),
 
-                          const Spacer(),
-                        ],
-                      ),
+                        const Spacer(),
+                      ],
+                    ),
 
-                      StreamBuilder(
-                          stream: AudioService.positionStream,
-                          builder: (context, AsyncSnapshot<Duration> snapshot) {
-                            if (snapshot.hasData) {
-                              return SeekBar(
-                                  onChanged: (value) {
-                                    AudioService.seekTo(value);
-                                  },
-                                  onChangeEnd: (value) {
-                                    // audioController.updatePlayPosition(
-                                    //     newPosition: value.inMilliseconds);
-                                  },
-                                  duration: Duration(
-                                      milliseconds: controller.currentTrack.trackDuration!),
-                                  position: snapshot.data!);
-                            }
-                            return Container();
-                          }),
+                    StreamBuilder(
+                        stream: AudioService.positionStream,
+                        builder: (context, AsyncSnapshot<Duration> snapshot) {
+                          if (snapshot.hasData) {
+                            return SeekBar(
+                                onChanged: (value) {
+                                  AudioService.seekTo(value);
+                                },
+                                onChangeEnd: (value) {
+                                  // audioController.updatePlayPosition(
+                                  //     newPosition: value.inMilliseconds);
+                                },
+                                duration:
+                                    Duration(milliseconds: controller.currentTrack.trackDuration!),
+                                position: controller.playing
+                                    ? snapshot.data!
+                                    : Duration(
+                                        milliseconds: controller.currentTrack.currentPosition!));
+                          }
+                          return Container();
+                        }),
 
-                      PlayerControlls(
-                        controller: controller,
-                        iconColor: Colors.white,
-                        iconSize: 35.0,
-                      ),
-                    ],
-                  ),
+                    PlayerControlls(
+                      controller: controller,
+                      iconColor: Colors.white,
+                      iconSize: 35.0,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
-    );
+              ),
+            ],
+          ),
+        ));
   }
 }

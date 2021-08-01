@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
 
+/// Ignore immutable because one of the fields is reassigned
+// ignore: must_be_immutable
 class Track extends Equatable {
   Track({
     required this.trackId,
