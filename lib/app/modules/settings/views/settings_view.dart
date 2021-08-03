@@ -32,26 +32,17 @@ class SettingsView extends GetView<SettingsController> {
                 onPressed: () => Get.toNamed(Routes.FEEDBACK),
                 child: const Text('Feedback'),
               ),
-              if (kDebugMode) ...[
-                SettingsEntry(
-                  onPressed: () =>
-                      MediaScanner(Get.find<DatabaseController>().localDatabase)
-                          .queryMediaFolders(),
-                  child: const Text('Query media Folders'),
-                ),
-                SettingsEntry(
-                  onPressed: () => Get.find<DatabaseController>()
-                      .localDatabase
-                      .resetDatabase(),
-                  child: const Text('Reset Db'),
-                ),
-                SettingsEntry(
-                  onPressed: () => Get.find<DatabaseController>()
-                      .localDatabase
-                      .initializeDatabaseSchema(),
-                  child: const Text('Initialize db schema'),
-                ),
-              ],
+              // if (kDebugMode) ...[
+              //   SettingsEntry(
+              //     onPressed: () => MediaScanner(Get.find<DatabaseController>().localDatabase)
+              //         .queryMediaFolders(),
+              //     child: const Text('Query media Folders'),
+              //   ),
+              //   SettingsEntry(
+              //     onPressed: () => Get.find<DatabaseController>().localDatabase.resetDatabase(),
+              //     child: const Text('Reset Db'),
+              //   ),
+              // ],
             ],
           ),
         ),
@@ -61,9 +52,10 @@ class SettingsView extends GetView<SettingsController> {
 }
 
 class SettingsEntry extends StatelessWidget {
-  const SettingsEntry({Key? key, required this.child, required this.onPressed})
+  const SettingsEntry({Key? key, required this.child, required this.onPressed, this.text})
       : super(key: key);
-  final Widget child;
+  final Widget? child;
+  final String? text;
   final VoidCallback onPressed;
 
   @override

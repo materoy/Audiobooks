@@ -13,6 +13,7 @@ abstract class Routes {
   static const FEEDBACK = _Paths.FEEDBACK;
   static const OVERLAY = _Paths.OVERLAY;
   static const SEARCH = _Paths.SEARCH;
+  static const EXPLORE = _Paths.EXPLORE;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const FEEDBACK = '/feedback';
   static const OVERLAY = '/overlay';
   static const SEARCH = '/search';
+  static const EXPLORE = '/explore';
 }

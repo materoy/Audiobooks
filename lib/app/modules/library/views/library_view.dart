@@ -1,6 +1,5 @@
 import 'package:audiobooks/app/global/base_page.dart';
 import 'package:audiobooks/app/modules/library/views/widgets/shelf_card.dart';
-import 'package:audiobooks/app/modules/overlay/views/overlay_view.dart';
 import 'package:audiobooks/app/routes/app_pages.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +18,6 @@ class LibraryView extends GetView<LibraryController> {
           "Library",
           style: Theme.of(context).textTheme.headline5,
         ),
-        trailing: Material(
-          child: IconButton(
-              onPressed: () => Get.toNamed(Routes.SETTINGS),
-              icon: const Icon(CupertinoIcons.settings)),
-        ),
         backgroundColor: Colors.transparent,
       ),
       child: Material(
@@ -34,8 +28,8 @@ class LibraryView extends GetView<LibraryController> {
                   ...List.generate(controller.shelves.length, (index) {
                     return ShelfCard(
                         shelf: controller.shelves[index],
-                        onPressed: () => Get.toNamed(Routes.SHELF,
-                            arguments: controller.shelves[index]));
+                        onPressed: () =>
+                            Get.toNamed(Routes.SHELF, arguments: controller.shelves[index]));
                   }),
                   // ShelfCard(
                   //     shelfName: 'New shelf',

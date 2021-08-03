@@ -13,8 +13,10 @@ class SearchView extends GetView<SearchController> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      navigationBar:
-          const CupertinoNavigationBar(backgroundColor: Colors.transparent, middle: Text('Search')),
+      navigationBar: const CupertinoNavigationBar(
+        backgroundColor: Colors.transparent,
+        middle: Text('Search'),
+      ),
       child: SafeArea(
         child: Material(
           child: ListView(

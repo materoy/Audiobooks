@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import 'package:audiobooks/app/modules/explore/bindings/explore_binding.dart';
+import 'package:audiobooks/app/modules/explore/views/explore_view.dart';
 import 'package:audiobooks/app/modules/feedback/bindings/feedback_binding.dart';
 import 'package:audiobooks/app/modules/feedback/views/feedback_view.dart';
 import 'package:audiobooks/app/modules/library/bindings/library_binding.dart';
@@ -71,6 +73,11 @@ class AppPages {
       name: _Paths.SEARCH,
       page: () => SearchView(),
       binding: SearchBinding(),
+    ),
+    GetPage(
+      name: _Paths.EXPLORE,
+      page: () => ExploreView(),
+      binding: ExploreBinding(),
     ),
   ];
 }

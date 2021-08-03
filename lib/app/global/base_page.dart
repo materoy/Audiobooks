@@ -27,54 +27,43 @@ class BasePage extends StatelessWidget {
                 children: [
                   OverlayView(),
                   if (hasNavigationBar)
-                    GetX<BasePageController>(
-                      init: BasePageController(),
-                      initState: (_) {},
-                      builder: (_) {
-                        return CupertinoTabBar(
-                            currentIndex: _.currentIndex,
-                            onTap: (value) {
-                              switch (value) {
-                                case 0:
-                                  if (_.currentIndex != 0) {
-                                    _.currentIndex = 0;
-                                    Get.toNamed(Routes.LIBRARY);
-                                  }
-                                  break;
-
-                                case 1:
-                                  if (_.currentIndex != 1) {
-                                    _.currentIndex = 1;
-                                    Get.toNamed(Routes.SEARCH);
-                                  }
-                                  break;
-
-                                case 2:
-                                  if (_.currentIndex != 2) {
-                                    _.currentIndex = 2;
-                                    // Get.toNamed(Routes.LIBRARY);
-                                  }
-                                  break;
-
-                                case 3:
-                                  if (_.currentIndex != 3) {
-                                    _.currentIndex = 3;
-                                    Get.toNamed(Routes.SETTINGS);
-                                  }
-                                  break;
-                                default:
+                    CupertinoTabBar(
+                        currentIndex: getIndex(),
+                        onTap: (value) {
+                          switch (value) {
+                            case 0:
+                              if (getIndex() != 0) {
+                                Get.offNamed(Routes.LIBRARY);
                               }
-                            },
-                            backgroundColor: Colors.transparent,
-                            items: const [
-                              // BottomNavigationBarItem(icon: Icon(Icons.brows)),
-                              BottomNavigationBarItem(icon: Icon(CupertinoIcons.book)),
-                              BottomNavigationBarItem(icon: Icon(CupertinoIcons.search)),
-                              BottomNavigationBarItem(icon: Icon(CupertinoIcons.bookmark)),
-                              BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings_solid)),
-                            ]);
-                      },
-                    ),
+                              break;
+
+                            case 1:
+                              if (getIndex() != 1) {
+                                Get.toNamed(Routes.EXPLORE);
+                              }
+                              break;
+
+                            case 2:
+                              if (getIndex() != 2) {
+                                Get.toNamed(Routes.SEARCH);
+                              }
+                              break;
+
+                            case 3:
+                              if (getIndex() != 3) {
+                                Get.toNamed(Routes.SETTINGS);
+                              }
+                              break;
+                            default:
+                          }
+                        },
+                        backgroundColor: Colors.transparent,
+                        items: const [
+                          BottomNavigationBarItem(icon: Icon(CupertinoIcons.book)),
+                          BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded)),
+                          BottomNavigationBarItem(icon: Icon(CupertinoIcons.search)),
+                          BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings_solid)),
+                        ]),
                 ],
               ),
             ],
@@ -83,10 +72,23 @@ class BasePage extends StatelessWidget {
       ],
     );
   }
-}
 
-class BasePageController extends GetxController {
-  final _currentIndex = 0.obs;
-  set currentIndex(int value) => _currentIndex.value = value;
-  int get currentIndex => _currentIndex.value;
+  int getIndex() {
+    switch (Get.currentRoute) {
+      case Routes.LIBRARY:
+        return 0;
+
+      case Routes.EXPLORE:
+        return 1;
+
+      case Routes.SEARCH:
+        return 2;
+
+      case Routes.SETTINGS:
+        return 3;
+
+      default:
+        return 0;
+    }
+  }
 }
