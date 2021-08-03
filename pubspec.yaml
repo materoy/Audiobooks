@@ -12,11 +12,12 @@ dependencies:
     sdk: flutter
   audio_service: ^0.17.1
   cupertino_icons: ^1.0.3
+  dio: ^4.0.0
   equatable: ^2.0.3
   file_picker: ^3.0.3
   flutter_email_sender: ^5.0.2
   flutter_media_metadata: ^0.1.0
-  get: 4.2.4
+  get: ^4.2.4
   intl: ^0.17.0
   just_audio: ^0.9.3
   marquee_text: ^2.0.0
