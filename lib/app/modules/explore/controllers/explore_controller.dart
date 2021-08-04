@@ -1,12 +1,13 @@
+import 'package:audiobooks/app/modules/explore/providers/librivox_provider.dart';
 import 'package:get/get.dart';
 
 class ExploreController extends GetxController {
-  //TODO: Implement ExploreController
+  LibrivoxProvider _librivoxProvider = LibrivoxProvider();
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    _librivoxProvider.getFeed();
   }
 
   @override
@@ -16,5 +17,4 @@ class ExploreController extends GetxController {
 
   @override
   void onClose() {}
-  void increment() => count.value++;
 }
