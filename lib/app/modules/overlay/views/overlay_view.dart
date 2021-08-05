@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
+import 'package:audiobooks/app/modules/home/views/widgets/play_pause.dart';
 import 'package:audiobooks/app/modules/home/views/widgets/seek_bar.dart';
 import 'package:audiobooks/app/modules/player/views/widgets/audio_player_controlls.dart';
 import 'package:audiobooks/app/utils/size_config.dart';
@@ -19,7 +20,7 @@ class OverlayView extends GetView<OverlayController> {
     return Align(
         alignment: Alignment.bottomCenter,
         child: Obx(
-          () => controller.currentAlbum == Album.empty() || !AudioService.playbackState.playing
+          () => controller.currentAlbum == Album.empty()
               ? const SizedBox()
               : SizedBox(
                   // height: SizeConfig.blockSizeVertical * 16,
@@ -31,52 +32,72 @@ class OverlayView extends GetView<OverlayController> {
                         color: Theme.of(context).scaffoldBackgroundColor.withOpacity(.1),
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                         type: MaterialType.card,
-                        child: Column(
-                          children: [
-                            StreamBuilder<PlaybackState>(
-                              stream: AudioService.playbackStateStream,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData && snapshot.data!.playing) {
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.only(top: 5.0),
-                                        width: SizeConfig.blockSizeHorizontal * 90,
-                                        height: SizeConfig.blockSizeVertical * 3,
-                                        child: MarqueeText(
-                                          text: controller.albumController.currentTrack.trackName ??
-                                              '',
-                                          speed: 20.0,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: SizeConfig.blockSizeVertical * 2.0,
+                              horizontal: SizeConfig.blockSizeHorizontal * 4.0),
+                          child: Column(
+                            children: [
+                              StreamBuilder<PlaybackState>(
+                                stream: AudioService.playbackStateStream,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.only(top: 5.0),
+                                              height: SizeConfig.blockSizeVertical * 3,
+                                              child: MarqueeText(
+                                                text: controller
+                                                        .albumController.currentTrack.trackName ??
+                                                    '',
+                                                speed: 20.0,
+                                              ),
+                                            ),
+                                            PlayPauseButton(
+                                              audioFilePath:
+                                                  controller.albumController.currentTrack.path!,
+                                              color: Colors.black,
+                                              size: 30,
+                                              albumController: controller.albumController,
+                                              playing: controller.albumController.playing,
+                                              onPressed: () async {
+                                                if (controller.albumController.playing) {
+                                                  await controller.albumController.onPause();
+                                                } else {
+                                                  await controller.albumController.onPlay();
+                                                }
+                                              },
+                                            )
+                                          ],
                                         ),
-                                      ),
-                                      StreamBuilder(
-                                          stream: AudioService.positionStream,
-                                          builder: (context, AsyncSnapshot<Duration> snapshot) {
-                                            if (snapshot.hasData) {
-                                              return SeekBar(
-                                                  onChanged: (value) {
-                                                    AudioService.seekTo(value);
-                                                  },
-                                                  duration: Duration(
-                                                      milliseconds: controller.albumController
-                                                              .currentTrack.trackDuration ??
-                                                          0),
-                                                  position: snapshot.data!);
-                                            }
-                                            return Container();
-                                          }),
-                                    ],
-                                  );
-                                }
-                                return const SizedBox();
-                              },
-                            ),
-                            PlayerControlls(
-                              controller: controller.albumController,
-                              iconColor: Colors.brown,
-                              iconSize: 35.0,
-                            ),
-                          ],
+                                        StreamBuilder(
+                                            stream: AudioService.positionStream,
+                                            builder: (context, AsyncSnapshot<Duration> snapshot) {
+                                              if (snapshot.hasData) {
+                                                return SeekBar(
+                                                    onChanged: (value) {
+                                                      AudioService.seekTo(value);
+                                                    },
+                                                    duration: Duration(
+                                                        milliseconds: controller.albumController
+                                                                .currentTrack.trackDuration ??
+                                                            0),
+                                                    position: snapshot.data!);
+                                              }
+                                              return Container();
+                                            }),
+                                      ],
+                                    );
+                                  }
+                                  return const SizedBox();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

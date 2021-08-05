@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
@@ -28,29 +29,64 @@ class AlbumCard extends GetView<AlbumController> {
       child: Column(
         children: [
           Container(
-            height: SizeConfig.blockSizeVertical * 33.0,
+            // height: SizeConfig.blockSizeVertical * 33.0,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
                 color: const Color(0xFFC4C4C4), borderRadius: BorderRadius.circular(15.0)),
             margin: EdgeInsets.symmetric(
                 vertical: SizeConfig.blockSizeVertical * 2,
                 horizontal: SizeConfig.blockSizeHorizontal * 3),
+            padding: const EdgeInsets.only(bottom: 12.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  clipBehavior: Clip.hardEdge,
-                  width: double.infinity,
-                  height: SizeConfig.blockSizeVertical * 20.0,
-                  decoration: BoxDecoration(
-                    color: Colors.brown[50],
-                  ),
-                  child: album.albumArt != null
-                      ? Image.memory(album.albumArt!, fit: BoxFit.cover)
-                      : Container(
-                          color: Colors.grey,
-                          // child: ,
-                        ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    /// The album art
+                    Container(
+                      clipBehavior: Clip.hardEdge,
+                      width: double.infinity,
+                      height: SizeConfig.blockSizeVertical * 20.0,
+                      decoration: BoxDecoration(
+                        color: Colors.brown[50],
+                      ),
+                      child: album.albumArt != null
+                          ? Image.memory(album.albumArt!, fit: BoxFit.cover)
+                          : Container(
+                              color: Colors.grey,
+                              // child: ,
+                            ),
+                    ),
+
+                    /// Play pause controlls overlay
+                    Obx(() => controller.currentTrack.path != null
+                        ? Container(
+                            decoration: const BoxDecoration(boxShadow: [
+                              BoxShadow(color: Colors.white12, spreadRadius: 2.0, blurRadius: 4.0)
+                            ], shape: BoxShape.circle),
+                            child: IntrinsicWidth(
+                              child: StreamBuilder<PlaybackState>(
+                                  stream: AudioService.playbackStateStream,
+                                  builder: (context, snapshot) {
+                                    return PlayPauseButton(
+                                      audioFilePath: controller.currentTrack.path!,
+                                      color: Colors.black,
+                                      size: 40,
+                                      albumController: controller,
+                                      onPressed: () async {
+                                        if (controller.playing) {
+                                          await controller.onPause();
+                                        } else {
+                                          await controller.onPlay();
+                                        }
+                                      },
+                                    );
+                                  }),
+                            ),
+                          )
+                        : const SizedBox())
+                  ],
                 ),
 
                 /// The [album] name
@@ -77,8 +113,8 @@ class AlbumCard extends GetView<AlbumController> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ListenViewButton(currenTrack: controller.currentTrack, controler: controller),
-                const Spacer(),
+                // ListenViewButton(currenTrack: controller.currentTrack, controler: controller),
+                // const Spacer(),
               ],
             ),
           ),
