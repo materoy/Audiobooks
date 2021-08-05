@@ -37,20 +37,20 @@ class BasePage extends StatelessWidget {
                               }
                               break;
 
+                            // case 1:
+                            //   if (getIndex() != 1) {
+                            //     Get.toNamed(Routes.EXPLORE);
+                            //   }
+                            //   break;
+
                             case 1:
                               if (getIndex() != 1) {
-                                Get.toNamed(Routes.EXPLORE);
+                                Get.toNamed(Routes.SEARCH);
                               }
                               break;
 
                             case 2:
                               if (getIndex() != 2) {
-                                Get.toNamed(Routes.SEARCH);
-                              }
-                              break;
-
-                            case 3:
-                              if (getIndex() != 3) {
                                 Get.toNamed(Routes.SETTINGS);
                               }
                               break;
@@ -60,7 +60,7 @@ class BasePage extends StatelessWidget {
                         backgroundColor: Colors.transparent,
                         items: const [
                           BottomNavigationBarItem(icon: Icon(CupertinoIcons.book)),
-                          BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded)),
+                          // BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded)),
                           BottomNavigationBarItem(icon: Icon(CupertinoIcons.search)),
                           BottomNavigationBarItem(icon: Icon(CupertinoIcons.settings_solid)),
                         ]),

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:audiobooks/app/data/models/track.dart';
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/library/controllers/library_controller.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
@@ -18,6 +20,8 @@ class MediaScanner {
   static const List<String> AUDIO_MEDIA_TYPES = ['.mp3', '.m4b'];
 
   Future<void> queryMediaFolders() async {
+    Get.snackbar('New audiobooks !', "Adding new audiobooks",
+        duration: const Duration(seconds: 30), icon: CupertinoActivityIndicator());
     final results = await localDatabase.database
         .transaction((txn) async => txn.query(LocalDatabase.directoryPaths));
     List<String> paths;
@@ -29,6 +33,8 @@ class MediaScanner {
     for (final String path in paths) {
       await addMediaFromPath(path);
     }
+
+    Get.back();
     Get.snackbar('Done!', 'New Audiobooks added to Library');
 
     /// Refreshes the state of the shelves since new media has been added
