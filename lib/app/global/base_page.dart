@@ -78,14 +78,14 @@ class BasePage extends StatelessWidget {
       case Routes.LIBRARY:
         return 0;
 
-      case Routes.EXPLORE:
-        return 1;
+      // case Routes.EXPLORE:
+      //   return 1;
 
       case Routes.SEARCH:
-        return 2;
+        return 1;
 
       case Routes.SETTINGS:
-        return 3;
+        return 2;
 
       default:
         return 0;

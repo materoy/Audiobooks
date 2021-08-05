@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audiobooks/app/data/models/album.dart';
 import 'package:audiobooks/app/modules/home/controllers/album_controller.dart';
 import 'package:audiobooks/app/modules/home/providers/album_provider.dart';
@@ -20,7 +22,15 @@ class OverlayController extends GetxController {
 
   Future<void> refreshAlbum() async {
     _currentAlbum.value = (await getCurrentPlayingAlbum())!;
-    albumController = Get.find<AlbumController>(tag: _currentAlbum.value.albumId.toString());
+    if (!Get.isRegistered<AlbumController>(tag: _currentAlbum.value.albumId.toString())) {
+      albumController = Get.put(
+          AlbumController(
+              localDatabase: Get.find<DatabaseController>().localDatabase,
+              album: _currentAlbum.value),
+          tag: _currentAlbum.value.albumId.toString());
+    } else {
+      albumController = Get.find<AlbumController>(tag: _currentAlbum.value.albumId.toString());
+    }
     update();
   }
 

@@ -29,13 +29,13 @@ class OverlayView extends GetView<OverlayController> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                       child: Material(
-                        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(.1),
+                        color: Colors.black12,
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                         type: MaterialType.card,
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: SizeConfig.blockSizeVertical * 2.0,
-                              horizontal: SizeConfig.blockSizeHorizontal * 4.0),
+                              vertical: SizeConfig.blockSizeVertical * 1.0,
+                              horizontal: SizeConfig.blockSizeHorizontal * 5.0),
                           child: Column(
                             children: [
                               StreamBuilder<PlaybackState>(
@@ -49,12 +49,12 @@ class OverlayView extends GetView<OverlayController> {
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.only(top: 5.0),
+                                              width: SizeConfig.blockSizeHorizontal * 82.0,
                                               height: SizeConfig.blockSizeVertical * 3,
-                                              child: MarqueeText(
-                                                text: controller
-                                                        .albumController.currentTrack.trackName ??
+                                              child: Text(
+                                                controller.albumController.currentTrack.trackName ??
                                                     '',
-                                                speed: 20.0,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             PlayPauseButton(
