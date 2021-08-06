@@ -1,5 +1,5 @@
 name: audiobooks
-version: 0.0.5+4
+version: 0.1.0+5
 publish_to: none
 description: An audiobook player
 environment:
