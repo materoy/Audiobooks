@@ -22,7 +22,7 @@ class ShelfView extends GetView<ShelfController> {
           child: Obx(
             () => GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 3 / 4,
+                  childAspectRatio: 3 / 3.8,
                   crossAxisCount: 2,
                 ),
                 shrinkWrap: true,

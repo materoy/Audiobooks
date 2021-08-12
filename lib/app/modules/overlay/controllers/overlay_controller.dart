@@ -44,7 +44,7 @@ class OverlayController extends GetxController {
   Future onReady() async {
     super.onReady();
 
-    Future.delayed(const Duration(seconds: 3), () async {
+    Future.delayed(const Duration(seconds: 1), () async {
       _currentAlbum.value = await getCurrentPlayingAlbum() ?? Album.empty();
 
       if (_currentAlbum.value != Album.empty()) {

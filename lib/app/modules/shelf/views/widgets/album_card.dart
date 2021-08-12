@@ -32,7 +32,7 @@ class AlbumCard extends GetView<AlbumController> {
             // height: SizeConfig.blockSizeVertical * 33.0,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-                color: const Color(0xFFC4C4C4), borderRadius: BorderRadius.circular(15.0)),
+                color: const Color(0xFFC4C4C4), borderRadius: BorderRadius.circular(5.0)),
             margin: EdgeInsets.symmetric(
                 vertical: SizeConfig.blockSizeVertical * 2,
                 horizontal: SizeConfig.blockSizeHorizontal * 3),

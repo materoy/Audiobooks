@@ -120,7 +120,7 @@ class AlbumController extends GetxController {
       await startBackgroundAudioService();
     }
     if (AudioService.playbackState.playing) {
-      AudioService.pause();
+      await AudioService.pause();
     }
 
     await AudioService.updateQueue(mediaItemsQueue);

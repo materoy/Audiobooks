@@ -8,6 +8,7 @@ class SeekBar extends StatefulWidget {
   final ValueChanged<Duration>? onChanged;
   final ValueChanged<Duration>? onChangeEnd;
   final bool? showSeeker;
+  final bool? showTime;
 
   const SeekBar({
     required this.duration,
@@ -16,6 +17,7 @@ class SeekBar extends StatefulWidget {
     this.onChanged,
     this.onChangeEnd,
     this.showSeeker,
+    this.showTime,
   });
 
   @override
@@ -90,24 +92,26 @@ class _SeekBarState extends State<SeekBar> {
             },
           ),
         ),
-        Positioned(
-          right: 16.0,
-          top: 0.0,
-          child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
-                      .firstMatch("${widget.duration}")
-                      ?.group(1) ??
-                  '${widget.duration}',
-              style: const TextStyle(color: Colors.white, fontSize: 10)),
-        ),
-        Positioned(
-          left: 16.0,
-          top: 0.0,
-          child: Text(
-              RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ??
-                  '$_remaining',
-              style: const TextStyle(color: Colors.white, fontSize: 10)),
-        ),
+        if (widget.showTime == null || widget.showTime!) ...[
+          Positioned(
+            right: 16.0,
+            top: 0.0,
+            child: Text(
+                RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                        .firstMatch("${widget.duration}")
+                        ?.group(1) ??
+                    '${widget.duration}',
+                style: const TextStyle(color: Colors.white, fontSize: 10)),
+          ),
+          Positioned(
+            left: 16.0,
+            top: 0.0,
+            child: Text(
+                RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$').firstMatch("$_remaining")?.group(1) ??
+                    '$_remaining',
+                style: const TextStyle(color: Colors.white, fontSize: 10)),
+          ),
+        ]
       ],
     );
   }
