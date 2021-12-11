@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -51,6 +52,11 @@ android {
 
 dependencies {
 
+    def retrofit_version = '2.9.0'
+    def room_version = '2.3.0'
+    def lifecycle_version = "2.4.0-rc01"
+    def landscapist_glide_version = '1.4.1'
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
@@ -67,6 +73,7 @@ dependencies {
 
     // Compose dependencies
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
+    implementation "androidx.navigation:navigation-compose:2.4.0-beta02"
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
@@ -89,9 +96,16 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
 
     // Room
-    implementation "androidx.room:room-runtime:2.3.0"
-    kapt "androidx.room:room-compiler:2.3.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.3.0"
+
+    // Glide
+    implementation "com.github.skydoves:landscapist-glide:$landscapist_glide_version"
+
+    // Material Icons
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
 }

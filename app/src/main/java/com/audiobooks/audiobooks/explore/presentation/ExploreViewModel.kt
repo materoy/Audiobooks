@@ -1,11 +1,11 @@
-package com.audiobooks.audiobooks.feature_home.presentation
+package com.audiobooks.audiobooks.explore.presentation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.audiobooks.audiobooks.core.util.Resource
-import com.audiobooks.audiobooks.feature_home.domain.use_case.GetFeed
+import com.audiobooks.audiobooks.explore.domain.use_case.GetFeed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ExploreViewModel @Inject constructor(
     private val getFeed: GetFeed
 ) : ViewModel() {
 

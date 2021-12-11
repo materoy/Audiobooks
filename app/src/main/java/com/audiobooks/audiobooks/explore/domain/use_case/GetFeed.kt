@@ -1,12 +1,12 @@
-package com.audiobooks.audiobooks.feature_home.domain.use_case
+package com.audiobooks.audiobooks.explore.domain.use_case
 
 import com.audiobooks.audiobooks.core.domain.model.Audiobook
 import com.audiobooks.audiobooks.core.util.Resource
-import com.audiobooks.audiobooks.feature_home.domain.repository.HomeRepository
+import com.audiobooks.audiobooks.explore.domain.repository.ExploreRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetFeed (
-    private val repository: HomeRepository
+    private val repository: ExploreRepository
         ){
 
     operator fun invoke(): Flow<Resource<List<Audiobook>>>{

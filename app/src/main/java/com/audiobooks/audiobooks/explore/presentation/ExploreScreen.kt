@@ -1,4 +1,4 @@
-package com.audiobooks.audiobooks.feature_home.presentation
+package com.audiobooks.audiobooks.explore.presentation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen() {
-    val viewModel: HomeViewModel = hiltViewModel()
+    val viewModel: ExploreViewModel = hiltViewModel()
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is HomeViewModel.UIEvent.ShowSnackBar -> {
+                is ExploreViewModel.UIEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )

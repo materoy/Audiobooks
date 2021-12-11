@@ -1,17 +1,17 @@
-package com.audiobooks.audiobooks.feature_home.data.repository
+package com.audiobooks.audiobooks.explore.data.repository
 
 import com.audiobooks.audiobooks.core.data.remote.LibrivoxApi
 import com.audiobooks.audiobooks.core.domain.model.Audiobook
 import com.audiobooks.audiobooks.core.util.Resource
-import com.audiobooks.audiobooks.feature_home.domain.repository.HomeRepository
+import com.audiobooks.audiobooks.explore.domain.repository.ExploreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 
-class HomeRepositoryImpl(
+class ExploreRepositoryImpl(
     private val api: LibrivoxApi
-): HomeRepository {
+): ExploreRepository {
     override fun getFeed(): Flow<Resource<List<Audiobook>>> = flow {
         emit(Resource.Loading<List<Audiobook>>())
 

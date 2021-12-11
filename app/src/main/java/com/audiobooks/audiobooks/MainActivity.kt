@@ -8,9 +8,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.audiobooks.audiobooks.feature_home.presentation.HomeScreen
+import com.audiobooks.audiobooks.core.presentation.AudiobooksScreen
+import com.audiobooks.audiobooks.core.presentation.BottomNavigationBar
+import com.audiobooks.audiobooks.explore.presentation.HomeScreen
 import com.audiobooks.audiobooks.ui.theme.AudiobooksTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,25 +38,38 @@ class MainActivity : ComponentActivity() {
 fun AudiobooksApp() {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
-//    val currentScreen = AudiobooksScreen.fromRoute(backStackEntry.value?.destination?.route)
-//    val mainScreens = AudiobooksScreen.values().filter { screen -> screen.icon != null }
+    val currentScreen = AudiobooksScreen.fromRoute(backStackEntry.value?.destination?.route)
+    val mainScreens = AudiobooksScreen.values().filter { screen -> screen.icon != null }
     Scaffold(
-//        bottomBar = {
-//            if (mainScreens.contains(currentScreen)) {
-//                BottomBar(
-//                    mainScreens = mainScreens,
-//                    onTabSelected = { screen ->
-//                        navController.navigate(screen.name)
-//                    }, currentScreen = currentScreen
-//                )
-//            }
-//        },
+        bottomBar = {
+            if (mainScreens.contains(currentScreen)) {
+                BottomNavigationBar(
+                    mainScreens = mainScreens,
+                    onTabSelected = { screen ->
+                        navController.navigate(screen.name)
+                    }, currentScreen = currentScreen
+                )
+            }
+        },
         drawerShape = MaterialTheme.shapes.small,
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true
     ) { innerPadding ->
-//        ApplicationNavigationHost(navController, Modifier.padding(innerPadding))
+        ApplicationNavigationHost(navController, Modifier.padding(innerPadding))
         HomeScreen()
+    }
+}
+
+@Composable
+fun ApplicationNavigationHost(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+
+    NavHost(navController = navController, startDestination = AudiobooksScreen.Home.name) {
+        composable(AudiobooksScreen.Home.name) {
+            HomeScreen()
+        }
     }
 }
 

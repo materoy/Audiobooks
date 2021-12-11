@@ -1,4 +1,4 @@
-package com.audiobooks.audiobooks.feature_home.presentation
+package com.audiobooks.audiobooks.explore.presentation
 
 import com.audiobooks.audiobooks.core.domain.model.Audiobook
 
