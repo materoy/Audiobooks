@@ -17,13 +17,15 @@ class HomeRepositoryImpl(
 
         try {
             val remoteAudiobooks = api.getFeed()
-            emit(Resource.Success<List<Audiobook>>(remoteAudiobooks.map { it.toAudiobook() }))
+            emit(Resource.Success<List<Audiobook>>(remoteAudiobooks.books.map { it.toAudiobook() }))
 
         } catch (e: HttpException){
+            println(e)
             emit(Resource.Error<List<Audiobook>>(
                 "Ooops, something went wrong",
             ))
         } catch (e: IOException) {
+            println(e)
             emit(Resource.Error<List<Audiobook>>(
                 "Couldn't reach server check your internet connection",
             ))

@@ -7,9 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.audiobooks.audiobooks.core.util.Resource
 import com.audiobooks.audiobooks.feature_home.domain.use_case.GetFeed
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,29 +17,46 @@ class HomeViewModel @Inject constructor(
     private val getFeed: GetFeed
 ) : ViewModel() {
 
-    private val _feed = mutableStateOf(FeedState())
-    val feed: State<FeedState> = _feed;
+    private val _state = mutableStateOf(FeedState())
+    val state: State<FeedState> = _state;
+
+    private val _eventFlow = MutableSharedFlow<UIEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     init {
         viewModelScope.launch {
             getFeed().onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _feed.value = feed.value.copy(
+                        _state.value = state.value.copy(
                             result.data ?: emptyList(),
                             isLoading = false
                         )
                     }
 
                     is Resource.Error -> {
+                        _state.value = state.value.copy(
+                            result.data ?: emptyList(),
+                            isLoading = false
+                        )
 
+                        _eventFlow.emit(UIEvent.ShowSnackBar(
+                            result.message ?: "Unknown error occurred"
+                        ))
                     }
 
                     is Resource.Loading -> {
-
+                        _state.value = state.value.copy(
+                            result.data ?: emptyList(),
+                            true
+                        )
                     }
                 }
             }.launchIn(this)
         }
+    }
+
+    sealed class UIEvent {
+        data class ShowSnackBar(val message: String): UIEvent()
     }
 }
