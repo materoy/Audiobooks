@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface ExploreRepository {
 
     fun getFeed(): Flow<Resource<List<Audiobook>>>
+
+    fun getGenre(genre: String): Flow<Resource<List<Audiobook>>>
 }

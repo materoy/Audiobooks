@@ -9,6 +9,15 @@ interface LibrivoxApi {
     @GET("feed/audiobooks/format/json/")
     suspend fun getFeed(): LibrivoxAudiobooksDto
 
+    @GET("feed/audiobooks/format/json/genre/^{genre}")
+    suspend fun getGenre(genre: String): LibrivoxAudiobooksDto
+
+    @GET("feed/audiobooks/format/json/title/^{title}")
+    suspend fun getTitle(title: String): LibrivoxAudiobooksDto
+
+    @GET("feed/audiobooks/format/json/author/^{author}")
+    suspend fun getAuthor(author: String): LibrivoxAudiobooksDto
+
     companion object {
         const val BASE_URL = "https://librivox.org/api/"
     }

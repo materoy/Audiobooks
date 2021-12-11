@@ -2,7 +2,7 @@ package com.audiobooks.audiobooks.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val FunOrange = Color(0xFFFF8E40)
+val Black = Color(0xFF262626)
+val FreeGreen = Color(0xFF9BCDB2)
+val EnergyYellow = Color(0xFFFECB02)

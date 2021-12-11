@@ -4,6 +4,7 @@ import com.audiobooks.audiobooks.core.data.remote.LibrivoxApi
 import com.audiobooks.audiobooks.explore.data.repository.ExploreRepositoryImpl
 import com.audiobooks.audiobooks.explore.domain.repository.ExploreRepository
 import com.audiobooks.audiobooks.explore.domain.use_case.GetFeed
+import com.audiobooks.audiobooks.explore.domain.use_case.GetGenre
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +20,12 @@ object ExploreModule {
     @Singleton
     fun provideGetFeedUseCase(repository: ExploreRepository): GetFeed {
         return GetFeed(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetGenreUseCase(repository: ExploreRepository): GetGenre {
+        return GetGenre(repository)
     }
 
     @Singleton

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+val genres = listOf("Fiction", "Non-fiction", "Fantasy", "Crime")
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
@@ -54,6 +55,10 @@ class ExploreViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
+    }
+
+    fun getGenre(genre: String){
+
     }
 
     sealed class UIEvent {

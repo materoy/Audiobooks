@@ -31,4 +31,24 @@ class ExploreRepositoryImpl(
             ))
         }
     }
+
+    override fun getGenre(genre: String): Flow<Resource<List<Audiobook>>> = flow {
+        emit(Resource.Loading<List<Audiobook>>())
+
+        try {
+            val remoteAudiobooks = api.getGenre(genre)
+            emit(Resource.Success<List<Audiobook>>(remoteAudiobooks.books.map { it.toAudiobook() }))
+
+        } catch (e: HttpException){
+            println(e)
+            emit(Resource.Error<List<Audiobook>>(
+                "Ooops, something went wrong",
+            ))
+        } catch (e: IOException) {
+            println(e)
+            emit(Resource.Error<List<Audiobook>>(
+                "Couldn't reach server check your internet connection",
+            ))
+        }
+    }
 }
