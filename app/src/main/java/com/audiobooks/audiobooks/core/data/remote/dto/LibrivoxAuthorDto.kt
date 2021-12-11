@@ -1,8 +1,9 @@
 package com.audiobooks.audiobooks.core.data.remote.dto
 
+import com.audiobooks.audiobooks.core.domain.model.Author
 import com.google.gson.annotations.SerializedName
 
-data class Author(
+data class LibrivoxAuthorDto(
     val dob: String,
     val dod: String,
     @SerializedName("first_name")
@@ -10,4 +11,12 @@ data class Author(
     val id: String,
     @SerializedName("last_name")
     val lastName: String
-)
+) {
+    fun toAuthor(): Author {
+        return Author(
+            fistName = fistName,
+            lastName = lastName,
+            id = id
+        )
+    }
+}

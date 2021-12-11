@@ -1,10 +1,10 @@
 package com.audiobooks.audiobooks.core.data.remote.dto
 
+import com.audiobooks.audiobooks.core.domain.model.Audiobook
 import com.google.gson.annotations.SerializedName
-import java.time.Year
 
 data class LibrivoxAudiobookDto(
-    val authors: List<Author>,
+    val authors: List<LibrivoxAuthorDto>,
     @SerializedName("copyright_year")
     val copyrightYear: String,
     val description: String,
@@ -29,4 +29,24 @@ data class LibrivoxAudiobookDto(
     val urlTextSource: String,
     @SerializedName("url_zip_file")
     val urlZipFile: String
-)
+) {
+    fun toAudiobook(): Audiobook{
+        return Audiobook(
+            authors = authors.map { it.toAuthor() },
+            copyrightYear = copyrightYear,
+        description = description,
+        id = id,
+        language = language,
+        numSections = numSections.toInt(),
+        title = title,
+        totalTime = totalTime.toLong(),
+        totalTimeSecs = totalTimeSecs.toLong(),
+        urlLibrivox = urlLibrivox,
+        urlOther = urlOther,
+        urlProject = urlProject,
+        urlRss = urlRss,
+        urlTextSource = urlTextSource,
+        urlZipFile= urlZipFile
+        )
+    }
+}
