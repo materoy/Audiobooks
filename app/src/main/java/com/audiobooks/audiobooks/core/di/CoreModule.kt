@@ -1,5 +1,6 @@
 package com.audiobooks.audiobooks.core.di
 
+import com.audiobooks.audiobooks.core.data.remote.BookShelvesApi
 import com.audiobooks.audiobooks.core.data.remote.LibrivoxApi
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -25,5 +26,17 @@ object CoreModule {
             ))
             .build()
             .create(LibrivoxApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookShelvesApi(): BookShelvesApi {
+        return Retrofit.Builder()
+            .baseUrl(BookShelvesApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(
+                GsonBuilder().setLenient().create()
+            ))
+            .build()
+            .create(BookShelvesApi::class.java)
     }
 }

@@ -1,12 +1,11 @@
 package com.audiobooks.audiobooks.core.data.remote
-
-import com.audiobooks.audiobooks.core.data.remote.dto.LibrivoxAudiobookDto
 import com.audiobooks.audiobooks.core.data.remote.dto.LibrivoxAudiobooksDto
 import retrofit2.http.GET
 
+
 interface LibrivoxApi {
 
-    @GET("feed/audiobooks/format/json/")
+    @GET("feed/audiobooks/format/json/limit/5")
     suspend fun getFeed(): LibrivoxAudiobooksDto
 
     @GET("feed/audiobooks/format/json/genre/^{genre}")

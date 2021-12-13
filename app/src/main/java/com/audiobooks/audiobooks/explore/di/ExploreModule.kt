@@ -1,5 +1,6 @@
 package com.audiobooks.audiobooks.explore.di
 
+import com.audiobooks.audiobooks.core.data.remote.BookShelvesApi
 import com.audiobooks.audiobooks.core.data.remote.LibrivoxApi
 import com.audiobooks.audiobooks.explore.data.repository.ExploreRepositoryImpl
 import com.audiobooks.audiobooks.explore.domain.repository.ExploreRepository
@@ -30,7 +31,7 @@ object ExploreModule {
 
     @Singleton
     @Provides
-    fun provideHomeRepository(api: LibrivoxApi): ExploreRepository {
-        return ExploreRepositoryImpl(api)
+    fun provideHomeRepository(api: LibrivoxApi, shelfApi: BookShelvesApi): ExploreRepository {
+        return ExploreRepositoryImpl(api, shelfApi)
     }
 }

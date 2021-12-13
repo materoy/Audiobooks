@@ -1,5 +1,6 @@
 package com.audiobooks.audiobooks.explore.data.repository
 
+import com.audiobooks.audiobooks.core.data.remote.BookShelvesApi
 import com.audiobooks.audiobooks.core.data.remote.LibrivoxApi
 import com.audiobooks.audiobooks.core.domain.model.Audiobook
 import com.audiobooks.audiobooks.core.util.Resource
@@ -10,7 +11,8 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class ExploreRepositoryImpl(
-    private val api: LibrivoxApi
+    private val api: LibrivoxApi,
+    private val shelfApi: BookShelvesApi
 ): ExploreRepository {
     override fun getFeed(): Flow<Resource<List<Audiobook>>> = flow {
         emit(Resource.Loading<List<Audiobook>>())

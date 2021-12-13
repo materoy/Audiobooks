@@ -1,22 +1,23 @@
 package com.audiobooks.audiobooks.core.presentation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.PersonOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 import java.lang.IllegalArgumentException
 
 enum class AudiobooksScreen(val icon : ImageVector? = null) {
 
-    Home(icon = Icons.Rounded.Explore),
+    Home(icon = Icons.Outlined.Explore),
 
-    Search(icon = Icons.Outlined.Search),
+    Podcast(icon = Icons.Default.Podcasts),
 
-    Library(icon = Icons.Outlined.LocalLibrary),
+    Library(icon = Icons.Default.ViewWeek),
 
-    Profile(icon = Icons.Default.PersonOutline),
+    Profile(icon = Icons.Rounded.PersonOutline),
     Snippets,
     Settings,
     Player,
@@ -27,7 +28,7 @@ enum class AudiobooksScreen(val icon : ImageVector? = null) {
         fun fromRoute(route: String?) : AudiobooksScreen =
             when(route?.substringBefore("/")){
                 Home.name -> Home
-                Search.name -> Search
+                Podcast.name -> Podcast
                 Library.name -> Library
                 Snippets.name -> Snippets
                 AudiobookDetail.name -> AudiobookDetail
