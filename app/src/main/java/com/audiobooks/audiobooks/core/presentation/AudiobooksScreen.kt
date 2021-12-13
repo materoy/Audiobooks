@@ -3,21 +3,21 @@ package com.audiobooks.audiobooks.core.presentation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.material.icons.rounded.Explore
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.PersonOutline
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.audiobooks.audiobooks.R
 import java.lang.IllegalArgumentException
 
-enum class AudiobooksScreen(val icon : ImageVector? = null) {
+enum class AudiobooksScreen(val icon : ImageVector? = null, val resIcon: Int? = null) {
 
-    Home(icon = Icons.Outlined.Explore),
+    Explore(icon = Icons.Outlined.Explore),
 
     Podcast(icon = Icons.Default.Podcasts),
 
-    Library(icon = Icons.Default.ViewWeek),
+    Library(resIcon = R.drawable.library_icon),
 
-    Profile(icon = Icons.Rounded.PersonOutline),
+    Profile(icon = Icons.Rounded.Person),
+
     Snippets,
     Settings,
     Player,
@@ -27,7 +27,7 @@ enum class AudiobooksScreen(val icon : ImageVector? = null) {
     companion object {
         fun fromRoute(route: String?) : AudiobooksScreen =
             when(route?.substringBefore("/")){
-                Home.name -> Home
+                Explore.name -> Explore
                 Podcast.name -> Podcast
                 Library.name -> Library
                 Snippets.name -> Snippets
@@ -36,7 +36,7 @@ enum class AudiobooksScreen(val icon : ImageVector? = null) {
                 Settings.name -> Settings
                 Profile.name -> Profile
                 MediaFolders.name -> MediaFolders
-                null -> Home
+                null -> Explore
                 else -> throw  IllegalArgumentException("Route $route is note recognized.")
             }
     }

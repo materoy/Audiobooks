@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 
@@ -21,7 +22,7 @@ fun BottomNavigationBar(
         contentColor = MaterialTheme.colors.onBackground,
         elevation = 22.dp,
         cutoutShape = CircleShape,
-        modifier = Modifier.clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
+        modifier = Modifier.clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)),
     ) {
         mainScreens.forEach { item ->
             BottomNavigationItem(
@@ -30,8 +31,17 @@ fun BottomNavigationBar(
                 unselectedContentColor = Color.Gray,
                 onClick = { onTabSelected(item) },
                 icon = {
-                    Icon(imageVector = item.icon!!, contentDescription = item.name,
-                    modifier = Modifier.size(30.dp))
+                    if(item.icon != null)
+                    Icon(
+                        imageVector = item.icon!!, contentDescription = item.name,
+                        modifier = Modifier.size(30.dp)
+                    )
+
+                    if(item.resIcon != null)
+                    Icon(
+                        painter = painterResource(id = item.resIcon!!),
+                        contentDescription = item.name,
+                        modifier = Modifier.size(23.dp)                    )
                 },
             )
         }

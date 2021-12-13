@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,6 +22,9 @@ import androidx.navigation.compose.rememberNavController
 import com.audiobooks.audiobooks.core.presentation.AudiobooksScreen
 import com.audiobooks.audiobooks.core.presentation.BottomNavigationBar
 import com.audiobooks.audiobooks.explore.presentation.ExploreScreen
+import com.audiobooks.audiobooks.library.presentation.LibraryScreen
+import com.audiobooks.audiobooks.podcast.presentation.PodcastScreen
+import com.audiobooks.audiobooks.profile.presentation.ProfileScreen
 import com.audiobooks.audiobooks.ui.theme.AudiobooksTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,7 +48,8 @@ fun AudiobooksApp() {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentScreen = AudiobooksScreen.fromRoute(backStackEntry.value?.destination?.route)
-    val mainScreens = AudiobooksScreen.values().filter { screen -> screen.icon != null }
+    val mainScreens =
+        AudiobooksScreen.values().filter { screen -> screen.icon != null || screen.resIcon != null }
 
     val scaffoldState = rememberScaffoldState()
     Scaffold(
@@ -89,10 +91,28 @@ fun AudiobooksApp() {
         }
     ) {
         NavHost(
-            navController = navController, startDestination = AudiobooksScreen.Home.name,
+            navController = navController, startDestination = AudiobooksScreen.Explore.name,
         ) {
-            composable(AudiobooksScreen.Home.name) {
+            composable(AudiobooksScreen.Explore.name) {
                 ExploreScreen(scaffoldState)
+            }
+
+            composable(AudiobooksScreen.Podcast.name) {
+                PodcastScreen()
+            }
+
+
+            composable(AudiobooksScreen.Player.name) {
+            }
+
+
+            composable(AudiobooksScreen.Library.name) {
+                LibraryScreen()
+            }
+
+
+            composable(AudiobooksScreen.Profile.name) {
+                ProfileScreen()
             }
         }
     }
