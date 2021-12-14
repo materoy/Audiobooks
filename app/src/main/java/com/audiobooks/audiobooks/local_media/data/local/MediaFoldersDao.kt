@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.rmgennative.audiobooks.data.local.dto.MediaFolderDto
+import com.audiobooks.audiobooks.local_media.data.local.entity.MediaFolderDto
 
 @Dao
 interface MediaFoldersDao {

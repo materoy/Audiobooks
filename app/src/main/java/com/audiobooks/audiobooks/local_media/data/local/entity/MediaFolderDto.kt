@@ -1,4 +1,4 @@
-package com.rmgennative.audiobooks.data.local.dto
+package com.audiobooks.audiobooks.local_media.data.local.entity
 
 import android.net.Uri
 import androidx.room.Entity

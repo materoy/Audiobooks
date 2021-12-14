@@ -1,9 +1,7 @@
-package com.rmgennative.audiobooks.data.local
+package com.audiobooks.audiobooks.local_media.data.local
 
 import androidx.room.*
-import com.rmgennative.audiobooks.data.local.dto.LocalAlbumDto
-import com.rmgennative.audiobooks.domain.model.Album
-import kotlinx.coroutines.flow.Flow
+import com.audiobooks.audiobooks.local_media.data.local.entity.LocalAlbumDto
 
 @Dao
 interface LocalAlbumsDao {

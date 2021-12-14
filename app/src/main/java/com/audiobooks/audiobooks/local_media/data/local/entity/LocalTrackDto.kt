@@ -3,7 +3,8 @@ package com.rmgennative.audiobooks.data.local.dto
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.rmgennative.audiobooks.domain.model.Track
+import com.audiobooks.audiobooks.local_media.data.local.entity.LocalAlbumDto
+import com.audiobooks.audiobooks.local_media.domain.model.Track
 
 @Entity(
     tableName = "local_audiobooks",

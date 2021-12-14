@@ -1,10 +1,10 @@
-package com.rmgennative.audiobooks.data.local.dto
+package com.audiobooks.audiobooks.local_media.data.local.entity
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.rmgennative.audiobooks.domain.model.Album
+import com.audiobooks.audiobooks.local_media.domain.model.Album
 
 @Entity(tableName = "albums")
 data class LocalAlbumDto (
