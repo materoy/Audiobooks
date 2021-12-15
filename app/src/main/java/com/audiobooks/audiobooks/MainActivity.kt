@@ -91,7 +91,7 @@ fun AudiobooksApp() {
         }
     ) {
         NavHost(
-            navController = navController, startDestination = AudiobooksScreen.Explore.name,
+            navController = navController, startDestination = AudiobooksScreen.Library.name,
         ) {
             composable(AudiobooksScreen.Explore.name) {
                 ExploreScreen(scaffoldState)
