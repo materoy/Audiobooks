@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class MediaFolderDto(
+data class MediaFolderEntity(
     @PrimaryKey val path : String,
     val name: String
 )

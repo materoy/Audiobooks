@@ -4,14 +4,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.audiobooks.audiobooks.local_media.data.local.entity.MediaFolderDto
+import com.audiobooks.audiobooks.local_media.data.local.entity.MediaFolderEntity
 
 @Dao
 interface MediaFoldersDao {
 
-    @Query("SELECT * FROM MediaFolderDto")
-    suspend fun getAll() : List<MediaFolderDto>
+    @Query("SELECT * FROM MediaFolderEntity")
+    suspend fun getAll() : List<MediaFolderEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(mediaFolder: MediaFolderDto)
+    suspend fun insert(mediaFolder: MediaFolderEntity)
 }

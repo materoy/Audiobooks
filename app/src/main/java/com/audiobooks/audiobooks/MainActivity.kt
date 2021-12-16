@@ -25,6 +25,7 @@ import com.audiobooks.audiobooks.explore.presentation.ExploreScreen
 import com.audiobooks.audiobooks.library.presentation.LibraryScreen
 import com.audiobooks.audiobooks.podcast.presentation.PodcastScreen
 import com.audiobooks.audiobooks.profile.presentation.ProfileScreen
+import com.audiobooks.audiobooks.settings.presentation.SettingsScreen
 import com.audiobooks.audiobooks.ui.theme.AudiobooksTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -112,7 +113,12 @@ fun AudiobooksApp() {
 
 
             composable(AudiobooksScreen.Profile.name) {
-                ProfileScreen()
+                ProfileScreen(navController)
+            }
+
+
+            composable(AudiobooksScreen.Settings.name) {
+                SettingsScreen()
             }
         }
     }

@@ -3,21 +3,21 @@ package com.rmgennative.audiobooks.data.local.dto
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.audiobooks.audiobooks.local_media.data.local.entity.LocalAlbumDto
+import com.audiobooks.audiobooks.local_media.data.local.entity.LocalAlbumEntity
 import com.audiobooks.audiobooks.local_media.domain.model.Track
 
 @Entity(
     tableName = "local_audiobooks",
     foreignKeys = [
         ForeignKey(
-            entity = LocalAlbumDto::class,
+            entity = LocalAlbumEntity::class,
             parentColumns = arrayOf("albumId"),
             childColumns = arrayOf("albumId"),
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class LocalTrackDto(
+data class LocalTrackEntity(
     @PrimaryKey val id: Long,
     val albumId : Long,
     val album: String,
@@ -35,20 +35,21 @@ data class LocalTrackDto(
 //    val title: String,
 //    val userRating: Rating?,
 //    val year: Long,
-)
+) {
 
-fun LocalTrackDto.toTrack() : Track {
-    return Track(
-        id = id,
-        albumId = albumId,
-        album = album
-    )
-}
+    fun LocalTrackEntity.toTrack(): Track {
+        return Track(
+            id = id,
+            albumId = albumId,
+            album = album
+        )
+    }
 
-fun Track.toDto() : LocalTrackDto {
-    return LocalTrackDto(
-        id = id,
-        albumId = albumId,
-        album = album
-    )
+    fun Track.toDto(): LocalTrackEntity {
+        return LocalTrackEntity(
+            id = id,
+            albumId = albumId,
+            album = album
+        )
+    }
 }
